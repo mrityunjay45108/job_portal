@@ -34,21 +34,20 @@
 
 
 
-import { IconAnchor } from '@tabler/icons-react';
-import { IconBellRinging } from '@tabler/icons-react';
-import { IconSettings } from '@tabler/icons-react';
-import { Avatar, Indicator } from '@mantine/core';  // ← Fixed: Combined import
-// import { Avatar } from '@mantine/core';
+import { IconAnchor, IconBellRinging, IconSettings } from '@tabler/icons-react';
+import { Avatar, Indicator } from '@mantine/core';
+import { Link } from 'react-router-dom'; // 1. Link import kiya
 import NavLinks from './NavLinks';
-
 
 const Header = () => {
   return (
-    <div className="w-full bg-[#2a2d2e] px-6 text-white h-20 flex justify-between items-center   ">
-      <div className="flex items-center gap-1 text-bright-sun-400">
+    <div className="w-full bg-[#2a2d2e] px-6 text-white h-20 flex justify-between items-center">
+      
+      {/* 2. Logo section ko Link mein wrap kiya */}
+      <Link to="/" className="flex items-center gap-1 text-bright-sun-400 cursor-pointer no-underline">
         <IconAnchor stroke={2.5} size={24} />
-        <span className="text-xl font-bold">JobSeekers</span>
-      </div>
+        <span className="text-xl font-bold text-bright-sun-400">JobSeekers</span>
+      </Link>
       
       {NavLinks()}
       
@@ -60,7 +59,6 @@ const Header = () => {
         
         <IconSettings size={24} className="cursor-pointer hover:text-gray-300" />
         
-        {/* Indicator wraps the bell icon */}
         <Indicator inline size={8} offset={6} position="top-end" color="red" processing>
           <IconBellRinging size={24} className="cursor-pointer hover:text-gray-300" />
         </Indicator>
@@ -68,4 +66,5 @@ const Header = () => {
     </div>
   );
 }
+
 export default Header;

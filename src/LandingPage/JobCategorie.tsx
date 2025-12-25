@@ -3,7 +3,7 @@ import { jobCategory } from "../Data/Data";
 
 const JobCategorie = () => {
   return (
-    <div className="mt-18 pb-5 bg-[#2a2d2e]">
+    <div className="mt-12 pb-5 bg-[#2a2d2e]">
       <div className="text-4xl text-center font-semibold mb-3 text-white">
         Browse <span className="text-bright-sun-400">JobCategory</span>
       </div>

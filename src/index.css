@@ -11,3 +11,20 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+
+
+@layer base{ ul, ol,p{
+list-style: revert;
+font-size: medium;
+}
+p{
+font-size: medium;
+list-style: revert;
+}
+li{
+margin-left: 1em;
+}
+p { font-size: medium;
+list-style: revert;}
+}

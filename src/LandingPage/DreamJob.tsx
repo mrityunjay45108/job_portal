@@ -4,7 +4,7 @@ const DreamJob = () => {
   return (
     <div className="flex items-center px-20 py-10 gap-10 relative">
       {/* ✅ Left Section */}
-      <div className="w-[45%] flex flex-col gap-4 relative z-20">
+      <div className="w-[45%] flex flex-col gap-4 relative z-30">
         <div className="text-6xl font-bold text-white">
           Find Your <span className="text-bright-sun-400">Dream Job</span> With Us
         </div>
@@ -13,7 +13,7 @@ const DreamJob = () => {
           Good Life Begins With a Good Company. Start Explore Thousands of Jobs in One Place.
         </div>
 
-        <div className="flex gap-3 mt-5">
+        <div className="flex gap-3 mt-5 relative z-30">
           <input
             type="text"
             placeholder="Job Title"

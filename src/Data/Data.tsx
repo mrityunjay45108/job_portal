@@ -123,3 +123,78 @@ export const internshipCategory = [
     openings: "100+ Internships"
   }
 ];
+
+// data/jobs.js
+// Data.ts
+
+export interface Job {
+  id: number;
+  title: string;
+  company: string;
+  location: string;
+  salary: string;
+}
+
+export const jobs: Job[] = [
+  {
+    id: 1,
+    title: "Frontend Developer",
+    company: "Google",
+    location: "Bangalore",
+    salary: "₹12 LPA",
+  },
+];
+// src/job-portal/Data.tsx
+
+export const recommendedJobsData = [
+  {
+    logo: 'Meta', // Placeholder for a logo/icon source
+    title: 'Product Designer',
+    company: 'Meta',
+    applicants: 25,
+    level: 'Entry Level',
+    type: 'Full-Time',
+    location: 'New York',
+    description: 'Meta is seeking a Product Designer to join our team. You\'ll be working on designing user-centric interfaces for our blockchai...',
+    salary: '₹32 LPA',
+    postedDaysAgo: 12,
+  },
+  {
+    logo: 'Netflix',
+    title: 'Sr. UX Designer',
+    company: 'Netflix',
+    applicants: 14,
+    level: 'Expert',
+    type: 'Part-Time',
+    location: 'San Francisco',
+    description: 'Netflix is looking for a Sr. UX Designer to enhance our user experience on streaming platforms. Ideal candidates w...',
+    salary: '₹40 LPA',
+    postedDaysAgo: 5,
+  },
+  {
+    logo: 'Microsoft',
+    title: 'Product Designer',
+    company: 'Microsoft',
+    applicants: 58,
+    level: 'Intermediate',
+    type: 'Full-Time',
+    location: 'Remote',
+    description: 'Join Microsoft as a Product Designer and contribute to our new lightspeed LA studio. We\'re looking for designers wh...',
+    salary: '₹35 LPA',
+    postedDaysAgo: 4,
+  },
+  {
+    logo: 'Adobe',
+    title: 'Product Designer',
+    company: 'Adobe',
+    applicants: 23,
+    level: 'Expert',
+    type: 'Part-Time',
+    location: 'Toronto',
+    description: 'Adobe is seeking a part-time Product Designer to help us enhance our user experience. You will work closely with a...',
+    salary: '₹33 LPA',
+    postedDaysAgo: 22,
+  },
+  // ... add more data as needed to match the image
+];
+
