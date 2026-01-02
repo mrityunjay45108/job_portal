@@ -2,7 +2,7 @@ import { jobList } from "../Data/JobsData";
 import JobCard from "./JobCard";
 import Sort from "./Sort";
 
-const Jobs = () => {
+const Jobs = (props:any) => {
   return (
     <div className="min-h-screen bg-mine-shaft950 p-6">
       <div className="max-w-7xl mx-auto">

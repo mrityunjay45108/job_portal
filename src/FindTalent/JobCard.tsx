@@ -14,6 +14,7 @@ interface Job {
   postedDaysAgo: number | string;
 }
 
+
 interface JobCardProps {
   job: Job;
   isFavorite: boolean;

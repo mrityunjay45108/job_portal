@@ -40,7 +40,10 @@ const NavLinks = () => {
     { name: "Find Jobs", url: "/find-jobs" },
     { name: "Find Talent", url: "/find-talent" },
     { name: "Post Jobs", url: "/Post-Jobs" },
-    { name: "About us", url: "/about-us" },
+    { name: "Posted Jobs", url: "/Posted-Jobs" },
+    { name: "Jobs History", url: "/Jobs-History" },
+    { name: "SignUp", url: "/signup" },
+
   ];
 
   return (

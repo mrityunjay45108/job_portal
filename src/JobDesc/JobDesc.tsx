@@ -2,7 +2,7 @@ import { Button, Divider, ActionIcon } from "@mantine/core";
 import { IconBookmark } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { desc } from "../Data/JobDescData";
-import DOMpurify from 'dompurify';
+import DOMpurify from "dompurify";
 
 import {
   IconBriefcase,
@@ -29,13 +29,12 @@ const skills = [
   "Tailwind CSS",
 ];
 
-const JobDesc = () => {
+const JobDesc = (props: any) => {
   const data = DOMpurify.sanitize(desc);
-  
+
   return (
     // CHANGE: 'w-full' rakha hai gap hatane ke liye, par background/border hata diya hai
     <div className="w-full">
-      
       {/* ================= Header ================= */}
       <div className="flex justify-between items-center">
         <div className="flex gap-4 items-center">
@@ -44,7 +43,9 @@ const JobDesc = () => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <div className="font-semibold text-2xl text-white">Software Engineer III</div>
+            <div className="font-semibold text-2xl text-white">
+              Software Engineer III
+            </div>
             <div className="text-lg text-mine-shaft-300">
               Google &bull; 3 days ago &bull; 48 Applicants
             </div>
@@ -54,14 +55,18 @@ const JobDesc = () => {
         <div className="flex flex-col gap-2 items-center">
           <Link to="/apply-job">
             <Button color="brightSun.4" size="sm" variant="light">
-              Apply
+              {props.edit ? "Edit" : "Apply"}
             </Button>
           </Link>
-          <IconBookmark
-            className="cursor-pointer text-bright-sun-400"
-            stroke={1.5}
-            size={26}
-          />
+          {props.edit ? <Button color="red.5" size="sm" variant="outline">
+              Delete
+            </Button> : ""}
+            <IconBookmark
+              className="cursor-pointer text-bright-sun-400"
+              stroke={1.5}
+              size={26}
+            />
+          
         </div>
       </div>
 
@@ -108,9 +113,9 @@ const JobDesc = () => {
       <Divider my="xl" />
 
       {/* ================= About the Job ================= */}
-      <div 
+      <div
         className="[&_h4]:text-xl [&_h4]:my-5 [&_h4]:font-semibold [&_h4]:text-mine-shaft-200 [&_p]:text-justify [&_*]:text-mine-shaft-300 [&_li]:marker:text-bright-sun-400"
-        dangerouslySetInnerHTML={{__html: data}}
+        dangerouslySetInnerHTML={{ __html: data }}
       />
 
       <Divider my="xl" />
@@ -136,7 +141,8 @@ const JobDesc = () => {
           </Link>
         </div>
         <div className="text-mine-shaft-300 text-justify">
-          Google's mission is to organize the world's information and make it universally accessible and useful.
+          Google's mission is to organize the world's information and make it
+          universally accessible and useful.
         </div>
       </div>
     </div>

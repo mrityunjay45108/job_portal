@@ -1,8 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { IconBrandLinkedin } from "@tabler/icons-react";
+import NavLinks from "../Header/NavLinks";
 
 const Footer = () => {
-  return (
+  const location = useLocation();
+  return location.pathname !== "/signup" && location.pathname !== "/login" ?(
     <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-6 py-14">
 
@@ -104,7 +106,7 @@ const Footer = () => {
 
       </div>
     </footer>
-  );
+  ): <></>;
 };
 
 export default Footer;

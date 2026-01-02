@@ -11,14 +11,27 @@ import {
 import { IconHeart } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
-const JobCard = (props: any) => {
+// FIXED: Define Interface to match your jobList data
+interface JobCardProps {
+  jobTitle?: string;
+  company?: string;
+  applicants?: number;
+  experience?: string;
+  jobType?: string;
+  location?: string;
+  package?: string; // mapping from 'salary' if needed
+  posted?: string;  // mapping from 'postedDaysAgo'
+  description?: string;
+  logo?: string;
+  edit?: boolean;   // To handle the edit logic
+}
+
+const JobCard = (props: JobCardProps) => {
   return (
     <Card
-      // Link ke liye component prop use karein
       component={Link}
       to="/Jobs"
-      // Aapki original Tailwind classes aur Mantine props
-      className="!bg-mine-shaft-950 transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-2 hover:shadow-[0_10px_20px_rgba(0,0,0,0.4),0_0_15px_rgba(255,255,0,0.2)] !border-white hover:!border-bright-sun-400 decoration-none "
+      className="!bg-mine-shaft-950 transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-2 hover:shadow-[0_10px_20px_rgba(0,0,0,0.4),0_0_15px_rgba(255,255,0,0.2)] !border-white hover:!border-bright-sun-400 decoration-none w-full sm:max-w-[350px]"
       radius="xl"
       padding="md"
       withBorder
@@ -27,7 +40,7 @@ const JobCard = (props: any) => {
       <Group justify="space-between" align="flex-start">
         <Group gap="sm">
           <Avatar radius="xl" color="gray" src={props.logo}>
-            {props.companyName?.[0] || "∞"}
+            {props.company?.[0] || "∞"}
           </Avatar>
 
           <Stack gap={0}>
@@ -35,7 +48,7 @@ const JobCard = (props: any) => {
               {props.jobTitle}
             </Text>
             <Text size="sm" c="dimmed">
-              {props.companyName} • {props.applicants} Applicants
+              {props.company} • {props.applicants} Applicants
             </Text>
           </Stack>
         </Group>
@@ -44,7 +57,7 @@ const JobCard = (props: any) => {
           variant="subtle" 
           color="gray" 
           onClick={(e) => {
-            e.preventDefault(); // Isse card click trigger nahi hoga
+            e.preventDefault(); 
             console.log("Wishlist clicked");
           }}
         >
@@ -69,12 +82,19 @@ const JobCard = (props: any) => {
       {/* Footer */}
       <Group justify="space-between">
         <Text fw={600} size="lg" className="text-white">
-          {props.package}
+          {props.package || "Negotiable"}
         </Text>
         <Text size="sm" c="dimmed">
-          {props.posted}
+          {props.posted || "Just now"}
         </Text>
       </Group>
+
+      {/* Logic for Edit Button if needed in Posted Jobs */}
+      {props.edit && (
+        <Badge color="brightSun.4" variant="filled" fullWidth mt="md" size="lg" className="text-black">
+          Manage Job
+        </Badge>
+      )}
     </Card>
   );
 };

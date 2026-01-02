@@ -1,4 +1,4 @@
-  // ------------ this code have alignment error-----------
+// ------------ this code have alignment error-----------
 
 // import { IconBriefcase } from "@tabler/icons-react";
 // import { IconBellRinging } from '@tabler/icons-react';
@@ -31,40 +31,61 @@
 // }
 // export default Header;
 
-
-
-
-import { IconAnchor, IconBellRinging, IconSettings } from '@tabler/icons-react';
-import { Avatar, Indicator } from '@mantine/core';
-import { Link } from 'react-router-dom'; // 1. Link import kiya
-import NavLinks from './NavLinks';
+import { IconAnchor, IconBellRinging, IconSettings } from "@tabler/icons-react";
+import { Indicator } from "@mantine/core";
+import { Link, useLocation } from "react-router-dom";
+import NavLinks from "./NavLinks";
+import ProfileMenu from "./ProfileMenu";
 
 const Header = () => {
+  const location = useLocation();
+
+  if (location.pathname === "/signup" || location.pathname === "/login") {
+    return null;
+  }
+
   return (
-    <div className="w-full bg-[#2a2d2e] px-6 text-white h-20 flex justify-between items-center">
-      
-      {/* 2. Logo section ko Link mein wrap kiya */}
-      <Link to="/" className="flex items-center gap-1 text-bright-sun-400 cursor-pointer no-underline">
+    <div className="w-full bg-[#2a2d2e] px-6 text-white h-20 flex justify-between items-center relative">
+      {/* Logo */}
+      <Link
+        to="/"
+        className="flex items-center gap-1 text-bright-sun-400 no-underline cursor-pointer relative z-10"
+      >
         <IconAnchor stroke={2.5} size={24} />
-        <span className="text-xl font-bold text-bright-sun-400">JobSeekers</span>
+        <span className="text-xl font-bold">JobSeekers</span>
       </Link>
-      
-      {NavLinks()}
-      
-      <div className="flex gap-4 items-center">
-        <div className="flex items-center gap-2">
-          <span>Mrityunjay</span>
-          <Avatar src="avatar2.png" alt="it's me" size="md" />
-        </div>
-        
-        <IconSettings size={24} className="cursor-pointer hover:text-gray-300" />
-        
-        <Indicator inline size={8} offset={6} position="top-end" color="red" processing>
-          <IconBellRinging size={24} className="cursor-pointer hover:text-gray-300" />
+
+      {/* Navigation - Wrapped in a div to prevent overlapping */}
+      <div className="flex-1 flex justify-center">
+        {NavLinks()}
+      </div>
+
+      {/* Right Section */}
+      <div className="flex gap-5 items-center relative z-20">
+        <ProfileMenu />
+
+        <IconSettings
+          size={24}
+          className="cursor-pointer hover:text-bright-sun-400 transition-colors"
+        />
+
+        <Indicator
+          inline
+          size={9}
+          offset={5}
+          position="top-end"
+          color="red"
+          withBorder
+          processing
+        >
+          <IconBellRinging
+            size={24}
+            className="cursor-pointer hover:text-bright-sun-400 transition-colors"
+          />
         </Indicator>
       </div>
     </div>
   );
-}
+};
 
 export default Header;
