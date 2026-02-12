@@ -43,9 +43,8 @@ const NavLinks = () => {
     { name: "Posted Jobs", url: "/Posted-Jobs" },
     { name: "Jobs History", url: "/Jobs-History" },
     { name: "SignUp", url: "/signup" },
-
   ];
-
+  
   return (
     <div className="flex gap-5 h-full items-center z-50 relative">
       {links.map((link, index) => {

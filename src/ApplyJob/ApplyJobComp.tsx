@@ -1,12 +1,11 @@
 import { Button, Divider, FileInput, Group, Select, Textarea, TextInput } from "@mantine/core";
 import { IconBrandGithub, IconCheck, IconEdit, IconLink, IconPaperclip, IconSend } from "@tabler/icons-react";
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 const ApplyJobComp = () => {
   const [preview, setPreview] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   
-  // Form data ko track karne ke liye state (Validation ke liye)
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -23,7 +22,6 @@ const ApplyJobComp = () => {
   };
 
   const handlePreview = () => {
-    // Basic Validation Logic
     const { fullName, email, college, year, session, branch, skills, projectName } = formData;
     if (!fullName || !email || !college || !year || !session || !branch || !skills || !projectName) {
       alert("Please fill all mandatory fields before submitting!");
@@ -33,39 +31,34 @@ const ApplyJobComp = () => {
   };
 
   const handleEdit = () => setPreview(false);
-  
-  const handleSubmit = () => {
-    setSubmitted(true);
-  };
+  const handleSubmit = () => setSubmitted(true);
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-mine-shaft-950 pt-10 pb-20 px-4">
+    <div className="flex justify-center items-start min-h-screen bg-mine-shaft-950 pt-6 md:pt-10 pb-20 px-4">
       <div className="w-full max-w-4xl">
         
-        {/* Header Section */}
-        <div className="flex justify-between items-center">
-          <div className="flex gap-4 items-center">
-            <div className="p-3 bg-mine-shaft-800 rounded-xl">
-              <img className="h-14" src="/Icons/Google.png" alt="Google" />
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="font-semibold text-2xl text-white">Software Engineer III</div>
-              <div className="text-lg text-mine-shaft-300">
-                Google &bull; 3 days ago &bull; 48 Applicants
-              </div>
+        {/* Header Section - Now Responsive */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="p-3 bg-mine-shaft-800 rounded-xl">
+            <img className="h-10 md:h-14" src="/Icons/Google.png" alt="Google" />
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="font-semibold text-xl md:text-2xl text-white">Software Engineer III</div>
+            <div className="text-sm md:text-lg text-mine-shaft-300">
+              Google &bull; 3 days ago &bull; <span className="text-bright-sun-400">48 Applicants</span>
             </div>
           </div>
         </div>
 
         <Divider my="xl" color="mineShaft.7" />
 
-        <div className="text-xl font-semibold mb-6 text-white">
+        <div className="text-lg md:text-xl font-semibold mb-6 text-white">
           {submitted ? "Application Status" : preview ? "Preview Your Application" : "Submit Your Application"}
         </div>
         
-        <div className="flex flex-col gap-6">
-          {/* Row 1 */}
-          <div className="flex flex-col sm:flex-row gap-10 [&>*]:flex-1">
+        <div className="flex flex-col gap-5 md:gap-6">
+          {/* Row 1 to 5 - Adjusted gap for mobile */}
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 [&>*]:flex-1">
             <TextInput 
               label="Full Name" withAsterisk placeholder="Enter name" 
               disabled={preview} required
@@ -78,8 +71,7 @@ const ApplyJobComp = () => {
             />
           </div>
 
-          {/* Row 2 */}
-          <div className="flex flex-col sm:flex-row gap-10 [&>*]:flex-1">
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 [&>*]:flex-1">
             <TextInput 
               label="College Name" withAsterisk placeholder="Enter your college" 
               disabled={preview} required
@@ -93,8 +85,7 @@ const ApplyJobComp = () => {
             />
           </div>
 
-          {/* Row 3 */}
-          <div className="flex flex-col sm:flex-row gap-10 [&>*]:flex-1">
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 [&>*]:flex-1">
             <TextInput 
               label="Session" withAsterisk placeholder="2021-2025" 
               disabled={preview} required
@@ -107,8 +98,7 @@ const ApplyJobComp = () => {
             />
           </div>
 
-          {/* Row 4 */}
-          <div className="flex flex-col sm:flex-row gap-10 [&>*]:flex-1">
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 [&>*]:flex-1">
             <TextInput 
               label="Skills" withAsterisk placeholder="React, Node.js, etc." 
               disabled={preview} required
@@ -121,8 +111,7 @@ const ApplyJobComp = () => {
             />
           </div>
 
-          {/* Row 5 */}
-          <div className="flex flex-col sm:flex-row gap-10 [&>*]:flex-1">
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 [&>*]:flex-1">
             <TextInput 
               label="Project Name" withAsterisk placeholder="Main Project" 
               disabled={preview} required
@@ -144,25 +133,25 @@ const ApplyJobComp = () => {
             accept="application/pdf"
           />
 
-          {/* Button Section */}
-          <Group grow mt="md">
+          {/* Button Section - Responsive Grouping */}
+          <div className="mt-6">
             {!submitted && (
-              <>
+              <div className="flex flex-col sm:flex-row gap-4">
                 {preview ? (
                   <>
-                    <Button variant="outline" color="brightSun.4" size="lg" leftSection={<IconEdit size={20} />} onClick={handleEdit}>
+                    <Button variant="outline" color="brightSun.4" size="lg" className="flex-1" leftSection={<IconEdit size={20} />} onClick={handleEdit}>
                       Edit
                     </Button>
-                    <Button color="brightSun.4" size="lg" leftSection={<IconCheck size={20} />} onClick={handleSubmit}>
+                    <Button color="brightSun.4" size="lg" className="flex-1" leftSection={<IconCheck size={20} />} onClick={handleSubmit}>
                       Confirm Submit
                     </Button>
                   </>
                 ) : (
-                  <Button color="brightSun.4" variant="light" size="lg" leftSection={<IconSend size={20} />} onClick={handlePreview}>
+                  <Button color="brightSun.4" variant="light" size="lg" fullWidth leftSection={<IconSend size={20} />} onClick={handlePreview}>
                     Submit Application
                   </Button>
                 )}
-              </>
+              </div>
             )}
 
             {submitted && (
@@ -170,7 +159,7 @@ const ApplyJobComp = () => {
                 Application Submitted Successfully!
               </Button>
             )}
-          </Group>
+          </div>
         </div>
       </div>
     </div>
