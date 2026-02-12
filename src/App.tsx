@@ -20,6 +20,7 @@ import SignUpPage from './Pages/SignUpPage';
 import ProfilePage from './Pages/ProfilePage';
 
 function App() {
+  console.log("hii there , YOU can remove this later")
   const theme = createTheme({
     colors: {
       brightSun: [
