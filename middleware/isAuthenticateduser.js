@@ -1,24 +1,37 @@
 import jwt from "jsonwebtoken";
+
 const authenticateToken = (req, res, next) => {
   try {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
+    const token = req.cookies.token;
 
     if (!token) {
-      return res.status(401).json({ message: "Access denied - No token provided" });
+      return res.status(401).json({
+        message: "Unauthorized - No token provided"
+      });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) {
-        return res.status(403).json({ message: "Invalid token" });
-      }
-      req.user = user;
-      next();
-    });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!decoded) {
+      return res.status(401).json({
+        message: "Unauthorized - Invalid token"
+      });
+    }
+
+    // attach user data to request
+    req.user = {
+      id: decoded.userId,
+      role: decoded.role
+    };
+
+    next();
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error - Authentication failed" });
-  }     
+    console.error("Authentication error:", error);
+    return res.status(401).json({
+      message: "Unauthorized - Invalid token"
+    });
+  }
+};
 
-
-}
+export default authenticateToken;
