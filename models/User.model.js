@@ -20,7 +20,7 @@ import mongoose from "mongoose";
     },
     role: {
         type: String,
-        enum: ['student', 'Recruiter', 'admin'],
+        enum: ['student', 'recruiter', 'admin'],
         default: 'student',
         required: true,
     },

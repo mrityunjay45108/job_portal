@@ -1,60 +1,57 @@
 // register controller
-import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import User from "../models/User.model.js";
 
-export const register = async (req, res) => {
-  try {
-    const { username, email, password, role } = req.body;
+export const register = async (req,res)=>{
+try{
 
-    // Validation
-    if (!username || !email || !password || !role) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
+const {fullname,email,phoneNumber,password,role}=req.body;
 
-    // Check existing user
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+if(!fullname || !email || !phoneNumber || !password || !role){
+return res.status(400).json({
+message:"All fields are required"
+});
+}
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+const user = await User.findOne({email});
 
-    // Create user
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-      role,
-    });
+if(user){
+return res.status(400).json({
+message:"User already exists"
+});
+}
 
-    await newUser.save();
+const hashedPassword = await bcrypt.hash(password,10);
 
-    // Response
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-        role: newUser.role,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error - Registration failed" });
-  }
-};
+const newUser = await User.create({
+fullname,
+email,
+phoneNumber,
+password:hashedPassword,
+role
+});
+
+res.status(201).json({
+message:"Registered Successfully",
+success:true,
+user:newUser
+});
+
+}catch(error){
+console.log(error);
+res.status(500).json({
+message:"Server Error"
+})
+}
+}
 
 
 
 
 // login controller
 
-import User from "../models/userModel.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+
 
 export const login = async (req, res) => {
   try {
