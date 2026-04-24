@@ -153,29 +153,33 @@ export const logout = (req, res) => {
 //update profile controller
 
 
-
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const { username, email, phoneNumber } = req.body;
+    const { fullname, email, phoneNumber } = req.body;
     const file = req.file;
 
     let updateData = {};
 
-    // Only update fields if provided
-    if (username) updateData.username = username;
+    if (fullname) updateData.fullname = fullname;
     if (email) updateData.email = email;
     if (phoneNumber) updateData.phoneNumber = phoneNumber;
 
-    // Handle profile image (if uploaded)
     if (file) {
-      updateData.profilePicture = file.path; // or cloudinary URL
+      updateData.profilePicture = file.path;
     }
 
-    // Check if at least one field is provided
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ message: "No data provided to update" });
+    }
+
+    // Email duplicate check
+    if (email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -190,18 +194,15 @@ export const updateProfile = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-  await updatedUser.save(); 
+
+    const { password, ...safeUser } = updatedUser._doc;
+
     res.status(200).json({
+      success: true,
       message: "Profile updated successfully",
-      user: {
-        id: updatedUser._id,
-        username: updatedUser.username,
-        email: updatedUser.email,
-        role: updatedUser.role,
-        profilePicture: updatedUser.profilePicture,
-        phoneNumber: updatedUser.phoneNumber,
-      },
+      user: safeUser
     });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error - Profile update failed" });
