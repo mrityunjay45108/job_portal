@@ -47,8 +47,14 @@ export default registerCompany;
 export const getAllCompanies = async (req, res) => {
   try {
     const userId = req.user.id;
-    const companies = await Company.find();
-    res.status(200).json({
+    const companies = await Company.find( {user: userId} );
+    if (!companies) {
+      return res.status(404).json({
+        message: "No companies found",
+        success: false,
+      });
+    }
+    return res.status(200).json({
       message: "Companies fetched successfully",
       success: true,
       companies,
@@ -74,7 +80,8 @@ export const updateCompany = async (req, res) => {
       website,
       location,
     };
-    const company = await company.findByIdAndUpdate(req.params.id, updateData, {
+    const companyId = req.params.id;
+    const company = await Company.findByIdAndUpdate(companyId, updateData, {
       new: true,
     });
     res.status(200).json({
@@ -100,3 +107,27 @@ export const updateCompany = async (req, res) => {
     });
   }
 };
+
+// get company by id
+export const getCompanyById = async (req, res) => {
+  try {
+       const companyid = req.params.id;
+    const company = await Company.findById(companyid);
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      message: "Company fetched successfully",
+      success: true,
+      company,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+}; 

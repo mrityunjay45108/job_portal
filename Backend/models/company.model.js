@@ -1,19 +1,20 @@
-// @ts-check
 import mongoose from "mongoose";
 
 const companySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique: true, // Unique hona chahiye taaki duplicate na ho
     trim: true
   },
   description: {
     type: String,
-    required: true
+    // Agar registration ke waqt description nahi chahiye toh required: false kar dein
+    required: false 
   },
   location: {
     type: String,
-    required: true
+    required: false 
   },
   website: {
     type: String,
@@ -24,10 +25,10 @@ const companySchema = new mongoose.Schema({
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
+    required: true
   }
 }, { timestamps: true });
 
 const Company = mongoose.model("Company", companySchema);
-
 export default Company;

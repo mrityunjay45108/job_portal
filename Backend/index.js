@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/user.routes.js";
-
+import companyRoutes from "./routes/company.routes.js";
 dotenv.config();
 
 const app = express();
@@ -28,6 +28,7 @@ app.use(cookieParser());
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/companies", companyRoutes);
+
 
 // Test Route
 app.get("/", (req, res) => {
