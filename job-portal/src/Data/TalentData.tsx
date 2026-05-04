@@ -1,15 +1,21 @@
+// Helper function to generate consistent avatar based on name
+const getAvatarUrl = (name: string) => {
+  // API that generates cute avatars - this URL works fine in img tags
+  return `https://api.dicebear.com/7.x/lorelei/svg?seed=${encodeURIComponent(name)}`;
+};
+
 export const talentData = [
   {
     id: 1,
     name: "Mrityunjay Kumar",
     title: "Software Engineer",
     company: "Infosys",
-    skills: ["React", "SpringBoot", "MongoDB", "Docker",],
+    skills: ["React", "SpringBoot", "MongoDB", "Docker"],
     salary: 75,
     location: "San Francisco",
     postedDaysAgo: 2,
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=suman",
-    about: "Passionate Software Engineer with 4+ years of experience building scalable web applications. I specialize in full-stack development using React and Spring Boot. I love solving complex problems and contributing to open-source projects.",
+    avatar: getAvatarUrl("Mrityunjay Kumar"), // Will generate a unique avatar
+    about: "Passionate Software Engineer with 4+ years of experience building scalable web applications...",
     experience: [
       {
         title: "Software Engineer",
@@ -17,7 +23,7 @@ export const talentData = [
         location: "San Francisco, USA",
         startDate: "Jan 2022",
         endDate: "Present",
-        description: "Building next-generation search features and optimizing backend performance for high-traffic microservices.",
+        description: "Building next-generation search features and optimizing backend performance...",
         companyIcon: "/Icons/Google.png"
       },
       {
@@ -26,7 +32,7 @@ export const talentData = [
         location: "Bangalore, India",
         startDate: "Jul 2020",
         endDate: "Dec 2021",
-        description: "Developed UI components for banking applications and collaborated with cross-functional teams.",
+        description: "Developed UI components for banking applications...",
         companyIcon: "/Icons/Infosys.jpg"
       }
     ],
@@ -49,8 +55,8 @@ export const talentData = [
     salary: 85,
     location: "New York",
     postedDaysAgo: 1,
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=messi",
-    about: "Full Stack Developer focused on creating seamless user experiences. Experienced in building real-time applications and managing distributed databases. I enjoy staying at the forefront of JavaScript evolution.",
+    avatar: getAvatarUrl("Manjay Kumar"),
+    about: "Full Stack Developer focused on creating seamless user experiences...",
     experience: [
       {
         title: "Full Stack Developer",
@@ -58,7 +64,7 @@ export const talentData = [
         location: "New York, USA",
         startDate: "Mar 2021",
         endDate: "Present",
-        description: "Architecting social media features and improving data consistency across various Meta platforms.",
+        description: "Architecting social media features and improving data consistency...",
         companyIcon: "/Icons/Meta.png"
       }
     ],
@@ -81,8 +87,8 @@ export const talentData = [
     salary: 95,
     location: "Seattle",
     postedDaysAgo: 3,
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=story",
-    about: "Backend enthusiast with a deep interest in cloud architecture and system design. Proven track record in optimizing cloud costs and improving system reliability using AWS best practices.",
+    avatar: getAvatarUrl("Madhu Sudan Kumar"),
+    about: "Backend enthusiast with a deep interest in cloud architecture...",
     experience: [
       {
         title: "Backend Engineer",
@@ -90,7 +96,7 @@ export const talentData = [
         location: "Seattle, USA",
         startDate: "Feb 2020",
         endDate: "Present",
-        description: "Scaling distributed systems and managing AWS Lambda functions for order processing.",
+        description: "Scaling distributed systems and managing AWS Lambda functions...",
         companyIcon: "/Icons/Amazon.png"
       }
     ],
@@ -113,8 +119,8 @@ export const talentData = [
     salary: 80,
     location: "Los Angeles",
     postedDaysAgo: 5,
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=donalt",
-    about: "Frontend Specialist dedicated to building high-performance streaming interfaces. I am passionate about web accessibility and creating visually stunning, user-friendly layouts.",
+    avatar: getAvatarUrl("Abhishek Kumar"),
+    about: "Frontend Specialist dedicated to building high-performance streaming interfaces...",
     experience: [
       {
         title: "Frontend Developer",
@@ -122,7 +128,7 @@ export const talentData = [
         location: "Los Angeles, USA",
         startDate: "Jan 2021",
         endDate: "Present",
-        description: "Optimizing video player UI and implementing new features for the content discovery page.",
+        description: "Optimizing video player UI and implementing new features...",
         companyIcon: "/Icons/Netflix.png"
       }
     ],
@@ -145,8 +151,8 @@ export const talentData = [
     salary: 90,
     location: "Austin",
     postedDaysAgo: 4,
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=kohli",
-    about: "Infrastructure Engineer specialized in CI/CD automation and container orchestration. My goal is to bridge the gap between development and operations through reliable automation.",
+    avatar: getAvatarUrl("Aditya Kumar"),
+    about: "Infrastructure Engineer specialized in CI/CD automation...",
     experience: [
       {
         title: "DevOps Engineer",
@@ -154,7 +160,7 @@ export const talentData = [
         location: "Austin, USA",
         startDate: "Jun 2021",
         endDate: "Present",
-        description: "Implementing automated pipelines for Azure services and managing Kubernetes clusters.",
+        description: "Implementing automated pipelines for Azure services...",
         companyIcon: "/Icons/Microsoft.png"
       }
     ],
@@ -177,8 +183,8 @@ export const talentData = [
     salary: 100,
     location: "Cupertino",
     postedDaysAgo: 1,
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=lli",
-    about: "Data Scientist with a passion for Machine Learning and Predictive Analytics. I thrive on turning raw data into actionable insights to drive business decisions.",
+    avatar: getAvatarUrl("Aarav Kumar"),
+    about: "Data Scientist with a passion for Machine Learning...",
     experience: [
       {
         title: "Data Scientist",
@@ -186,7 +192,7 @@ export const talentData = [
         location: "Cupertino, USA",
         startDate: "Apr 2022",
         endDate: "Present",
-        description: "Developing machine learning models for Siri and improving natural language understanding.",
+        description: "Developing machine learning models for Siri...",
         companyIcon: "/Icons/Apple.png"
       },
       {
@@ -195,7 +201,7 @@ export const talentData = [
         location: "San Jose, USA",
         startDate: "Jan 2020",
         endDate: "Mar 2022",
-        description: "Analyzed large datasets for enterprise clients and built interactive data visualizations.",
+        description: "Analyzed large datasets for enterprise clients...",
         companyIcon: "/Icons/IBM.png"
       }
     ],

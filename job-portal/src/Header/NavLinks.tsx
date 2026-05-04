@@ -1,65 +1,48 @@
-// import { Link, useLocation } from "react-router-dom";
-
-// const NavLinks = () => {
-//   const location = useLocation();
-  
-//   const links = [
-//     { name: "Find Jobs", url: "find-jobs" },
-//     { name: "Find Talent", url: "find-talent" },
-//     { name: "Upload Jobs", url: "upload-jobs" },
-//     { name: "About us", url: "about-us" },
-//   ];
-// const location = useLocation();
-//   return (
-//     <div className="flex gap-5" text-mine-shaft-300 h-full items-centre>
-//       {links.map((link, index) => 
-//          <div className={'${location .pathname=="/"+link"border-bright-sun-400":"border-transparent"} border-t[3px] h-full flex-items-centre'}>
-      
-//       (
-//         <Link key={index} to={link.url}>
-//           {link.name}
-//         </Link>
-//       ))}
-
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default NavLinks;
-
-// 
-
-
 import { Link, useLocation } from "react-router-dom";
 
-const NavLinks = () => {
+interface NavLinksProps {
+  onClose?: () => void;
+}
+
+const NavLinks = ({ onClose }: NavLinksProps) => {
   const location = useLocation();
 
   const links = [
     { name: "Find Jobs", url: "/find-jobs" },
-    { name: "Find Talent", url: "/find-talent" },
-    { name: "Post Jobs", url: "/Post-Jobs" },
-    { name: "Posted Jobs", url: "/Posted-Jobs" },
-    { name: "Jobs History", url: "/Jobs-History" },
-    { name: "SignUp", url: "/signup" },
+    // { name: "Find Talent", url: "/find-talent" },
+    // { name: "Post Jobs", url: "/post-jobs" },
+    { name: "Posted Jobs", url: "/posted-jobs" },
+    { name: "Recruiter Dashboard", url: "/recruiter-dashboard" },
+    { name: "Candidate Dashboard", url: "/candidate-dashboard" },
   ];
-  
+
+  const handleClick = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="flex gap-5 h-full items-center z-50 relative">
+    <div className="flex flex-col md:flex-row gap-1 md:gap-2">
       {links.map((link, index) => {
         const isActive = location.pathname === link.url;
         return (
           <Link
             key={index}
             to={link.url}
-            className={`flex items-center border-t-[3px] px-3 transition-colors duration-200 ${
-              isActive
-                ? "text-bright-sun-400 border-bright-sun-400"
-                : "text-mine-shaft-300 border-transparent hover:text-bright-sun-300"
-            }`}
+            onClick={handleClick}
+            className={`
+              relative px-4 py-2.5 md:py-2 rounded-lg transition-all duration-200
+              ${isActive 
+                ? "text-blue-600 bg-blue-50 font-semibold" 
+                : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+              }
+            `}
           >
             {link.name}
+            {isActive && (
+              <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-blue-600 rounded-full md:hidden" />
+            )}
           </Link>
         );
       })}

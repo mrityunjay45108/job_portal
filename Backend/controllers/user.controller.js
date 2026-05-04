@@ -1,214 +1,220 @@
-// register controller
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../models/User.model.js";
-import dotenv from "dotenv";
+// Backend/controllers/user.controller.js
+const User = require('../models/User.model');
+const generateToken = require('../utils/generateToken');
 
-dotenv.config();
-export const register = async (req,res)=>{
-try{
-
-const {fullname,email,phoneNumber,password,role}=req.body;
-
-if(!fullname || !email || !phoneNumber || !password || !role){
-return res.status(400).json({
-message:"All fields are required"
-});
-}
-
-const user = await User.findOne({email});
-
-if(user){
-return res.status(400).json({
-message:"User already exists"
-});
-}
-
-const hashedPassword = await bcrypt.hash(password,10);
-
-const newUser = await User.create({
-fullname,
-email,
-phoneNumber,
-password:hashedPassword,
-role
-});
-
-res.status(201).json({
-message:"Registered Successfully",
-success:true,
-user:newUser
-});
-
-}catch(error){
-console.log(error);
-res.status(500).json({
-message:"Server Error"
-})
-}
-};
-
-
-
-
-// login controller
-
-export const login = async (req, res) => {
+// @desc    Register a new user
+// @route   POST /api/auth/register
+// @access  Public
+const registerUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    console.log("Register Request:", req.body);
+    
+    const { fullName, email, password, phoneNumber, role } = req.body;
 
     // Validation
-    if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required",
-        success: false,
+    if (!fullName) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Full name is required' 
+      });
+    }
+    
+    if (!email) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email is required' 
+      });
+    }
+    
+    if (!password) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Password is required' 
+      });
+    }
+    
+    if (!phoneNumber) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Phone number is required' 
       });
     }
 
-    // Check user
+    if (password.length < 6) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Password must be at least 6 characters' 
+      });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'User already exists with this email' 
+      });
+    }
+
+    // Create new user
+    const user = new User({
+      fullName,
+      email,
+      password,
+      phoneNumber,
+      role: role || 'candidate'
+    });
+
+    await user.save();
+    console.log("User saved successfully:", user._id);
+
+    // Generate token
+    const token = generateToken(user._id, user.role);
+
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      token,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        profile: user.profile,
+        createdAt: user.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || 'Server error. Please try again.' 
+    });
+  }
+};
+
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
+const loginUser = async (req, res) => {
+  try {
+    console.log("Login Request:", req.body);
+    
+    const { email, password } = req.body;
+
+    // Validation
+    if (!email) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email is required' 
+      });
+    }
+    
+    if (!password) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Password is required' 
+      });
+    }
+
+    // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({
-        message: "Invalid credentials",
-        success: false,
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid email or password' 
       });
     }
 
     // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({
-        message: "Invalid credentials",
-        success: false,
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid email or password' 
       });
     }
 
-    //  Generate token
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" },
-    );
+    // Generate token
+    const token = generateToken(user._id, user.role);
 
-    // Clean user object (password remove)
-    const userData = {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      profile: user.profilePicture,
-    };
-
-    // Send cookie + response
-    return res
-      .status(200)
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 3600000,
-      })
-      .json({
-        message: `Welcome back ${user.username}`,
-        success: true,
-        user: userData,
-        token,
-      });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Server Error - Login failed",
-      success: false,
-    });
-  }
-};
-
-
-
-
-// logout controller
-
-export const logout = (req, res) => {
-  try {
-    res
-      .clearCookie("token", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-      })
-      .status(200)
-      .json({
-        message: "Logged out successfully",
-        success: true,
-      });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Logout failed",
-      success: false,
-    });
-  }
-};
-
-
-
-
-//update profile controller
-
-
-export const updateProfile = async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    const { fullname, email, phoneNumber } = req.body;
-    const file = req.file;
-
-    let updateData = {};
-
-    if (fullname) updateData.fullname = fullname;
-    if (email) updateData.email = email;
-    if (phoneNumber) updateData.phoneNumber = phoneNumber;
-
-    if (file) {
-      updateData.profilePicture = file.path;
-    }
-
-    if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ message: "No data provided to update" });
-    }
-
-    // Email duplicate check
-    if (email) {
-      const existingUser = await User.findOne({ email });
-      if (existingUser && existingUser._id.toString() !== userId) {
-        return res.status(400).json({ message: "Email already in use" });
-      }
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      updateData,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const { password, ...safeUser } = updatedUser._doc;
-
-    res.status(200).json({
+    res.json({
       success: true,
-      message: "Profile updated successfully",
-      user: safeUser
+      message: 'Login successful',
+      token,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        profile: user.profile
+      }
     });
-
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error - Profile update failed" });
+    console.error('Login error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || 'Server error. Please try again.' 
+    });
   }
 };
 
+// @desc    Get current user profile
+// @route   GET /api/auth/me
+// @access  Private
+const getCurrentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+    res.json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    console.error('Get user error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error' 
+    });
+  }
+};
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+const updateProfile = async (req, res) => {
+  try {
+    const { profile } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { profile },
+      { new: true }
+    ).select('-password');
+    
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      user
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error' 
+    });
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getCurrentUser,
+  updateProfile
+};

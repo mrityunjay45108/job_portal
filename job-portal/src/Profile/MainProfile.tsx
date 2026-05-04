@@ -1,498 +1,747 @@
-import {
-  Divider,
-  ActionIcon,
-  TextInput,
-  Textarea,
-  Badge,
-  Button,
-} from "@mantine/core";
+// import { useState } from "react";
+// import {
+//   Divider,
+//   ActionIcon,
+//   TextInput,
+//   Textarea,
+//   Badge,
+//   Button,
+//   Avatar,
+//   Tabs,
+//   Paper,
+//   Tooltip,
+//   LoadingOverlay,
+//   FileInput
+// } from "@mantine/core";
+// import {
+//   IconBriefcase,
+//   IconMapPin,
+//   IconDeviceLaptop,
+//   IconPencil,
+//   IconDeviceFloppy,
+//   IconCertificate,
+//   IconX,
+//   IconTags,
+//   IconPlus,
+//   IconMail,
+//   IconPhone,
+//   IconBrandLinkedin,
+//   IconBrandGithub,
+//   IconCalendar,
+//   IconCheck,
+//   IconUpload,
+//   IconTrash
+// } from "@tabler/icons-react";
+// import { notifications } from "@mantine/notifications";
+// import Experience from "./Experience";
+// import CertiCard from "./CertiCard";
+// import profileData from "../Data/MainProfileData";
 
-import {
-  IconBriefcase,
-  IconMapPin,
-  IconDeviceLaptop,
-  IconPencil,
-  IconDeviceFloppy,
-  IconCertificate,
-  IconX,
-  IconTags,
-  IconPlus,
-} from "@tabler/icons-react";
-import { useState } from "react";
+// interface ProfileData {
+//   id?: string;
+//   name: string;
+//   title: string;
+//   company: string;
+//   location: string;
+//   about: string;
+//   skills: string[];
+//   banner: string;
+//   avatar: string;
+//   experience: any[];
+//   certifications: any[];
+//   email?: string;
+//   phone?: string;
+//   linkedin?: string;
+//   github?: string;
+//   website?: string;
+// }
 
-import profileData from "../Data/MainProfileData";
+// const MainProfile = () => {
+//   const [data, setData] = useState<ProfileData>(profileData);
+//   const [editMode, setEditMode] = useState(false);
+//   const [activeTab, setActiveTab] = useState<string | null>("profile");
+//   const [newSkill, setNewSkill] = useState("");
+//   const [newExp, setNewExp] = useState(false);
+//   const [newCert, setNewCert] = useState(false);
+//   const [loading, setLoading] = useState(false);
+//   const [newExpData, setNewExpData] = useState({
+//     title: "",
+//     company: "",
+//     location: "",
+//     startDate: "",
+//     endDate: "",
+//     description: "",
+//     technologies: ""
+//   });
+//   const [newCertData, setNewCertData] = useState({
+//     name: "",
+//     issuer: "",
+//     date: "",
+//     credentialId: "",
+//     credentialUrl: ""
+//   });
 
-// --- Sub-Component: Experience ---
-const ExperienceCard = (props: any) => {
+//   const handleChange = (field: keyof ProfileData, value: any) => {
+//     setData({ ...data, [field]: value });
+//   };
+
+//   const addSkill = () => {
+//     if (newSkill.trim() && !data.skills.includes(newSkill.trim())) {
+//       setData({ ...data, skills: [...data.skills, newSkill.trim()] });
+//       setNewSkill("");
+//       notifications.show({
+//         title: 'Skill Added',
+//         message: `${newSkill} has been added to your profile`,
+//         color: 'green'
+//       });
+//     }
+//   };
+
+//   const removeSkill = (skillToRemove: string) => {
+//     setData({ ...data, skills: data.skills.filter((skill: string) => skill !== skillToRemove) });
+//     notifications.show({
+//       title: 'Skill Removed',
+//       message: `${skillToRemove} has been removed`,
+//       color: 'blue'
+//     });
+//   };
+
+//   const addExperience = () => {
+//     if (newExpData.title && newExpData.company) {
+//       const newExpItem = {
+//         id: Date.now().toString(),
+//         ...newExpData,
+//         technologies: newExpData.technologies.split(",").map(t => t.trim()).filter(t => t)
+//       };
+//       setData({ ...data, experience: [...data.experience, newExpItem] });
+//       setNewExpData({ title: "", company: "", location: "", startDate: "", endDate: "", description: "", technologies: "" });
+//       setNewExp(false);
+//       notifications.show({
+//         title: 'Experience Added',
+//         message: 'Work experience has been added to your profile',
+//         color: 'green'
+//       });
+//     }
+//   };
+
+//   const addCertification = () => {
+//     if (newCertData.name && newCertData.issuer) {
+//       const newCertItem = {
+//         id: Date.now().toString(),
+//         ...newCertData
+//       };
+//       setData({ ...data, certifications: [...data.certifications, newCertItem] });
+//       setNewCertData({ name: "", issuer: "", date: "", credentialId: "", credentialUrl: "" });
+//       setNewCert(false);
+//       notifications.show({
+//         title: 'Certification Added',
+//         message: 'Certification has been added to your profile',
+//         color: 'green'
+//       });
+//     }
+//   };
+
+//   const handleSaveProfile = () => {
+//     setLoading(true);
+//     setTimeout(() => {
+//       localStorage.setItem('user_profile', JSON.stringify(data));
+//       notifications.show({
+//         title: 'Profile Updated',
+//         message: 'Your profile has been saved successfully',
+//         color: 'green',
+//         icon: <IconCheck size={16} />
+//       });
+//       setEditMode(false);
+//       setLoading(false);
+//     }, 1000);
+//   };
+
+//   const handleImageUpload = (file: File | null, field: 'avatar' | 'banner') => {
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => {
+//         setData({ ...data, [field]: reader.result as string });
+//         notifications.show({
+//           title: 'Image Updated',
+//           message: `${field === 'avatar' ? 'Profile picture' : 'Banner'} has been updated`,
+//           color: 'green'
+//         });
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   const handleSaveExperience = (id: string, updatedExp: any) => {
+//     const updatedExperiences = data.experience.map((exp: any) =>
+//       exp.id === id ? { ...exp, ...updatedExp } : exp
+//     );
+//     setData({ ...data, experience: updatedExperiences });
+//     notifications.show({
+//       title: 'Experience Updated',
+//       message: 'Work experience has been updated',
+//       color: 'green'
+//     });
+//   };
+
+//   const handleDeleteExperience = (id: string) => {
+//     const updatedExperiences = data.experience.filter((exp: any) => exp.id !== id);
+//     setData({ ...data, experience: updatedExperiences });
+//     notifications.show({
+//       title: 'Experience Deleted',
+//       message: 'Work experience has been removed',
+//       color: 'orange'
+//     });
+//   };
+
+//   const handleSaveCertification = (id: string, updatedCert: any) => {
+//     const updatedCertifications = data.certifications.map((cert: any) =>
+//       cert.id === id ? { ...cert, ...updatedCert } : cert
+//     );
+//     setData({ ...data, certifications: updatedCertifications });
+//     notifications.show({
+//       title: 'Certification Updated',
+//       message: 'Certification has been updated',
+//       color: 'green'
+//     });
+//   };
+
+//   const handleDeleteCertification = (id: string) => {
+//     const updatedCertifications = data.certifications.filter((cert: any) => cert.id !== id);
+//     setData({ ...data, certifications: updatedCertifications });
+//     notifications.show({
+//       title: 'Certification Deleted',
+//       message: 'Certification has been removed',
+//       color: 'orange'
+//     });
+//   };
+
+//   const profileCompletion = () => {
+//     const fields = ['name', 'title', 'company', 'location', 'about', 'skills'];
+//     const completed = fields.filter(field => {
+//       const value = data[field as keyof ProfileData];
+//       return value && (Array.isArray(value) ? value.length > 0 : value.toString().length > 0);
+//     }).length;
+//     return Math.round((completed / fields.length) * 100);
+//   };
+
+//   return (
+//     <div className="w-full relative">
+//       <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ blur: 2 }} />
+      
+//       {/* Profile Completion Bar */}
+//       {!editMode && profileCompletion() < 100 && (
+//         <div className="mb-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
+//           <div className="flex justify-between items-center mb-1">
+//             <span className="text-sm font-medium text-blue-800">Profile Completion</span>
+//             <span className="text-sm font-bold text-blue-800">{profileCompletion()}%</span>
+//           </div>
+//           <div className="w-full bg-blue-200 rounded-full h-2">
+//             <div className="bg-blue-600 h-2 rounded-full transition-all duration-500" style={{ width: `${profileCompletion()}%` }}></div>
+//           </div>
+//           <p className="text-xs text-blue-600 mt-2">Complete your profile to get better job matches</p>
+//         </div>
+//       )}
+
+//       {/* Banner & Avatar Section */}
+//       <div className="relative group">
+//         <div className="relative h-48 rounded-2xl overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600">
+//           <img
+//             src={data.banner}
+//             alt="Banner"
+//             className="w-full h-full object-cover opacity-40"
+//           />
+//           {editMode && (
+//             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+//               <FileInput
+//                 placeholder="Change Banner"
+//                 accept="image/png,image/jpeg"
+//                 onChange={(file) => handleImageUpload(file, 'banner')}
+//                 className="bg-white rounded-lg"
+//                 leftSection={<IconUpload size={16} />}
+//               />
+//             </div>
+//           )}
+//         </div>
+        
+//         <div className="absolute -bottom-16 left-6">
+//           <div className="relative">
+//             <Avatar
+//               src={data.avatar}
+//               alt={data.name}
+//               size={120}
+//               radius="xl"
+//               className="border-4 border-white shadow-xl bg-white"
+//             />
+//             {editMode && (
+//               <Tooltip label="Change Photo">
+//                 <label className="absolute bottom-1 right-1 cursor-pointer">
+//                   <div className="bg-blue-600 text-white p-1.5 rounded-full hover:bg-blue-700 transition">
+//                     <IconPencil size={14} />
+//                   </div>
+//                   <input
+//                     type="file"
+//                     accept="image/png,image/jpeg"
+//                     className="hidden"
+//                     onChange={(e) => handleImageUpload(e.target.files?.[0] || null, 'avatar')}
+//                   />
+//                 </label>
+//               </Tooltip>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+      
+//       <div className="h-20"></div>
+
+//       {/* Profile Header */}
+//       <div className="px-4">
+//         <div className="flex flex-wrap justify-between items-start gap-4">
+//           <div className="flex-1">
+//             <div className="flex items-center gap-3 mb-2 flex-wrap">
+//               {editMode ? (
+//                 <TextInput
+//                   value={data.name}
+//                   onChange={(e) => handleChange("name", e.target.value)}
+//                   size="xl"
+//                   radius="md"
+//                   className="flex-1 max-w-md"
+//                   placeholder="Name"
+//                 />
+//               ) : (
+//                 <h1 className="text-3xl font-bold text-gray-900">{data.name}</h1>
+//               )}
+//               <Tooltip label={editMode ? "Save Changes" : "Edit Profile"}>
+//                 <ActionIcon
+//                   onClick={() => editMode ? handleSaveProfile() : setEditMode(true)}
+//                   color={editMode ? "green" : "blue"}
+//                   variant="light"
+//                   size="lg"
+//                   radius="xl"
+//                 >
+//                   {editMode ? <IconDeviceFloppy size={18} /> : <IconPencil size={18} />}
+//                 </ActionIcon>
+//               </Tooltip>
+//             </div>
+
+//             <div className="space-y-1">
+//               <div className="flex items-center gap-2 text-gray-600">
+//                 <IconDeviceLaptop size={18} className="text-blue-500" />
+//                 {editMode ? (
+//                   <div className="flex gap-2 flex-wrap">
+//                     <TextInput
+//                       value={data.title}
+//                       onChange={(e) => handleChange("title", e.target.value)}
+//                       size="sm"
+//                       radius="md"
+//                       placeholder="Title"
+//                     />
+//                     <TextInput
+//                       value={data.company}
+//                       onChange={(e) => handleChange("company", e.target.value)}
+//                       size="sm"
+//                       radius="md"
+//                       placeholder="Company"
+//                     />
+//                   </div>
+//                 ) : (
+//                   <span className="text-gray-700">{data.title} at {data.company}</span>
+//                 )}
+//               </div>
+              
+//               <div className="flex items-center gap-2 text-gray-500">
+//                 <IconMapPin size={16} className="text-gray-400" />
+//                 {editMode ? (
+//                   <TextInput
+//                     value={data.location}
+//                     onChange={(e) => handleChange("location", e.target.value)}
+//                     size="sm"
+//                     radius="md"
+//                     placeholder="Location"
+//                   />
+//                 ) : (
+//                   <span className="text-sm">{data.location}</span>
+//                 )}
+//               </div>
+//             </div>
+
+//             {/* Contact Info - Edit Mode */}
+//             {editMode && (
+//               <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+//                 <TextInput
+//                   label="Email"
+//                   placeholder="your@email.com"
+//                   value={data.email || ""}
+//                   onChange={(e) => handleChange("email", e.target.value)}
+//                   size="sm"
+//                 />
+//                 <TextInput
+//                   label="Phone"
+//                   placeholder="+1 234 567 8900"
+//                   value={data.phone || ""}
+//                   onChange={(e) => handleChange("phone", e.target.value)}
+//                   size="sm"
+//                 />
+//                 <TextInput
+//                   label="LinkedIn URL"
+//                   placeholder="https://linkedin.com/in/username"
+//                   value={data.linkedin || ""}
+//                   onChange={(e) => handleChange("linkedin", e.target.value)}
+//                   size="sm"
+//                 />
+//                 <TextInput
+//                   label="GitHub URL"
+//                   placeholder="https://github.com/username"
+//                   value={data.github || ""}
+//                   onChange={(e) => handleChange("github", e.target.value)}
+//                   size="sm"
+//                 />
+//               </div>
+//             )}
+
+//             {/* Social Links - View Mode */}
+//             {!editMode && (
+//               <div className="flex gap-2 mt-3">
+//                 {data.email && (
+//                   <Tooltip label="Email">
+//                     <a href={`mailto:${data.email}`}>
+//                       <ActionIcon variant="light" color="gray" radius="xl">
+//                         <IconMail size={16} />
+//                       </ActionIcon>
+//                     </a>
+//                   </Tooltip>
+//                 )}
+//                 {data.phone && (
+//                   <Tooltip label="Phone">
+//                     <a href={`tel:${data.phone}`}>
+//                       <ActionIcon variant="light" color="gray" radius="xl">
+//                         <IconPhone size={16} />
+//                       </ActionIcon>
+//                     </a>
+//                   </Tooltip>
+//                 )}
+//                 {data.linkedin && (
+//                   <Tooltip label="LinkedIn">
+//                     <a href={data.linkedin} target="_blank" rel="noopener noreferrer">
+//                       <ActionIcon variant="light" color="gray" radius="xl">
+//                         <IconBrandLinkedin size={16} />
+//                       </ActionIcon>
+//                     </a>
+//                   </Tooltip>
+//                 )}
+//                 {data.github && (
+//                   <Tooltip label="GitHub">
+//                     <a href={data.github} target="_blank" rel="noopener noreferrer">
+//                       <ActionIcon variant="light" color="gray" radius="xl">
+//                         <IconBrandGithub size={16} />
+//                       </ActionIcon>
+//                     </a>
+//                   </Tooltip>
+//                 )}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+
+//         <Divider className="my-6 border-gray-200" />
+//       </div>
+
+//       {/* Tabs Section */}
+//       <div className="px-4">
+//         <Tabs value={activeTab} onChange={setActiveTab} color="blue" variant="pills">
+//           <Tabs.List className="mb-6 gap-2 flex-wrap">
+//             <Tabs.Tab value="profile" className="data-[active]:bg-blue-600 data-[active]:text-white">
+//               Profile
+//             </Tabs.Tab>
+//             <Tabs.Tab value="skills" className="data-[active]:bg-blue-600 data-[active]:text-white">
+//               Skills & Expertise
+//             </Tabs.Tab>
+//             <Tabs.Tab value="experience" className="data-[active]:bg-blue-600 data-[active]:text-white">
+//               Work Experience
+//             </Tabs.Tab>
+//             <Tabs.Tab value="certifications" className="data-[active]:bg-blue-600 data-[active]:text-white">
+//               Certifications
+//             </Tabs.Tab>
+//           </Tabs.List>
+
+//           {/* Profile Tab */}
+//           <Tabs.Panel value="profile">
+//             <div className="space-y-6">
+//               <Paper className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+//                 <h2 className="text-xl font-semibold text-gray-900 mb-3">About Me</h2>
+//                 {editMode ? (
+//                   <Textarea
+//                     value={data.about}
+//                     onChange={(e) => handleChange("about", e.target.value)}
+//                     minRows={4}
+//                     radius="md"
+//                     placeholder="Tell us about yourself..."
+//                   />
+//                 ) : (
+//                   <p className="text-gray-600 leading-relaxed">{data.about}</p>
+//                 )}
+//               </Paper>
+//             </div>
+//           </Tabs.Panel>
+
+//           {/* Skills Tab */}
+//           <Tabs.Panel value="skills">
+//             <div className="space-y-6">
+//               <Paper className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+//                 <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
+//                   <div className="flex items-center gap-2">
+//                     <IconTags className="text-blue-600" size={20} />
+//                     <h2 className="text-xl font-semibold text-gray-900">Core Skills</h2>
+//                   </div>
+//                   {editMode && (
+//                     <div className="flex gap-2">
+//                       <TextInput
+//                         value={newSkill}
+//                         onChange={(e) => setNewSkill(e.target.value)}
+//                         placeholder="Add new skill"
+//                         size="sm"
+//                         radius="md"
+//                         onKeyPress={(e) => e.key === 'Enter' && addSkill()}
+//                       />
+//                       <Button onClick={addSkill} size="sm" radius="md" color="blue">
+//                         <IconPlus size={14} /> Add
+//                       </Button>
+//                     </div>
+//                   )}
+//                 </div>
+
+//                 <div className="flex flex-wrap gap-3">
+//                   {data.skills?.map((skill: string, index: number) => (
+//                     <Badge
+//                       key={index}
+//                       size="xl"
+//                       variant="light"
+//                       color="blue"
+//                       className="bg-blue-50 text-blue-700 px-4 py-2 text-sm font-medium"
+//                       radius="xl"
+//                       rightSection={
+//                         editMode && (
+//                           <IconX
+//                             size={14}
+//                             className="cursor-pointer hover:text-red-500 ml-1"
+//                             onClick={() => removeSkill(skill)}
+//                           />
+//                         )
+//                       }
+//                     >
+//                       {skill}
+//                     </Badge>
+//                   ))}
+//                 </div>
+//               </Paper>
+//             </div>
+//           </Tabs.Panel>
+
+//           {/* Experience Tab */}
+//           <Tabs.Panel value="experience">
+//             <div className="space-y-6">
+//               <div className="flex justify-between items-center flex-wrap gap-3">
+//                 <div className="flex items-center gap-2">
+//                   <IconBriefcase className="text-blue-600" size={20} />
+//                   <h2 className="text-xl font-semibold text-gray-900">Work Experience</h2>
+//                 </div>
+//                 {editMode && (
+//                   <Button onClick={() => setNewExp(true)} size="sm" radius="xl" color="blue" variant="light">
+//                     <IconPlus size={14} className="mr-1" /> Add Experience
+//                   </Button>
+//                 )}
+//               </div>
+
+//               <div className="space-y-4">
+//                 {data.experience?.map((exp: any, idx: number) => (
+//                   <Experience 
+//                     key={idx} 
+//                     {...exp} 
+//                     edit={editMode} 
+//                     onSave={handleSaveExperience}
+//                     onDelete={handleDeleteExperience}
+//                   />
+//                 ))}
+//               </div>
+
+//               {newExp && editMode && (
+//                 <Paper className="bg-gray-50 rounded-xl p-6 border border-gray-200 mt-4">
+//                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Experience</h3>
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                     <TextInput 
+//                       label="Job Title" 
+//                       placeholder="Software Engineer" 
+//                       required 
+//                       radius="md" 
+//                       className="md:col-span-2"
+//                       value={newExpData.title}
+//                       onChange={(e) => setNewExpData({ ...newExpData, title: e.target.value })}
+//                     />
+//                     <TextInput 
+//                       label="Company" 
+//                       placeholder="Google" 
+//                       required 
+//                       radius="md"
+//                       value={newExpData.company}
+//                       onChange={(e) => setNewExpData({ ...newExpData, company: e.target.value })}
+//                     />
+//                     <TextInput 
+//                       label="Location" 
+//                       placeholder="Location" 
+//                       radius="md"
+//                       value={newExpData.location}
+//                       onChange={(e) => setNewExpData({ ...newExpData, location: e.target.value })}
+//                     />
+//                     <TextInput 
+//                       label="Start Date" 
+//                       placeholder="Jan 2023" 
+//                       required 
+//                       radius="md"
+//                       value={newExpData.startDate}
+//                       onChange={(e) => setNewExpData({ ...newExpData, startDate: e.target.value })}
+//                     />
+//                     <TextInput 
+//                       label="End Date" 
+//                       placeholder="Present" 
+//                       radius="md"
+//                       value={newExpData.endDate}
+//                       onChange={(e) => setNewExpData({ ...newExpData, endDate: e.target.value })}
+//                     />
+//                     <Textarea 
+//                       label="Description" 
+//                       placeholder="Describe your responsibilities..." 
+//                       required 
+//                       radius="md" 
+//                       autosize 
+//                       minRows={3} 
+//                       className="md:col-span-2"
+//                       value={newExpData.description}
+//                       onChange={(e) => setNewExpData({ ...newExpData, description: e.target.value })}
+//                     />
+//                     <TextInput 
+//                       label="Technologies (comma-separated)" 
+//                       placeholder="React, TypeScript, Node.js" 
+//                       radius="md" 
+//                       className="md:col-span-2"
+//                       value={newExpData.technologies}
+//                       onChange={(e) => setNewExpData({ ...newExpData, technologies: e.target.value })}
+//                     />
+//                   </div>
+//                   <div className="flex gap-3 mt-6">
+//                     <Button onClick={addExperience} color="blue">Save Experience</Button>
+//                     <Button onClick={() => setNewExp(false)} variant="light" color="gray">Cancel</Button>
+//                   </div>
+//                 </Paper>
+//               )}
+//             </div>
+//           </Tabs.Panel>
+
+//           {/* Certifications Tab */}
+//           <Tabs.Panel value="certifications">
+//             <div className="space-y-6">
+//               <div className="flex justify-between items-center flex-wrap gap-3">
+//                 <div className="flex items-center gap-2">
+//                   <IconCertificate className="text-blue-600" size={20} />
+//                   <h2 className="text-xl font-semibold text-gray-900">Certifications</h2>
+//                 </div>
+//                 {editMode && (
+//                   <Button onClick={() => setNewCert(true)} size="sm" radius="xl" color="blue" variant="light">
+//                     <IconPlus size={14} className="mr-1" /> Add Certification
+//                   </Button>
+//                 )}
+//               </div>
+
+//               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                 {data.certifications?.map((cert: any, idx: number) => (
+//                   <CertiCard 
+//                     key={idx} 
+//                     {...cert} 
+//                     edit={editMode} 
+//                     onSave={handleSaveCertification}
+//                     onDelete={handleDeleteCertification}
+//                   />
+//                 ))}
+//               </div>
+
+//               {newCert && editMode && (
+//                 <Paper className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+//                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Certification</h3>
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                     <TextInput 
+//                       label="Certificate Name" 
+//                       placeholder="Certificate name" 
+//                       required 
+//                       radius="md" 
+//                       className="md:col-span-2"
+//                       value={newCertData.name}
+//                       onChange={(e) => setNewCertData({ ...newCertData, name: e.target.value })}
+//                     />
+//                     <TextInput 
+//                       label="Issuer" 
+//                       placeholder="Google" 
+//                       required 
+//                       radius="md"
+//                       value={newCertData.issuer}
+//                       onChange={(e) => setNewCertData({ ...newCertData, issuer: e.target.value })}
+//                     />
+//                     <TextInput 
+//                       label="Issue Date" 
+//                       placeholder="August 2024" 
+//                       required 
+//                       radius="md"
+//                       value={newCertData.date}
+//                       onChange={(e) => setNewCertData({ ...newCertData, date: e.target.value })}
+//                     />
+//                     <TextInput 
+//                       label="Credential ID" 
+//                       placeholder="Enter ID" 
+//                       required 
+//                       radius="md" 
+//                       className="md:col-span-2"
+//                       value={newCertData.credentialId}
+//                       onChange={(e) => setNewCertData({ ...newCertData, credentialId: e.target.value })}
+//                     />
+//                     <TextInput 
+//                       label="Credential URL (Optional)" 
+//                       placeholder="https://credential.link/..." 
+//                       radius="md" 
+//                       className="md:col-span-2"
+//                       value={newCertData.credentialUrl}
+//                       onChange={(e) => setNewCertData({ ...newCertData, credentialUrl: e.target.value })}
+//                     />
+//                   </div>
+//                   <div className="flex gap-3 mt-6">
+//                     <Button onClick={addCertification} color="blue">Save Certification</Button>
+//                     <Button onClick={() => setNewCert(false)} variant="light" color="gray">Cancel</Button>
+//                   </div>
+//                 </Paper>
+//               )}
+//             </div>
+//           </Tabs.Panel>
+//         </Tabs>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default MainProfile;
+
+
+
+import Profile from "./Profile";
+
+interface MainProfileProps {
+  profileData?: any;
+  isEditable?: boolean;
+  onSave?: (data: any) => void;
+}
+
+const MainProfile = ({ profileData, isEditable = true, onSave }: MainProfileProps) => {
   return (
-    <div className="flex gap-4">
-      {/* Company Logo */}
-      <div className="bg-mine-shaft-800 p-2 rounded-xl h-14 w-14 flex-shrink-0 flex items-center justify-center">
-        <img
-          src={props.companyIcon}
-          alt={props.company}
-          className="max-h-full object-contain"
-        />
-      </div>
-
-      <div className="flex-1 flex flex-col gap-2">
-        {props.edit ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 bg-mine-shaft-900 rounded-lg border border-mine-shaft-700 shadow-inner">
-            <TextInput
-              label="Job Title"
-              defaultValue={props.title}
-              size="xs"
-              variant="filled"
-              className="md:col-span-2"
-            />
-            <TextInput
-              label="Company"
-              defaultValue={props.company}
-              size="xs"
-              variant="filled"
-            />
-            <TextInput
-              label="Location"
-              defaultValue={props.location}
-              size="xs"
-              variant="filled"
-            />
-
-            {/* Date Update Boxes */}
-            <TextInput
-              label="Start Date"
-              defaultValue={props.startDate}
-              placeholder="e.g. Jan 2023"
-              size="xs"
-              variant="filled"
-            />
-            <TextInput
-              label="End Date"
-              defaultValue={props.endDate}
-              placeholder="e.g. Present"
-              size="xs"
-              variant="filled"
-            />
-
-            <Textarea
-              label="Description"
-              defaultValue={props.description}
-              size="xs"
-              variant="filled"
-              autosize
-              className="md:col-span-2"
-            />
-          </div>
-        ) : (
-          <div className="flex flex-col">
-            <div className="text-lg font-semibold text-white">
-              {props.title}
-            </div>
-            <div className="text-sm text-bright-sun-400 font-medium">
-              {props.company} &bull; {props.location}
-            </div>
-            <div className="text-xs text-mine-shaft-400 mb-2">
-              {props.startDate} - {props.endDate}
-            </div>
-            <p className="text-sm text-mine-shaft-300 leading-relaxed text-justify">
-              {props.description}
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// --- Sub-Component: Certification ---
-const CertificationCard = (props: any) => {
-  return (
-    <div className="flex items-center gap-4 w-full">
-      {/* Certification Logo */}
-      <div className="h-12 w-12 flex-shrink-0">
-        <img
-          src={props.issuerIcon}
-          alt={props.issuer}
-          className="h-full w-full object-contain"
-        />
-      </div>
-
-      <div className="flex-1">
-        {props.edit ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-mine-shaft-900 rounded-lg border border-mine-shaft-700">
-            <TextInput
-              label="Certificate Name"
-              defaultValue={props.name}
-              size="xs"
-              variant="filled"
-              className="md:col-span-2"
-            />
-            <TextInput
-              label="Issuer"
-              defaultValue={props.issuer}
-              size="xs"
-              variant="filled"
-            />
-            <TextInput
-              label="Date"
-              defaultValue={props.date}
-              size="xs"
-              variant="filled"
-            />
-            <TextInput
-              label="Credential ID"
-              defaultValue={props.id}
-              size="xs"
-              variant="filled"
-              className="md:col-span-2"
-            />
-          </div>
-        ) : (
-          <div className="flex justify-between items-center">
-            <div>
-              <div className="font-semibold text-white leading-tight">
-                {props.name}
-              </div>
-              <div className="text-sm text-mine-shaft-400">{props.issuer}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-xs text-mine-shaft-500 font-medium">
-                {props.date}
-              </div>
-              <div className="text-[10px] text-mine-shaft-600 font-mono">
-                ID: {props.id}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// --- Main Component ---
-const MainProfile = () => {
-  const [data, setData] = useState(profileData);
-  const [edit, setEdit] = useState([false, false, false, false, false]);
-  // Saari states ko yahan upar function ke start mein rakh diya hai
-  const [addCert, setAddCert] = useState(false);
-  const [addExp, setAddExp] = useState(false);
-
-  const handleEdit = (index: number) => {
-    const newEdit = [...edit];
-    newEdit[index] = !newEdit[index];
-    setEdit(newEdit);
-  };
-
-  const handleChange = (field: string, value: string) => {
-    setData({ ...data, [field]: value });
-  };
-
-  return (
-    <div className="w-full mt-2 pb-10 bg-mine-shaft-950 min-h-screen text-mine-shaft-100">
-      {/* Banner & Avatar Section */}
-      <div className="relative group">
-        <img
-          src={data.banner}
-          alt="Banner"
-          className="w-full h-56 object-cover rounded-t-3xl shadow-lg"
-        />
-        <div className="absolute -bottom-16 left-10">
-          <img
-            src={data.avatar}
-            alt="Profile"
-            className="w-44 h-44 rounded-full border-8 border-mine-shaft-950 shadow-2xl object-cover bg-mine-shaft-900"
-          />
-        </div>
-      </div>
-      <div className="h-20"></div>
-
-      {/* Info Section */}
-      <div className="px-10">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3">
-              {edit[0] ? (
-                <TextInput
-                  value={data.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
-                  variant="filled"
-                  size="lg"
-                  className="flex-1"
-                />
-              ) : (
-                <h1 className="text-4xl font-bold text-white tracking-tight">
-                  {data.name}
-                </h1>
-              )}
-              <ActionIcon
-                onClick={() => handleEdit(0)}
-                color="brightSun.4"
-                variant="subtle"
-                size="lg"
-              >
-                {edit[0] ? <IconDeviceFloppy /> : <IconPencil />}
-              </ActionIcon>
-            </div>
-            <div className="mt-3 text-xl flex gap-2 items-center text-bright-sun-400 font-medium">
-              <IconDeviceLaptop size={22} />
-              {edit[0] ? (
-                <div className="flex gap-2">
-                  <TextInput
-                    value={data.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    size="xs"
-                    variant="filled"
-                  />
-                  <TextInput
-                    value={data.company}
-                    onChange={(e) => handleChange("company", e.target.value)}
-                    size="xs"
-                    variant="filled"
-                  />
-                </div>
-              ) : (
-                <span>
-                  {data.title} &bull; {data.company}
-                </span>
-              )}
-            </div>
-            <div className="mt-1 text-base flex gap-2 items-center text-mine-shaft-300">
-              <IconMapPin size={20} stroke={1.5} />
-              {edit[0] ? (
-                <TextInput
-                  value={data.location}
-                  onChange={(e) => handleChange("location", e.target.value)}
-                  size="xs"
-                  variant="filled"
-                />
-              ) : (
-                data.location
-              )}
-            </div>
-          </div>
-        </div>
-        <Divider my="xl" color="mineShaft.7" />
-      </div>
-
-      <div className="px-10 flex flex-col gap-10">
-        {/* skills   */}
-        <section>
-          <div className="flex justify-between items-center mb-6">
-            <div className="text-2xl font-bold text-white flex items-center gap-2">
-              <IconTags className="text-bright-sun-400" /> Skills
-            </div>
-            <ActionIcon
-              onClick={() => handleEdit(4)}
-              variant="subtle"
-              color="brightSun.4"
-            >
-              {edit[4] ? (
-                <IconDeviceFloppy size={20} />
-              ) : (
-                <IconPencil size={20} />
-              )}
-            </ActionIcon>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            {data.skills?.map((skill: string, index: number) => (
-              <Badge
-                key={index}
-                variant="light"
-                color="brightSun.4"
-                size="xl"
-                className="px-4 py-5 capitalize font-bold"
-                styles={{
-                  root: {
-                    backgroundColor: "rgba(255, 211, 62, 0.1)",
-                    color: "#FFD33E",
-                    border: "1px solid rgba(255, 211, 62, 0.2)",
-                  },
-                }}
-                rightSection={
-                  edit[4] && (
-                    <IconX
-                      size={16}
-                      className="cursor-pointer hover:text-red-500 transition-colors ml-1"
-                      onClick={() => {
-                        const newSkills = data.skills.filter(
-                          (_: any, i: number) => i !== index
-                        );
-                        setData({ ...data, skills: newSkills });
-                      }}
-                    />
-                  )
-                }
-              >
-                {skill}
-              </Badge>
-            ))}
-
-            {edit[4] && (
-              <TextInput
-                placeholder="Add Skill"
-                size="sm"
-                variant="filled"
-                className="w-36"
-                onKeyDown={(e) => {
-                  if (
-                    e.key === "Enter" &&
-                    e.currentTarget.value.trim() !== ""
-                  ) {
-                    setData({
-                      ...data,
-                      skills: [...data.skills, e.currentTarget.value.trim()],
-                    });
-                    e.currentTarget.value = "";
-                  }
-                }}
-              />
-            )}
-          </div>
-        </section>
-
-        {/* About Section */}
-        <section>
-          <div className="flex items-center gap-3 mb-4">
-            <h2 className="text-2xl font-bold text-white">About</h2>
-            <ActionIcon
-              onClick={() => handleEdit(1)}
-              variant="subtle"
-              color="brightSun.4"
-            >
-              {edit[1] ? (
-                <IconDeviceFloppy size={18} />
-              ) : (
-                <IconPencil size={18} />
-              )}
-            </ActionIcon>
-          </div>
-          {edit[1] ? (
-            <Textarea
-              value={data.about}
-              onChange={(e) => handleChange("about", e.target.value)}
-              autosize
-              minRows={3}
-              variant="filled"
-            />
-          ) : (
-            <p className="text-base text-mine-shaft-300 leading-relaxed text-justify max-w-4xl">
-              {data.about}
-            </p>
-          )}
-        </section>
-
-        {/* Experience Section */}
-        <section>
-          <div className="flex justify-between items-center mb-6">
-            <div className="text-2xl font-bold text-white flex items-center gap-2">
-              <IconBriefcase className="text-bright-sun-400" /> Experience
-            </div>
-            <div className="flex gap-2">
-              <ActionIcon onClick={() => setAddExp(true)} variant="subtle" color="brightSun.4">
-                <IconPlus size={22} />
-              </ActionIcon>
-              <ActionIcon
-                onClick={() => handleEdit(2)}
-                variant="subtle"
-                color="brightSun.4"
-              >
-                {edit[2] ? (
-                  <IconDeviceFloppy size={20} />
-                ) : (
-                  <IconPencil size={20} />
-                )}
-              </ActionIcon>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-10 border-l-2 border-mine-shaft-800 ml-4 pl-8">
-            {data.experience?.map((exp: any, idx: number) => (
-              <div key={idx} className="relative">
-                <div className="absolute -left-[41px] top-4 w-4 h-4 rounded-full bg-bright-sun-400 border-4 border-mine-shaft-950"></div>
-                <ExperienceCard {...exp} edit={edit[2]} />
-              </div>
-            ))}
-          </div>
-
-          {addExp && (
-            <div className="mt-8 p-6 bg-mine-shaft-900 rounded-xl border border-mine-shaft-800 ml-4">
-              <h3 className="text-lg font-semibold text-white mb-6">Add Experience</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <TextInput label="Job Title" placeholder="Software Engineer" required variant="filled" className="md:col-span-2" />
-                <TextInput label="Company" placeholder="Google" required variant="filled" />
-                <TextInput label="Location" placeholder="Bangalore, India" required variant="filled" />
-                <TextInput label="Start Date" placeholder="Jan 2023" required variant="filled" />
-                <TextInput label="End Date" placeholder="Present" required variant="filled" />
-                <Textarea label="Description" placeholder="Write about your responsibilities..." required variant="filled" autosize minRows={3} className="md:col-span-2" />
-              </div>
-              <div className="flex gap-4 mt-8">
-                <Button onClick={() => setAddExp(false)} color="brightSun.4" variant="outline">Save</Button>
-                <Button onClick={() => setAddExp(false)} variant="subtle" color="red.6">Cancel</Button>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* Certification Section */}
-        <section>
-          <div className="flex justify-between items-center mb-6">
-            <div className="text-2xl font-bold text-white flex items-center gap-2">
-              <IconCertificate className="text-bright-sun-400" /> Certifications
-            </div>
-            <div className="flex gap-2">
-              <ActionIcon
-                onClick={() => setAddCert(true)}
-                variant="subtle"
-                color="brightSun.4"
-              >
-                <IconPlus size={22} />
-              </ActionIcon>
-
-              <ActionIcon
-                onClick={() => handleEdit(3)}
-                variant="subtle"
-                color="brightSun.4"
-              >
-                {edit[3] ? (
-                  <IconDeviceFloppy size={20} />
-                ) : (
-                  <IconPencil size={20} />
-                )}
-              </ActionIcon>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {data.certifications?.map((cert: any, idx: number) => (
-              <div
-                key={idx}
-                className="p-4 rounded-xl bg-mine-shaft-900 border border-mine-shaft-800 transition-colors"
-              >
-                <CertificationCard {...cert} edit={edit[3]} />
-              </div>
-            ))}
-          </div>
-
-          {addCert && (
-            <div className="mt-8 p-6 bg-mine-shaft-900 rounded-xl border border-mine-shaft-800">
-              <h3 className="text-lg font-semibold text-white mb-6">Add Certificate</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <TextInput label="Title" placeholder="Enter title" required variant="filled" />
-                <TextInput label="Company" placeholder="Google" required variant="filled" />
-                <TextInput label="Issue Date" placeholder="August 2024" required variant="filled" />
-                <TextInput label="Certificate ID" placeholder="Enter ID" required variant="filled" />
-              </div>
-              <div className="flex gap-4 mt-8">
-                <Button onClick={() => setAddCert(false)} color="brightSun.4" variant="outline">Save</Button>
-                <Button onClick={() => setAddCert(false)} variant="subtle" color="red.6">Cancel</Button>
-              </div>
-            </div>
-          )}
-        </section>
-      </div>
-    </div>
+    <Profile 
+      {...profileData}
+      isEditable={isEditable}
+      onSave={onSave}
+    />
   );
 };
 

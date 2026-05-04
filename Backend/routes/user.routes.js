@@ -1,17 +1,47 @@
-import express from "express";
-import {
- register,
- login,
- logout,
- updateProfile
-} from "../controllers/user.controller.js";
+// // Backend/routes/user.routes.js
+// const express = require('express');
+// const router = express.Router();
+// const { 
+//   registerUser, 
+//   loginUser, 
+//   getCurrentUser, 
+//   updateProfile 
+// } = require('../controllers/user.controller');
+// const { isAuthenticated } = require('../middleware/isAuthenticated');
 
-import isAuthenticated from "../middleware/isAuthenticated.js";
+// // Public routes
+// router.post('/register', registerUser);
+// router.post('/login', loginUser);
+
+// // Protected routes (require authentication)
+// router.get('/me', isAuthenticated, getCurrentUser);
+// router.put('/profile', isAuthenticated, updateProfile);
+
+// module.exports = router;
+
+
+// Backend/routes/user.routes.js
+const express = require('express');
 const router = express.Router();
+const { 
+  registerUser, 
+  loginUser, 
+  getCurrentUser, 
+  updateProfile 
+} = require('../controllers/user.controller');
+const { isAuthenticated } = require('../middleware/isAuthenticated');
 
-router.post("/register", register);
-router.post("/login", login);
-router.put("/profile/update", isAuthenticated, updateProfile);
-router.post("/logout", logout);
+// Test route
+router.get('/test', (req, res) => {
+  res.json({ message: 'Auth routes are working!' });
+});
 
-export default router;
+// Public routes
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+
+// Protected routes
+router.get('/me', isAuthenticated, getCurrentUser);
+router.put('/profile', isAuthenticated, updateProfile);
+
+module.exports = router;

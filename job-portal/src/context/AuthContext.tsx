@@ -1,0 +1,324 @@
+// import React, { createContext, useState, useContext, useEffect } from 'react';
+// import axios from 'axios';
+// import { useNavigate } from 'react-router-dom';
+
+// // API calls to backend
+// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+// interface User {
+//   id: string;
+//   fullName: string;
+//   email: string;
+//   role: 'candidate' | 'recruiter';
+//   profile?: any;
+// }
+
+// interface AuthContextType {
+//   user: User | null;
+//   loading: boolean;
+//   isAuthenticated: boolean;
+//   isCandidate: boolean;
+//   isRecruiter: boolean;
+//   login: (email: string, password: string) => Promise<{ success: boolean; message?: string; role?: string }>;
+//   register: (userData: any) => Promise<{ success: boolean; message?: string }>;
+//   logout: () => void;
+//   updateProfile: (profileData: any) => Promise<{ success: boolean; message?: string }>;
+// }
+
+// const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// export const useAuth = () => {
+//   const context = useContext(AuthContext);
+//   if (!context) {
+//     throw new Error('useAuth must be used within AuthProvider');
+//   }
+//   return context;
+// };
+
+// export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+//   const [user, setUser] = useState<User | null>(null);
+//   const [loading, setLoading] = useState(true);
+//   const navigate = useNavigate();
+
+//   // Set axios default header if token exists
+//   useEffect(() => {
+//     const token = localStorage.getItem('token');
+//     if (token) {
+//       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+//       fetchUser(token);
+//     } else {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   const fetchUser = async (token: string) => {
+//     try {
+//       const response = await axios.get(`${API_URL}/auth/me`);
+//       setUser(response.data.user);
+//     } catch (error) {
+//       console.error('Error fetching user:', error);
+//       localStorage.removeItem('token');
+//       delete axios.defaults.headers.common['Authorization'];
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+// // In AuthContext.tsx
+// const login = async (email: string, password: string) => {
+//   try {
+//     const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+//     const { token, user } = response.data;
+    
+//     localStorage.setItem('token', token);
+//     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+//     setUser(user);
+    
+//     return { success: true, role: user.role };
+//   } catch (error: any) {
+//     return { 
+//       success: false, 
+//       message: error.response?.data?.message || 'Login failed' 
+//     };
+//   }
+// };
+
+// const register = async (userData: any) => {
+//   try {
+//     // Make sure field names match backend expectations
+//     const requestData = {
+//       fullName: userData.fullName,
+//       email: userData.email,
+//       password: userData.password,
+//       phoneNumber: userData.phoneNumber,  // ✅ Fixed: use phoneNumber not phone
+//       role: userData.role
+//     };
+    
+//     const response = await axios.post(`${API_URL}/auth/register`, requestData);
+//     const { token, user } = response.data;
+    
+//     localStorage.setItem('token', token);
+//     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+//     setUser(user);
+    
+//     return { success: true };
+//   } catch (error: any) {
+//     return { 
+//       success: false, 
+//       message: error.response?.data?.message || 'Registration failed' 
+//     };
+//   }
+// };
+//   const logout = () => {
+//     localStorage.removeItem('token');
+//     delete axios.defaults.headers.common['Authorization'];
+//     setUser(null);
+//     navigate('/login');
+//   };
+
+//   const updateProfile = async (profileData: any) => {
+//     try {
+//       const response = await axios.put(`${API_URL}/auth/profile`, { profile: profileData });
+//       setUser(response.data.user);
+//       return { success: true };
+//     } catch (error: any) {
+//       return { 
+//         success: false, 
+//         message: error.response?.data?.message || 'Failed to update profile' 
+//       };
+//     }
+//   };
+
+//   return (
+//     <AuthContext.Provider value={{
+//       user,
+//       loading,
+//       isAuthenticated: !!user,
+//       isCandidate: user?.role === 'candidate',
+//       isRecruiter: user?.role === 'recruiter',
+//       login,
+//       register,
+//       logout,
+//       updateProfile
+//     }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// src/context/AuthContext.tsx
+import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
+
+interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  role: 'candidate' | 'recruiter';
+  phoneNumber?: string;
+  profile?: any;
+}
+
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+  isCandidate: boolean;
+  isRecruiter: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; message?: string; role?: string }>;
+  register: (userData: any) => Promise<{ success: boolean; message?: string; user?: any }>;
+  logout: () => void;
+  updateProfile: (profileData: any) => Promise<{ success: boolean; message?: string }>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  
+  const loginInProgress = useRef(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      fetchUser();
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchUser = async () => {
+    try {
+      const response = await api.get('/auth/me');
+      if (response.data.success) {
+        setUser(response.data.user);
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      localStorage.removeItem('token');
+      delete axios.defaults.headers.common['Authorization'];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const login = async (email: string, password: string) => {
+    if (loginInProgress.current) {
+      return { success: false, message: 'Login already in progress' };
+    }
+
+    loginInProgress.current = true;
+
+    try {
+      console.log('📝 Sending login request to:', `${api.defaults.baseURL}/auth/login`);
+      const response = await api.post('/auth/login', { email, password });
+      
+      console.log('✅ Login response:', response.data);
+      
+      const { token, user: userData } = response.data;
+      
+      localStorage.setItem('token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser(userData);
+      
+      return { success: true, role: userData.role };
+    } catch (error: any) {
+      console.error('❌ Login error:', error.response?.data || error.message);
+      
+      // Handle specific error cases
+      if (error.response?.status === 401) {
+        return { success: false, message: 'Invalid email or password' };
+      }
+      if (error.response?.status === 404) {
+        return { success: false, message: 'Server not found. Please try again later.' };
+      }
+      if (error.code === 'ECONNABORTED') {
+        return { success: false, message: 'Request timeout. Please try again.' };
+      }
+      if (!error.response) {
+        return { success: false, message: 'Cannot connect to server. Please make sure backend is running on port 5000.' };
+      }
+      
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Login failed. Please try again.' 
+      };
+    } finally {
+      loginInProgress.current = false;
+    }
+  };
+
+  const register = async (userData: any) => {
+    try {
+      console.log('📝 Sending registration request to:', `${api.defaults.baseURL}/auth/register`);
+      const response = await api.post('/auth/register', userData);
+      const { token, user } = response.data;
+      
+      localStorage.setItem('token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser(user);
+      
+      return { success: true, user };
+    } catch (error: any) {
+      console.error('❌ Registration error:', error.response?.data || error.message);
+      
+      if (!error.response) {
+        return { success: false, message: 'Cannot connect to server. Please make sure backend is running on port 5000.' };
+      }
+      
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Registration failed. Please try again.' 
+      };
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    delete axios.defaults.headers.common['Authorization'];
+    setUser(null);
+    navigate('/login');
+  };
+
+  const updateProfile = async (profileData: any) => {
+    try {
+      const response = await api.put('/auth/profile', profileData);
+      setUser(response.data.user);
+      return { success: true };
+    } catch (error: any) {
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Failed to update profile' 
+      };
+    }
+  };
+
+  return (
+    <AuthContext.Provider value={{
+      user,
+      loading,
+      isAuthenticated: !!user,
+      isCandidate: user?.role === 'candidate',
+      isRecruiter: user?.role === 'recruiter',
+      login,
+      register,
+      logout,
+      updateProfile
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

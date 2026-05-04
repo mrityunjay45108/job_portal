@@ -1,58 +1,183 @@
-import { COMPANY_DATA } from "../Data/CompanyData";
-import { IconUsers, IconCalendar, IconWorld } from "@tabler/icons-react";
+// import { IconUsers, IconCalendar, IconWorld, IconBuilding, IconBriefcase, IconGlobe, IconArrowRight } from "@tabler/icons-react";
+// import { Button } from "@mantine/core";
+// import { useNavigate } from "react-router-dom";
 
-const AboutCompany = () => {
-  return (
-    <div className="bg-mine-shaft-900/50 p-5 md:p-8 rounded-2xl md:rounded-[2rem] border border-mine-shaft-800 space-y-6 shadow-xl backdrop-blur-sm">
-      <h3 className="text-lg md:text-xl font-bold text-white border-b border-mine-shaft-800 pb-4">
-        Company Overview
-      </h3>
-      
-      {/* On mobile, we use a 2-column grid for the stats to save space.
-          On desktop, we go back to a vertical stack (space-y-5).
-      */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-5 md:space-y-5">
-        
-        <div className="flex items-center gap-3 md:gap-4 group">
-          <div className="p-2.5 md:p-3 bg-bright-sun-400/10 rounded-xl group-hover:bg-bright-sun-400/20 transition-colors shrink-0">
-            <IconUsers className="text-bright-sun-400" size={window.innerWidth < 768 ? 20 : 24} />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[10px] md:text-xs text-mine-shaft-400 uppercase font-bold tracking-wider truncate">
-              Employees
-            </p>
-            <p className="text-white text-sm md:text-base font-semibold truncate">
-              150,000+ globally
-            </p>
-          </div>
-        </div>
+// interface AboutCompanyProps {
+//   company?: {
+//     employees?: string;
+//     founded?: string;
+//     headquarters?: string;
+//     website?: string;
+//     officeLocations?: string;
+//     name?: string;
+//     email?: string;
+//     phone?: string;
+//     id?: string;
+//   };
+//   jobId?: string;
+//   jobTitle?: string;
+//   onApplyClick?: () => void;  // Add this prop
+// }
 
-        <div className="flex items-center gap-3 md:gap-4 group">
-          <div className="p-2.5 md:p-3 bg-bright-sun-400/10 rounded-xl group-hover:bg-bright-sun-400/20 transition-colors shrink-0">
-            <IconCalendar className="text-bright-sun-400" size={window.innerWidth < 768 ? 20 : 24} />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[10px] md:text-xs text-mine-shaft-400 uppercase font-bold tracking-wider truncate">
-              Founded
-            </p>
-            <p className="text-white text-sm md:text-base font-semibold truncate">
-              Sept 4, 1998
-            </p>
-          </div>
-        </div>
-      </div>
+// const AboutCompany = ({ company, jobId, jobTitle, onApplyClick }: AboutCompanyProps) => {
+//   const companyData = company || {};
+//   const navigate = useNavigate();
 
-      <div className="pt-2 md:pt-4">
-        <button 
-          onClick={() => window.open(COMPANY_DATA.website || "https://www.google.com", "_blank")}
-          className="flex items-center justify-center gap-2 w-full py-3 bg-mine-shaft-800 hover:bg-mine-shaft-700 text-white rounded-xl font-bold transition-all border border-mine-shaft-700 hover:border-bright-sun-400 hover:text-bright-sun-400 active:scale-95 shadow-sm hover:shadow-bright-sun-400/20 text-sm md:text-base"
-        >
-          <IconWorld size={18} className="hidden md:block" />
-          Visit Website
-        </button>
-      </div>
-    </div>
-  );
-};
+//   const handleApplyNow = () => {
+//     if (onApplyClick) {
+//       // If onApplyClick is provided, use it (for JobDesc page)
+//       onApplyClick();
+//     } else {
+//       // Otherwise navigate to company page (for Company page)
+//       const companyName = companyData.name?.toLowerCase().replace(/\s/g, '-') || 'company';
+//       navigate(`/company/${companyName}?jobId=${jobId}&jobTitle=${encodeURIComponent(jobTitle || '')}`);
+//     }
+//   };
 
-export default AboutCompany;
+//   const handleViewJobs = () => {
+//     const companyName = companyData.name?.toLowerCase().replace(/\s/g, '-') || 'company';
+//     navigate(`/company/${companyName}/jobs`);
+//   };
+
+//   const handleVisitWebsite = () => {
+//     if (companyData.website) {
+//       const website = companyData.website.startsWith('http') ? companyData.website : `https://${companyData.website}`;
+//       window.open(website, "_blank");
+//     } else {
+//       window.open("https://www.example.com", "_blank");
+//     }
+//   };
+
+//   return (
+//     <div className="bg-white p-6 md:p-8 rounded-2xl md:rounded-3xl border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300">
+//       <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200">
+//         <div className="p-2 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
+//           <IconBuilding size={22} className="text-blue-600" />
+//         </div>
+//         <h3 className="text-xl md:text-2xl font-bold text-gray-900">
+//           Company Overview
+//         </h3>
+//       </div>
+
+//       <div className="space-y-6">
+//         {/* Employees */}
+//         <div className="flex items-start gap-4 group cursor-pointer" onClick={() => navigate('/company/about#employees')}>
+//           <div className="p-3 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-all duration-300">
+//             <IconUsers size={22} className="text-blue-600" />
+//           </div>
+//           <div>
+//             <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider">Total Employees</p>
+//             <p className="text-gray-900 text-base md:text-lg font-bold mt-1">
+//               {companyData.employees || "10,000+"}
+//             </p>
+//             <p className="text-xs text-gray-400 mt-0.5">globally across offices</p>
+//           </div>
+//         </div>
+
+//         {/* Founded */}
+//         <div className="flex items-start gap-4 group cursor-pointer" onClick={() => navigate('/company/about#founded')}>
+//           <div className="p-3 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-all duration-300">
+//             <IconCalendar size={22} className="text-blue-600" />
+//           </div>
+//           <div>
+//             <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider">Year Founded</p>
+//             <p className="text-gray-900 text-base md:text-lg font-bold mt-1">
+//               {companyData.founded || "2010"}
+//             </p>
+//             <p className="text-xs text-gray-400 mt-0.5">years of innovation</p>
+//           </div>
+//         </div>
+
+//         {/* Headquarters */}
+//         <div className="flex items-start gap-4 group cursor-pointer" onClick={() => navigate('/company/about#headquarters')}>
+//           <div className="p-3 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-all duration-300">
+//             <IconBuilding size={22} className="text-blue-600" />
+//           </div>
+//           <div>
+//             <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider">Global Headquarters</p>
+//             <p className="text-gray-900 text-base md:text-lg font-bold mt-1">
+//               {companyData.headquarters || "United States"}
+//             </p>
+//             <p className="text-xs text-gray-400 mt-0.5">Main office location</p>
+//           </div>
+//         </div>
+
+//         {/* Office Locations */}
+//         <div className="flex items-start gap-4 group cursor-pointer" onClick={() => navigate('/company/about#offices')}>
+//           <div className="p-3 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-all duration-300">
+//             <IconGlobe size={22} className="text-blue-600" />
+//           </div>
+//           <div>
+//             <p className="text-xs text-gray-500 uppercase font-semibold tracking-wider">Office Locations</p>
+//             <p className="text-gray-900 text-base md:text-lg font-bold mt-1">{companyData.officeLocations || "20+ Countries"}</p>
+//             <p className="text-xs text-gray-400 mt-0.5">Global presence worldwide</p>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Contact Info Section */}
+//       {(companyData.email || companyData.phone) && (
+//         <div className="mt-6 pt-4 border-t border-gray-200">
+//           <h4 className="text-sm font-semibold text-gray-700 mb-3">Contact Information</h4>
+//           <div className="space-y-2">
+//             {companyData.email && (
+//               <a 
+//                 href={`mailto:${companyData.email}`}
+//                 className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 hover:underline"
+//               >
+//                 📧 {companyData.email}
+//               </a>
+//             )}
+//             {companyData.phone && (
+//               <a 
+//                 href={`tel:${companyData.phone}`}
+//                 className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 hover:underline"
+//               >
+//                 📞 {companyData.phone}
+//               </a>
+//             )}
+//           </div>
+//         </div>
+//       )}
+
+//       {/* Action Buttons */}
+//       <div className="mt-8 pt-6 border-t border-gray-200 space-y-3">
+//         {/* Apply Now Button */}
+//         <button
+//           onClick={handleApplyNow}
+//           className="group relative w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+//         >
+//           <div className="flex items-center justify-center gap-2">
+//             <IconBriefcase size={18} className="transition-transform group-hover:scale-110" />
+//             <span>Apply Now</span>
+//             <IconArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+//           </div>
+//         </button>
+
+//         {/* View All Jobs Button */}
+//         <button
+//           onClick={handleViewJobs}
+//           className="group relative w-full py-3.5 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-blue-50 hover:to-indigo-50 text-gray-700 hover:text-blue-600 rounded-xl font-semibold transition-all duration-300 border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md"
+//         >
+//           <div className="flex items-center justify-center gap-2">
+//             <IconBriefcase size={18} className="transition-transform group-hover:scale-110" />
+//             <span>View All Jobs</span>
+//           </div>
+//         </button>
+
+//         {/* Visit Website Button */}
+//         <button
+//           onClick={handleVisitWebsite}
+//           className="group relative w-full py-3.5 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-blue-50 hover:to-indigo-50 text-gray-700 hover:text-blue-600 rounded-xl font-semibold transition-all duration-300 border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md"
+//         >
+//           <div className="flex items-center justify-center gap-2">
+//             <IconWorld size={18} className="transition-transform group-hover:scale-110" />
+//             <span>Visit Company Website</span>
+//           </div>
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AboutCompany;

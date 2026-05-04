@@ -1,82 +1,136 @@
-import { Avatar } from "@mantine/core";
+import { Avatar, Button, Text } from "@mantine/core";
+import { 
+  IconSearch, 
+  IconMapPin, 
+  IconSparkles, 
+  IconWorld, 
+  IconChartBar, 
+  IconShieldCheck,
+  IconArrowRight,
+  IconUsers
+} from "@tabler/icons-react";
 
 const DreamJob = () => {
   return (
-    <div className="flex items-center px-20 py-10 gap-10 relative">
-      {/* ✅ Left Section */}
-      <div className="w-[45%] flex flex-col gap-4 relative z-30">
-        <div className="text-6xl font-bold text-white">
-          Find Your <span className="text-bright-sun-400">Dream Job</span> With Us
+    <div className="flex flex-col lg:flex-row items-center px-6 lg:px-24 py-16 gap-16 relative overflow-hidden min-h-[90vh]">
+      
+      {/* Background Elements */}
+      <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-100/30 blur-[150px] -z-10 rounded-full" />
+      <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-indigo-50/40 blur-[120px] -z-10 rounded-full" />
+
+      {/* Left Section */}
+      <div className="w-full lg:w-[48%] flex flex-col gap-8 relative z-30">
+        <div className="space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 shadow-sm">
+            <IconSparkles size={16} className="text-blue-600" />
+            <span className="text-blue-700 font-bold tracking-widest text-[10px] uppercase">
+              The Next Gen Talent Network
+            </span>
+          </div>
+          
+          <h1 className="text-5xl lg:text-8xl font-black text-gray-900 leading-[1] tracking-tight">
+            Elevate Your <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
+              Career Path
+            </span>
+          </h1>
         </div>
 
-        <div className="text-lg text-mine-shaft-300">
-          Good Life Begins With a Good Company. Start Explore Thousands of Jobs in One Place.
+        <p className="text-xl text-gray-600 leading-relaxed max-w-lg font-medium">
+          Connect with high-growth companies and elite startups. Your journey to a global career starts with a single click.
+        </p>
+
+        {/* Search Bar */}
+        <div className="group flex flex-col sm:flex-row items-center gap-3 p-3 bg-white border border-gray-200 rounded-[2rem] mt-4 shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="flex items-center flex-1 px-4 gap-3 w-full">
+            <IconSearch className="text-blue-500" size={22} />
+            <input 
+              type="text" 
+              placeholder="Design, Engineering..." 
+              className="bg-transparent border-none text-gray-900 w-full outline-none py-3 text-base placeholder:text-gray-400 font-medium"
+            />
+          </div>
+          <div className="hidden sm:block w-[1px] h-10 bg-gray-200" />
+          <div className="flex items-center flex-1 px-4 gap-3 w-full">
+            <IconMapPin className="text-gray-500" size={22} />
+            <input 
+              type="text" 
+              placeholder="Remote, NYC..." 
+              className="bg-transparent border-none text-gray-900 w-full outline-none py-3 text-base placeholder:text-gray-400 font-medium"
+            />
+          </div>
+          <Button 
+            size="lg" 
+            rightSection={<IconArrowRight size={20} />}
+            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-[1.5rem] px-10 transition-all hover:scale-105 active:scale-95 border-none font-bold text-md h-14 shadow-md"
+          >
+            Explore Jobs
+          </Button>
         </div>
 
-        <div className="flex gap-3 mt-5 relative z-30">
-          <input
-            type="text"
-            placeholder="Job Title"
-            className="px-4 py-3 w-[45%] bg-mine-shaft-900 text-mine-shaft-100 rounded-lg outline-none focus:ring-2 focus:ring-bright-sun-400"
-          />
-          <input
-            type="text"
-            placeholder="Job Type"
-            className="px-4 py-3 w-[45%] bg-mine-shaft-900 text-mine-shaft-100 rounded-lg outline-none focus:ring-2 focus:ring-bright-sun-400"
-          />
-          <button className="bg-bright-sun-400 text-mine-shaft-950 px-6 py-3 rounded-lg hover:bg-bright-sun-500 transition flex items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-              />
-            </svg>
-          </button>
+        {/* Trust Badge */}
+        <div className="flex items-center gap-4 pt-4">
+          <div className="flex -space-x-2">
+            <Avatar size="sm" radius="xl" className="border-2 border-white" />
+            <Avatar size="sm" radius="xl" className="border-2 border-white" />
+            <Avatar size="sm" radius="xl" className="border-2 border-white" />
+          </div>
+          <div className="text-sm text-gray-600">
+            Trusted by <span className="font-bold text-gray-900">10,000+</span> job seekers
+          </div>
         </div>
       </div>
 
-      {/* ✅ Right Section */}
-      <div className="w-[55%] flex items-center justify-center relative z-10">
-        <div className="w-[30rem] relative pointer-events-none">
-          {/* 🧠 Prevent image from capturing clicks */}
-          <img src="/job.png" alt="Job" className="w-full" />
-
-          {/* Left Overlay Card */}
-          <div className="absolute left-[-70px] top-[28%] w-fit bg-mine-shaft-900/70 border border-bright-sun-400 rounded-xl px-4 py-3 backdrop-blur-lg shadow-xl">
-            <div className="flex items-center gap-3">
-              <img src="/Google.png" alt="Google" className="w-9 h-9 rounded-lg" />
-              <div className="flex flex-col">
-                <span className="text-white font-semibold text-sm">Software Engineer</span>
-                <span className="text-mine-shaft-300 text-xs">New York</span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between mt-2 text-xs text-mine-shaft-200">
-              <span>1 day ago</span>
-              <span>120 Applicants</span>
-            </div>
+      {/* Right Section - Feature Cards */}
+      <div className="w-full lg:w-[52%] grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+        
+        {/* Card 1 */}
+        <div className="p-8 bg-white border border-gray-200 rounded-[2.5rem] flex flex-col gap-5 hover:shadow-xl hover:border-blue-300 transition-all group">
+          <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center text-blue-600 group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-500">
+            <IconSparkles size={30} stroke={1.5} />
           </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold text-gray-900">AI Match Engine</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">Get a 95% accurate skill-to-job matching score before you even apply.</p>
+          </div>
+        </div>
 
-          {/* Right Overlay Avatar Card */}
-          <div className="absolute right-[-40px] top-[60%] w-fit border-bright-sun-400 border rounded-lg p-3 backdrop-blur-md bg-mine-shaft-900/70 shadow-lg">
-            <div className="text-center mb-1 text-sm text-mine-shaft-100">
-              10k+ got job
-            </div>
+        {/* Card 2 */}
+        <div className="p-8 bg-white border border-gray-200 rounded-[2.5rem] mt-0 md:mt-12 flex flex-col gap-5 hover:shadow-xl hover:border-blue-300 transition-all group">
+          <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center text-blue-600 group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-500">
+            <IconWorld size={30} stroke={1.5} />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold text-gray-900">Global Reach</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">Direct access to hiring managers at Fortune 500 & Unicorn startups.</p>
+          </div>
+        </div>
 
-            <Avatar.Group className="ml-1">
-              <Avatar src="avatar.png" />
-              <Avatar src="avatar1.png" />
-              <Avatar src="avatar2.png" />
-              <Avatar>+9k</Avatar>
-            </Avatar.Group>
+        {/* Card 3 */}
+        <div className="p-8 bg-white border border-gray-200 rounded-[2.5rem] flex flex-col gap-5 hover:shadow-xl hover:border-blue-300 transition-all group">
+          <div className="flex items-baseline gap-1">
+            <span className="text-5xl font-black text-gray-900 group-hover:text-blue-600 transition-colors">98%</span>
+            <IconChartBar size={24} className="text-blue-600" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold text-gray-900">Hiring Velocity</h3>
+            <p className="text-sm text-gray-600 leading-relaxed">Most candidates land interviews within the first 7 days of profile verification.</p>
+          </div>
+        </div>
+
+        {/* Card 4 */}
+        <div className="p-8 bg-white border border-gray-200 rounded-[2.5rem] mt-0 md:mt-12 flex flex-col gap-5 hover:shadow-xl hover:border-blue-300 transition-all group">
+          <div className="flex -space-x-3 mb-2">
+            <Avatar src="https://placehold.co/100" radius="xl" className="border-2 border-white" size="lg" />
+            <Avatar src="https://placehold.co/100" radius="xl" className="border-2 border-white" size="lg" />
+            <Avatar src="https://placehold.co/100" radius="xl" className="border-2 border-white" size="lg" />
+            <Avatar radius="xl" color="blue" className="border-2 border-white font-bold text-sm" size="lg">+5k</Avatar>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              Verified Talent <IconShieldCheck size={22} className="text-blue-600" />
+            </h3>
+            <p className="text-sm text-gray-600 leading-relaxed">Trusted by a community of 50,000+ top-tier industry professionals.</p>
           </div>
         </div>
       </div>

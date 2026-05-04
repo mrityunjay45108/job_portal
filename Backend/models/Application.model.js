@@ -1,31 +1,175 @@
-// @ts-check
-import mongoose from "mongoose";
+// const mongoose = require('mongoose');
+
+// const applicationSchema = new mongoose.Schema({
+//   jobId: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'Job',
+//     required: true
+//   },
+//   jobTitle: {
+//     type: String,
+//     required: true
+//   },
+//   company: {
+//     type: String,
+//     required: true
+//   },
+//   candidateId: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'User',
+//     required: true
+//   },
+//   candidateName: {
+//     type: String,
+//     required: true
+//   },
+//   candidateEmail: {
+//     type: String,
+//     required: true
+//   },
+//   candidatePhone: {
+//     type: String
+//   },
+//   resumeName: {
+//     type: String
+//   },
+//   resumeUrl: {
+//     type: String
+//   },
+//   coverLetter: {
+//     type: String
+//   },
+//   experience: {
+//     type: String
+//   },
+//   skills: {
+//     type: String
+//   },
+//   expectedSalary: {
+//     type: String
+//   },
+//   noticePeriod: {
+//     type: String
+//   },
+//   status: {
+//     type: String,
+//     enum: ['pending', 'reviewing', 'shortlisted', 'interview', 'rejected', 'hired'],
+//     default: 'pending'
+//   },
+//   matchScore: {
+//     type: Number,
+//     default: 0
+//   },
+//   feedback: {
+//     type: String
+//   },
+//   appliedDate: {
+//     type: Date,
+//     default: Date.now
+//   }
+// }, {
+//   timestamps: true
+// });
+
+// module.exports = mongoose.model('Application', applicationSchema);
+// Backend/models/Application.model.js
+const mongoose = require('mongoose');
 
 const applicationSchema = new mongoose.Schema({
-  applicant: {
+  jobId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'Job',
     required: true
   },
-  job: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Job",
+  jobTitle: {
+    type: String,
     required: true
   },
-  resume: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Resume"
+  company: {
+    type: String,
+    required: true
   },
+  candidateId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  candidateName: {
+    type: String,
+    required: true
+  },
+  candidateEmail: {
+    type: String,
+    required: true
+  },
+  candidatePhone: {
+    type: String,
+    required: true
+  },
+  // Resume fields (Cloudinary support)
+  resumeUrl: {
+    type: String,
+    default: ''
+  },
+  resumeName: {
+    type: String,
+    default: ''
+  },
+  resumePublicId: {
+    type: String,
+    default: ''
+  },
+  // Application details
+  coverLetter: {
+    type: String,
+    default: ''
+  },
+  experience: {
+    type: String,
+    default: ''
+  },
+  skills: {
+    type: String,
+    default: ''
+  },
+  expectedSalary: {
+    type: String,
+    default: ''
+  },
+  noticePeriod: {
+    type: String,
+    default: ''
+  },
+  // Status fields
   status: {
     type: String,
-    enum: ["applied", "shortlisted", "rejected"],
-    default: "applied"
+    enum: ['pending', 'shortlisted', 'interview', 'hired', 'rejected'],
+    default: 'pending'
   },
-  coverLetter: {
-    type: String
+  aiScore: {
+    type: Number,
+    default: null
+  },
+  feedback: {
+    type: String,
+    default: ''
+  },
+  isBookmarked: {
+    type: Boolean,
+    default: false
+  },
+  appliedDate: {
+    type: Date,
+    default: Date.now
   }
-}, { timestamps: true });
+}, {
+  timestamps: true
+});
 
-const Application = mongoose.model("Application", applicationSchema);
+// Add index for better query performance
+applicationSchema.index({ jobId: 1, candidateId: 1 });
+applicationSchema.index({ candidateId: 1 });
+applicationSchema.index({ jobId: 1 });
+applicationSchema.index({ status: 1 });
 
-export default Application;
+module.exports = mongoose.model('Application', applicationSchema);
