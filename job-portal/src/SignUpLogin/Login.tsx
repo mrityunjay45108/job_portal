@@ -47,7 +47,7 @@ const Login = () => {
   const isSubmitting = useRef(false);
 
   const handleLogin = async () => {
-    // ✅ Prevent multiple simultaneous submissions
+    //  Prevent multiple simultaneous submissions
     if (loading || isSubmitting.current) {
       console.log("Login already in progress, skipping duplicate request");
       notifications.show({

@@ -25,7 +25,7 @@ import {
   Select,
   LoadingOverlay,
   Modal,
-  Skeleton
+  Skeleton,
 } from "@mantine/core";
 import {
   IconFileText,
@@ -46,7 +46,7 @@ import {
   IconShield,
   IconChartBar,
   IconPrinter,
-  IconX
+  IconX,
 } from "@tabler/icons-react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -112,7 +112,12 @@ const ResumeBuilderSkeleton = () => {
               <div className="flex gap-4 mb-8">
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="text-center">
-                    <Skeleton circle height={40} width={40} className="mx-auto" />
+                    <Skeleton
+                      circle
+                      height={40}
+                      width={40}
+                      className="mx-auto"
+                    />
                     <Skeleton height={12} width={80} mt={5} radius="md" />
                     <Skeleton height={10} width={60} mt={2} radius="md" />
                   </div>
@@ -173,19 +178,26 @@ const ResumeBuilder = () => {
     phone: user?.phoneNumber || "",
     location: "",
     title: "",
-    summary: ""
+    summary: "",
   });
 
   const [skills, setSkills] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState("");
   const [experiences, setExperiences] = useState<Experience[]>([
-    { title: "", company: "", location: "", startDate: "", endDate: "", description: "" }
+    {
+      title: "",
+      company: "",
+      location: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+    },
   ]);
   const [educations, setEducations] = useState<Education[]>([
-    { degree: "", institution: "", year: "" }
+    { degree: "", institution: "", year: "" },
   ]);
   const [certifications, setCertifications] = useState<Certification[]>([
-    { name: "", issuer: "", date: "" }
+    { name: "", issuer: "", date: "" },
   ]);
 
   // Simulate loading
@@ -204,14 +216,28 @@ const ResumeBuilder = () => {
   };
 
   const removeSkill = (skill: string) => {
-    setSkills(skills.filter(s => s !== skill));
+    setSkills(skills.filter((s) => s !== skill));
   };
 
   const addExperience = () => {
-    setExperiences([...experiences, { title: "", company: "", location: "", startDate: "", endDate: "", description: "" }]);
+    setExperiences([
+      ...experiences,
+      {
+        title: "",
+        company: "",
+        location: "",
+        startDate: "",
+        endDate: "",
+        description: "",
+      },
+    ]);
   };
 
-  const updateExperience = (index: number, field: keyof Experience, value: string) => {
+  const updateExperience = (
+    index: number,
+    field: keyof Experience,
+    value: string,
+  ) => {
     const updated = [...experiences];
     updated[index][field] = value;
     setExperiences(updated);
@@ -225,7 +251,11 @@ const ResumeBuilder = () => {
     setEducations([...educations, { degree: "", institution: "", year: "" }]);
   };
 
-  const updateEducation = (index: number, field: keyof Education, value: string) => {
+  const updateEducation = (
+    index: number,
+    field: keyof Education,
+    value: string,
+  ) => {
     const updated = [...educations];
     updated[index][field] = value;
     setEducations(updated);
@@ -239,7 +269,11 @@ const ResumeBuilder = () => {
     setCertifications([...certifications, { name: "", issuer: "", date: "" }]);
   };
 
-  const updateCertification = (index: number, field: keyof Certification, value: string) => {
+  const updateCertification = (
+    index: number,
+    field: keyof Certification,
+    value: string,
+  ) => {
     const updated = [...certifications];
     updated[index][field] = value;
     setCertifications(updated);
@@ -254,7 +288,7 @@ const ResumeBuilder = () => {
       notifications.show({
         title: "Error",
         message: "Please select a file to upload",
-        color: "red"
+        color: "red",
       });
       return;
     }
@@ -264,7 +298,7 @@ const ResumeBuilder = () => {
       notifications.show({
         title: "Success",
         message: "Resume uploaded successfully!",
-        color: "green"
+        color: "green",
       });
       setUploading(false);
     }, 2000);
@@ -277,68 +311,68 @@ const ResumeBuilder = () => {
       experiences,
       educations,
       certifications,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
-    
+
     localStorage.setItem(`resume_${user?.id}`, JSON.stringify(resumeData));
-    
+
     notifications.show({
       title: "Success",
       message: "Resume saved successfully!",
       color: "green",
-      icon: <IconCheck size={16} />
+      icon: <IconCheck size={16} />,
     });
   };
 
   const downloadPDF = async () => {
     if (!previewRef.current) return;
-    
+
     setDownloading(true);
     try {
       const element = previewRef.current;
       const canvas = await html2canvas(element, {
         scale: 2,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
         logging: false,
-        useCORS: true
+        useCORS: true,
       });
-      
-      const imgData = canvas.toDataURL('image/png');
+
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
       });
-      
+
       const imgWidth = 210;
       const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
       let position = 0;
-      
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
-      
+
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
-      
-      pdf.save(`${personalInfo.fullName || 'Resume'}.pdf`);
-      
+
+      pdf.save(`${personalInfo.fullName || "Resume"}.pdf`);
+
       notifications.show({
         title: "Success",
         message: "Resume downloaded successfully!",
-        color: "green"
+        color: "green",
       });
     } catch (error) {
       console.error("PDF generation error:", error);
       notifications.show({
         title: "Error",
         message: "Failed to generate PDF",
-        color: "red"
+        color: "red",
       });
     } finally {
       setDownloading(false);
@@ -348,14 +382,14 @@ const ResumeBuilder = () => {
   const printResume = () => {
     const printContent = previewRef.current;
     if (!printContent) return;
-    
-    const printWindow = window.open('', '_blank');
-    
+
+    const printWindow = window.open("", "_blank");
+
     if (printWindow) {
       printWindow.document.write(`
         <html>
           <head>
-            <title>${personalInfo.fullName || 'Resume'} - Print</title>
+            <title>${personalInfo.fullName || "Resume"} - Print</title>
             <style>
               body { font-family: Arial, sans-serif; margin: 40px; }
               .text-center { text-align: center; }
@@ -400,24 +434,33 @@ const ResumeBuilder = () => {
   const calculateCompletion = () => {
     let completed = 0;
     let total = 0;
-    
+
     if (personalInfo.fullName && personalInfo.fullName.trim()) completed++;
     if (personalInfo.email && personalInfo.email.trim()) completed++;
     if (personalInfo.title && personalInfo.title.trim()) completed++;
     if (personalInfo.summary && personalInfo.summary.trim()) completed++;
     total += 4;
-    
+
     if (skills.length > 0) completed++;
     total++;
-    
-    const hasExperience = experiences.some(exp => exp.title && exp.title.trim() && exp.company && exp.company.trim());
+
+    const hasExperience = experiences.some(
+      (exp) =>
+        exp.title && exp.title.trim() && exp.company && exp.company.trim(),
+    );
     if (hasExperience) completed++;
     total++;
-    
-    const hasEducation = educations.some(edu => edu.degree && edu.degree.trim() && edu.institution && edu.institution.trim());
+
+    const hasEducation = educations.some(
+      (edu) =>
+        edu.degree &&
+        edu.degree.trim() &&
+        edu.institution &&
+        edu.institution.trim(),
+    );
     if (hasEducation) completed++;
     total++;
-    
+
     return Math.round((completed / total) * 100);
   };
 
@@ -475,26 +518,46 @@ const ResumeBuilder = () => {
           {/* Left Sidebar */}
           <div className="lg:col-span-1 space-y-4">
             <Paper className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-              <Text fw={700} size="lg" className="mb-3">Profile Completion</Text>
+              <Text fw={700} size="lg" className="mb-3">
+                Profile Completion
+              </Text>
               <Progress value={completion} size="lg" radius="xl" color="blue" />
-              <Text size="sm" className="text-gray-500 mt-2">{completion}% Complete</Text>
+              <Text size="sm" className="text-gray-500 mt-2">
+                {completion}% Complete
+              </Text>
               <Divider className="my-4" />
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span>Personal Info</span>
-                  {personalInfo.fullName ? <IconCheck size={14} className="text-green-500" /> : <span className="text-gray-400">Pending</span>}
+                  {personalInfo.fullName ? (
+                    <IconCheck size={14} className="text-green-500" />
+                  ) : (
+                    <span className="text-gray-400">Pending</span>
+                  )}
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Skills</span>
-                  {skills.length > 0 ? <IconCheck size={14} className="text-green-500" /> : <span className="text-gray-400">Pending</span>}
+                  {skills.length > 0 ? (
+                    <IconCheck size={14} className="text-green-500" />
+                  ) : (
+                    <span className="text-gray-400">Pending</span>
+                  )}
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Experience</span>
-                  {experiences.some(e => e.title) ? <IconCheck size={14} className="text-green-500" /> : <span className="text-gray-400">Pending</span>}
+                  {experiences.some((e) => e.title) ? (
+                    <IconCheck size={14} className="text-green-500" />
+                  ) : (
+                    <span className="text-gray-400">Pending</span>
+                  )}
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Education</span>
-                  {educations.some(e => e.degree) ? <IconCheck size={14} className="text-green-500" /> : <span className="text-gray-400">Pending</span>}
+                  {educations.some((e) => e.degree) ? (
+                    <IconCheck size={14} className="text-green-500" />
+                  ) : (
+                    <span className="text-gray-400">Pending</span>
+                  )}
                 </div>
               </div>
             </Paper>
@@ -517,20 +580,46 @@ const ResumeBuilder = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Paper className="bg-white rounded-2xl shadow-md overflow-hidden">
-              <Tabs value={activeTab} onChange={setActiveTab} color="blue" variant="pills" radius="lg">
+              <Tabs
+                value={activeTab}
+                onChange={setActiveTab}
+                color="blue"
+                variant="pills"
+                radius="lg"
+              >
                 <div className="border-b border-gray-200 px-6 pt-4">
                   <Tabs.List className="gap-2">
-                    <Tabs.Tab value="build" leftSection={<IconUser size={16} />}>Build Resume</Tabs.Tab>
-                    <Tabs.Tab value="preview" leftSection={<IconEye size={16} />}>Preview</Tabs.Tab>
+                    <Tabs.Tab
+                      value="build"
+                      leftSection={<IconUser size={16} />}
+                    >
+                      Build Resume
+                    </Tabs.Tab>
+                    <Tabs.Tab
+                      value="preview"
+                      leftSection={<IconEye size={16} />}
+                    >
+                      Preview
+                    </Tabs.Tab>
                   </Tabs.List>
                 </div>
 
                 <div className="p-6">
                   {/* Build Tab */}
                   <Tabs.Panel value="build">
-                    <Stepper active={activeStep} onStepClick={setActiveStep} className="mb-8">
-                      <Stepper.Step label="Personal" description="Your details" />
-                      <Stepper.Step label="Experience" description="Work history" />
+                    <Stepper
+                      active={activeStep}
+                      onStepClick={setActiveStep}
+                      className="mb-8"
+                    >
+                      <Stepper.Step
+                        label="Personal"
+                        description="Your details"
+                      />
+                      <Stepper.Step
+                        label="Experience"
+                        description="Work history"
+                      />
                       <Stepper.Step label="Education" description="Academic" />
                       <Stepper.Step label="Skills" description="Expertise" />
                     </Stepper>
@@ -543,32 +632,57 @@ const ResumeBuilder = () => {
                             label="Full Name"
                             placeholder="John Doe"
                             value={personalInfo.fullName || ""}
-                            onChange={(e) => setPersonalInfo({ ...personalInfo, fullName: e.target.value })}
+                            onChange={(e) =>
+                              setPersonalInfo({
+                                ...personalInfo,
+                                fullName: e.target.value,
+                              })
+                            }
                             required
                           />
                           <TextInput
                             label="Professional Title"
                             placeholder="Senior Software Engineer"
                             value={personalInfo.title || ""}
-                            onChange={(e) => setPersonalInfo({ ...personalInfo, title: e.target.value })}
+                            onChange={(e) =>
+                              setPersonalInfo({
+                                ...personalInfo,
+                                title: e.target.value,
+                              })
+                            }
                           />
                           <TextInput
                             label="Email"
                             placeholder="john@example.com"
                             value={personalInfo.email || ""}
-                            onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
+                            onChange={(e) =>
+                              setPersonalInfo({
+                                ...personalInfo,
+                                email: e.target.value,
+                              })
+                            }
                           />
                           <TextInput
                             label="Phone"
                             placeholder="+1 234 567 8900"
                             value={personalInfo.phone || ""}
-                            onChange={(e) => setPersonalInfo({ ...personalInfo, phone: e.target.value })}
+                            onChange={(e) =>
+                              setPersonalInfo({
+                                ...personalInfo,
+                                phone: e.target.value,
+                              })
+                            }
                           />
                           <TextInput
                             label="Location"
                             placeholder="San Francisco, CA"
                             value={personalInfo.location || ""}
-                            onChange={(e) => setPersonalInfo({ ...personalInfo, location: e.target.value })}
+                            onChange={(e) =>
+                              setPersonalInfo({
+                                ...personalInfo,
+                                location: e.target.value,
+                              })
+                            }
                             className="md:col-span-2"
                           />
                         </SimpleGrid>
@@ -576,7 +690,12 @@ const ResumeBuilder = () => {
                           label="Professional Summary"
                           placeholder="A brief overview of your professional background and career goals..."
                           value={personalInfo.summary || ""}
-                          onChange={(e) => setPersonalInfo({ ...personalInfo, summary: e.target.value })}
+                          onChange={(e) =>
+                            setPersonalInfo({
+                              ...personalInfo,
+                              summary: e.target.value,
+                            })
+                          }
                           minRows={4}
                         />
                       </Stack>
@@ -586,46 +705,82 @@ const ResumeBuilder = () => {
                     {activeStep === 1 && (
                       <Stack gap="md">
                         {experiences.map((exp, idx) => (
-                          <Card key={idx} className="bg-gray-50 border border-gray-200 p-4">
+                          <Card
+                            key={idx}
+                            className="bg-gray-50 border border-gray-200 p-4"
+                          >
                             <div className="flex justify-between items-center mb-3">
                               <Text fw={600}>Experience #{idx + 1}</Text>
                               {idx > 0 && (
-                                <ActionIcon color="red" variant="subtle" onClick={() => removeExperience(idx)}>
+                                <ActionIcon
+                                  color="red"
+                                  variant="subtle"
+                                  onClick={() => removeExperience(idx)}
+                                >
                                   <IconTrash size={16} />
                                 </ActionIcon>
                               )}
                             </div>
-                            <SimpleGrid cols={{ base: 1, md: 2 }} className="mb-3">
+                            <SimpleGrid
+                              cols={{ base: 1, md: 2 }}
+                              className="mb-3"
+                            >
                               <TextInput
                                 label="Job Title"
                                 placeholder="Senior Developer"
                                 value={exp.title || ""}
-                                onChange={(e) => updateExperience(idx, "title", e.target.value)}
+                                onChange={(e) =>
+                                  updateExperience(idx, "title", e.target.value)
+                                }
                               />
                               <TextInput
                                 label="Company"
                                 placeholder="Google"
                                 value={exp.company || ""}
-                                onChange={(e) => updateExperience(idx, "company", e.target.value)}
+                                onChange={(e) =>
+                                  updateExperience(
+                                    idx,
+                                    "company",
+                                    e.target.value,
+                                  )
+                                }
                               />
                               <TextInput
                                 label="Location"
                                 placeholder="Mountain View, CA"
                                 value={exp.location || ""}
-                                onChange={(e) => updateExperience(idx, "location", e.target.value)}
+                                onChange={(e) =>
+                                  updateExperience(
+                                    idx,
+                                    "location",
+                                    e.target.value,
+                                  )
+                                }
                               />
                               <div className="grid grid-cols-2 gap-2">
                                 <TextInput
                                   label="Start Date"
                                   placeholder="Jan 2020"
                                   value={exp.startDate || ""}
-                                  onChange={(e) => updateExperience(idx, "startDate", e.target.value)}
+                                  onChange={(e) =>
+                                    updateExperience(
+                                      idx,
+                                      "startDate",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                                 <TextInput
                                   label="End Date"
                                   placeholder="Present"
                                   value={exp.endDate || ""}
-                                  onChange={(e) => updateExperience(idx, "endDate", e.target.value)}
+                                  onChange={(e) =>
+                                    updateExperience(
+                                      idx,
+                                      "endDate",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                               </div>
                             </SimpleGrid>
@@ -633,12 +788,22 @@ const ResumeBuilder = () => {
                               label="Description"
                               placeholder="Describe your responsibilities and achievements..."
                               value={exp.description || ""}
-                              onChange={(e) => updateExperience(idx, "description", e.target.value)}
+                              onChange={(e) =>
+                                updateExperience(
+                                  idx,
+                                  "description",
+                                  e.target.value,
+                                )
+                              }
                               minRows={3}
                             />
                           </Card>
                         ))}
-                        <Button onClick={addExperience} variant="light" leftSection={<IconPlus size={16} />}>
+                        <Button
+                          onClick={addExperience}
+                          variant="light"
+                          leftSection={<IconPlus size={16} />}
+                        >
                           Add Experience
                         </Button>
                       </Stack>
@@ -648,11 +813,18 @@ const ResumeBuilder = () => {
                     {activeStep === 2 && (
                       <Stack gap="md">
                         {educations.map((edu, idx) => (
-                          <Card key={idx} className="bg-gray-50 border border-gray-200 p-4">
+                          <Card
+                            key={idx}
+                            className="bg-gray-50 border border-gray-200 p-4"
+                          >
                             <div className="flex justify-between items-center mb-3">
                               <Text fw={600}>Education #{idx + 1}</Text>
                               {idx > 0 && (
-                                <ActionIcon color="red" variant="subtle" onClick={() => removeEducation(idx)}>
+                                <ActionIcon
+                                  color="red"
+                                  variant="subtle"
+                                  onClick={() => removeEducation(idx)}
+                                >
                                   <IconTrash size={16} />
                                 </ActionIcon>
                               )}
@@ -662,30 +834,50 @@ const ResumeBuilder = () => {
                                 label="Degree"
                                 placeholder="B.Tech in Computer Science"
                                 value={edu.degree || ""}
-                                onChange={(e) => updateEducation(idx, "degree", e.target.value)}
+                                onChange={(e) =>
+                                  updateEducation(idx, "degree", e.target.value)
+                                }
                               />
                               <TextInput
                                 label="Institution"
                                 placeholder="Stanford University"
                                 value={edu.institution || ""}
-                                onChange={(e) => updateEducation(idx, "institution", e.target.value)}
+                                onChange={(e) =>
+                                  updateEducation(
+                                    idx,
+                                    "institution",
+                                    e.target.value,
+                                  )
+                                }
                               />
                               <TextInput
                                 label="Year of Graduation"
                                 placeholder="2020"
                                 value={edu.year || ""}
-                                onChange={(e) => updateEducation(idx, "year", e.target.value)}
+                                onChange={(e) =>
+                                  updateEducation(idx, "year", e.target.value)
+                                }
                               />
                               <TextInput
                                 label="Percentage/CGPA"
                                 placeholder="85% / 8.5 CGPA"
                                 value={edu.percentage || ""}
-                                onChange={(e) => updateEducation(idx, "percentage", e.target.value)}
+                                onChange={(e) =>
+                                  updateEducation(
+                                    idx,
+                                    "percentage",
+                                    e.target.value,
+                                  )
+                                }
                               />
                             </SimpleGrid>
                           </Card>
                         ))}
-                        <Button onClick={addEducation} variant="light" leftSection={<IconPlus size={16} />}>
+                        <Button
+                          onClick={addEducation}
+                          variant="light"
+                          leftSection={<IconPlus size={16} />}
+                        >
                           Add Education
                         </Button>
                       </Stack>
@@ -695,7 +887,9 @@ const ResumeBuilder = () => {
                     {activeStep === 3 && (
                       <Stack gap="md">
                         <div>
-                          <Text fw={500} className="mb-2">Skills</Text>
+                          <Text fw={500} className="mb-2">
+                            Skills
+                          </Text>
                           <div className="flex flex-wrap gap-2 mb-3">
                             {skills.map((skill, idx) => (
                               <Badge
@@ -704,7 +898,11 @@ const ResumeBuilder = () => {
                                 variant="light"
                                 color="blue"
                                 rightSection={
-                                  <IconTrash size={12} className="cursor-pointer ml-1" onClick={() => removeSkill(skill)} />
+                                  <IconTrash
+                                    size={12}
+                                    className="cursor-pointer ml-1"
+                                    onClick={() => removeSkill(skill)}
+                                  />
                                 }
                               >
                                 {skill}
@@ -717,7 +915,9 @@ const ResumeBuilder = () => {
                               value={newSkill || ""}
                               onChange={(e) => setNewSkill(e.target.value)}
                               className="flex-1"
-                              onKeyPress={(e) => e.key === 'Enter' && addSkill()}
+                              onKeyPress={(e) =>
+                                e.key === "Enter" && addSkill()
+                              }
                             />
                             <Button onClick={addSkill} variant="light">
                               <IconPlus size={16} />
@@ -728,40 +928,74 @@ const ResumeBuilder = () => {
                         <Divider />
 
                         <div>
-                          <Text fw={500} className="mb-2">Certifications</Text>
+                          <Text fw={500} className="mb-2">
+                            Certifications
+                          </Text>
                           {certifications.map((cert, idx) => (
-                            <Card key={idx} className="bg-gray-50 border border-gray-200 p-4 mb-3">
+                            <Card
+                              key={idx}
+                              className="bg-gray-50 border border-gray-200 p-4 mb-3"
+                            >
                               <div className="flex justify-between items-center mb-3">
                                 <Text fw={500}>Certification #{idx + 1}</Text>
                                 {idx > 0 && (
-                                  <ActionIcon color="red" variant="subtle" onClick={() => removeCertification(idx)}>
+                                  <ActionIcon
+                                    color="red"
+                                    variant="subtle"
+                                    onClick={() => removeCertification(idx)}
+                                  >
                                     <IconTrash size={16} />
                                   </ActionIcon>
                                 )}
                               </div>
-                              <SimpleGrid cols={{ base: 1, md: 2 }} className="mb-3">
+                              <SimpleGrid
+                                cols={{ base: 1, md: 2 }}
+                                className="mb-3"
+                              >
                                 <TextInput
                                   label="Certification Name"
                                   placeholder="AWS Certified Solutions Architect"
                                   value={cert.name || ""}
-                                  onChange={(e) => updateCertification(idx, "name", e.target.value)}
+                                  onChange={(e) =>
+                                    updateCertification(
+                                      idx,
+                                      "name",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                                 <TextInput
                                   label="Issuing Organization"
                                   placeholder="Amazon Web Services"
                                   value={cert.issuer || ""}
-                                  onChange={(e) => updateCertification(idx, "issuer", e.target.value)}
+                                  onChange={(e) =>
+                                    updateCertification(
+                                      idx,
+                                      "issuer",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                                 <TextInput
                                   label="Date Earned"
                                   placeholder="Jan 2023"
                                   value={cert.date || ""}
-                                  onChange={(e) => updateCertification(idx, "date", e.target.value)}
+                                  onChange={(e) =>
+                                    updateCertification(
+                                      idx,
+                                      "date",
+                                      e.target.value,
+                                    )
+                                  }
                                 />
                               </SimpleGrid>
                             </Card>
                           ))}
-                          <Button onClick={addCertification} variant="light" leftSection={<IconPlus size={16} />}>
+                          <Button
+                            onClick={addCertification}
+                            variant="light"
+                            leftSection={<IconPlus size={16} />}
+                          >
                             Add Certification
                           </Button>
                         </div>
@@ -771,13 +1005,17 @@ const ResumeBuilder = () => {
                     <div className="flex justify-between mt-6">
                       <Button
                         variant="outline"
-                        onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
+                        onClick={() =>
+                          setActiveStep(Math.max(0, activeStep - 1))
+                        }
                         disabled={activeStep === 0}
                       >
                         Previous
                       </Button>
                       <Button
-                        onClick={() => setActiveStep(Math.min(3, activeStep + 1))}
+                        onClick={() =>
+                          setActiveStep(Math.min(3, activeStep + 1))
+                        }
                         disabled={activeStep === 3}
                         className="bg-blue-600"
                       >
@@ -806,15 +1044,28 @@ const ResumeBuilder = () => {
                       </Button>
                     </div>
 
-                    <div ref={previewRef} className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
+                    <div
+                      ref={previewRef}
+                      className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm"
+                    >
                       {/* Resume Header */}
                       <div className="text-center mb-6">
-                        <h1 className="text-3xl font-bold text-gray-900">{personalInfo.fullName || "Your Name"}</h1>
-                        <p className="text-lg text-blue-600 mt-1">{personalInfo.title || "Professional Title"}</p>
+                        <h1 className="text-3xl font-bold text-gray-900">
+                          {personalInfo.fullName || "Your Name"}
+                        </h1>
+                        <p className="text-lg text-blue-600 mt-1">
+                          {personalInfo.title || "Professional Title"}
+                        </p>
                         <div className="flex flex-wrap justify-center gap-4 mt-3 text-sm text-gray-500">
-                          {personalInfo.email && <span>📧 {personalInfo.email}</span>}
-                          {personalInfo.phone && <span>📞 {personalInfo.phone}</span>}
-                          {personalInfo.location && <span>📍 {personalInfo.location}</span>}
+                          {personalInfo.email && (
+                            <span>📧 {personalInfo.email}</span>
+                          )}
+                          {personalInfo.phone && (
+                            <span>📞 {personalInfo.phone}</span>
+                          )}
+                          {personalInfo.location && (
+                            <span>📍 {personalInfo.location}</span>
+                          )}
                         </div>
                       </div>
 
@@ -823,18 +1074,30 @@ const ResumeBuilder = () => {
                       {/* Professional Summary */}
                       {personalInfo.summary && (
                         <div className="mt-4">
-                          <h3 className="font-semibold text-gray-800 mb-2 text-lg border-l-4 border-blue-500 pl-3">Professional Summary</h3>
-                          <p className="text-gray-600 text-sm leading-relaxed">{personalInfo.summary}</p>
+                          <h3 className="font-semibold text-gray-800 mb-2 text-lg border-l-4 border-blue-500 pl-3">
+                            Professional Summary
+                          </h3>
+                          <p className="text-gray-600 text-sm leading-relaxed">
+                            {personalInfo.summary}
+                          </p>
                         </div>
                       )}
 
                       {/* Skills Section */}
                       {skills.length > 0 && (
                         <div className="mt-5">
-                          <h3 className="font-semibold text-gray-800 mb-3 text-lg border-l-4 border-blue-500 pl-3">Technical Skills</h3>
+                          <h3 className="font-semibold text-gray-800 mb-3 text-lg border-l-4 border-blue-500 pl-3">
+                            Technical Skills
+                          </h3>
                           <div className="flex flex-wrap gap-2">
                             {skills.map((skill, idx) => (
-                              <Badge key={idx} size="lg" variant="light" color="blue" className="bg-blue-50 text-blue-700 px-3 py-1">
+                              <Badge
+                                key={idx}
+                                size="lg"
+                                variant="light"
+                                color="blue"
+                                className="bg-blue-50 text-blue-700 px-3 py-1"
+                              >
                                 {skill}
                               </Badge>
                             ))}
@@ -843,74 +1106,122 @@ const ResumeBuilder = () => {
                       )}
 
                       {/* Work Experience */}
-                      {experiences.some(e => e.title && e.company) && (
+                      {experiences.some((e) => e.title && e.company) && (
                         <div className="mt-5">
-                          <h3 className="font-semibold text-gray-800 mb-4 text-lg border-l-4 border-blue-500 pl-3">Work Experience</h3>
-                          {experiences.map((exp, idx) => (
-                            exp.title && exp.company && (
-                              <div key={idx} className="mb-5">
-                                <div className="flex justify-between items-start flex-wrap">
-                                  <div>
-                                    <h4 className="font-semibold text-gray-800">{exp.title}</h4>
-                                    <p className="text-gray-600 text-sm">{exp.company} {exp.location && `• ${exp.location}`}</p>
+                          <h3 className="font-semibold text-gray-800 mb-4 text-lg border-l-4 border-blue-500 pl-3">
+                            Work Experience
+                          </h3>
+                          {experiences.map(
+                            (exp, idx) =>
+                              exp.title &&
+                              exp.company && (
+                                <div key={idx} className="mb-5">
+                                  <div className="flex justify-between items-start flex-wrap">
+                                    <div>
+                                      <h4 className="font-semibold text-gray-800">
+                                        {exp.title}
+                                      </h4>
+                                      <p className="text-gray-600 text-sm">
+                                        {exp.company}{" "}
+                                        {exp.location && `• ${exp.location}`}
+                                      </p>
+                                    </div>
+                                    {exp.startDate && (
+                                      <p className="text-gray-400 text-sm">
+                                        {exp.startDate} -{" "}
+                                        {exp.endDate || "Present"}
+                                      </p>
+                                    )}
                                   </div>
-                                  {exp.startDate && (
-                                    <p className="text-gray-400 text-sm">{exp.startDate} - {exp.endDate || "Present"}</p>
+                                  {exp.description && (
+                                    <p className="text-gray-500 text-sm mt-2 leading-relaxed">
+                                      {exp.description}
+                                    </p>
                                   )}
                                 </div>
-                                {exp.description && (
-                                  <p className="text-gray-500 text-sm mt-2 leading-relaxed">{exp.description}</p>
-                                )}
-                              </div>
-                            )
-                          ))}
+                              ),
+                          )}
                         </div>
                       )}
 
                       {/* Education */}
-                      {educations.some(e => e.degree && e.institution) && (
+                      {educations.some((e) => e.degree && e.institution) && (
                         <div className="mt-5">
-                          <h3 className="font-semibold text-gray-800 mb-4 text-lg border-l-4 border-blue-500 pl-3">Education</h3>
-                          {educations.map((edu, idx) => (
-                            edu.degree && edu.institution && (
-                              <div key={idx} className="mb-3">
-                                <h4 className="font-semibold text-gray-800">{edu.degree}</h4>
-                                <p className="text-gray-600 text-sm">{edu.institution}</p>
-                                <div className="flex flex-wrap gap-3 mt-1 text-xs text-gray-400">
-                                  {edu.year && <span>🎓 Year: {edu.year}</span>}
-                                  {edu.percentage && <span>📊 Percentage: {edu.percentage}</span>}
+                          <h3 className="font-semibold text-gray-800 mb-4 text-lg border-l-4 border-blue-500 pl-3">
+                            Education
+                          </h3>
+                          {educations.map(
+                            (edu, idx) =>
+                              edu.degree &&
+                              edu.institution && (
+                                <div key={idx} className="mb-3">
+                                  <h4 className="font-semibold text-gray-800">
+                                    {edu.degree}
+                                  </h4>
+                                  <p className="text-gray-600 text-sm">
+                                    {edu.institution}
+                                  </p>
+                                  <div className="flex flex-wrap gap-3 mt-1 text-xs text-gray-400">
+                                    {edu.year && (
+                                      <span>🎓 Year: {edu.year}</span>
+                                    )}
+                                    {edu.percentage && (
+                                      <span>
+                                        📊 Percentage: {edu.percentage}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            )
-                          ))}
+                              ),
+                          )}
                         </div>
                       )}
 
                       {/* Certifications */}
-                      {certifications.some(c => c.name && c.issuer) && (
+                      {certifications.some((c) => c.name && c.issuer) && (
                         <div className="mt-5">
-                          <h3 className="font-semibold text-gray-800 mb-3 text-lg border-l-4 border-blue-500 pl-3">Certifications</h3>
-                          {certifications.map((cert, idx) => (
-                            cert.name && cert.issuer && (
-                              <div key={idx} className="mb-2">
-                                <p className="text-gray-700 text-sm">
-                                  <span className="font-semibold">{cert.name}</span> - {cert.issuer}
-                                  {cert.date && <span className="text-gray-400 ml-2">({cert.date})</span>}
-                                </p>
-                              </div>
-                            )
-                          ))}
+                          <h3 className="font-semibold text-gray-800 mb-3 text-lg border-l-4 border-blue-500 pl-3">
+                            Certifications
+                          </h3>
+                          {certifications.map(
+                            (cert, idx) =>
+                              cert.name &&
+                              cert.issuer && (
+                                <div key={idx} className="mb-2">
+                                  <p className="text-gray-700 text-sm">
+                                    <span className="font-semibold">
+                                      {cert.name}
+                                    </span>{" "}
+                                    - {cert.issuer}
+                                    {cert.date && (
+                                      <span className="text-gray-400 ml-2">
+                                        ({cert.date})
+                                      </span>
+                                    )}
+                                  </p>
+                                </div>
+                              ),
+                          )}
                         </div>
                       )}
 
                       {/* Empty state */}
-                      {!personalInfo.fullName && !personalInfo.summary && skills.length === 0 && 
-                       !experiences.some(e => e.title) && !educations.some(e => e.degree) && (
-                        <div className="text-center py-12 text-gray-400">
-                          <IconFileText size={48} className="mx-auto mb-3 opacity-50" />
-                          <p>No resume data available. Please fill in your information in the "Build Resume" tab.</p>
-                        </div>
-                      )}
+                      {!personalInfo.fullName &&
+                        !personalInfo.summary &&
+                        skills.length === 0 &&
+                        !experiences.some((e) => e.title) &&
+                        !educations.some((e) => e.degree) && (
+                          <div className="text-center py-12 text-gray-400">
+                            <IconFileText
+                              size={48}
+                              className="mx-auto mb-3 opacity-50"
+                            />
+                            <p>
+                              No resume data available. Please fill in your
+                              information in the "Build Resume" tab.
+                            </p>
+                          </div>
+                        )}
                     </div>
                   </Tabs.Panel>
                 </div>
@@ -928,12 +1239,14 @@ const ResumeBuilder = () => {
               </div>
               <div>
                 <h3 className="text-xl font-bold">AI Resume Analyzer</h3>
-                <p className="opacity-90">Get your resume analyzed against job descriptions with AI</p>
+                <p className="opacity-90">
+                  Get your resume analyzed against job descriptions with AI
+                </p>
               </div>
             </div>
             <div className="flex gap-3">
               <Button
-                onClick={() => navigate('/resume-analyzer')}
+                onClick={() => navigate("/resume-analyzer")}
                 className="bg-white text-purple-600 hover:bg-gray-100 shadow-lg"
                 rightSection={<IconArrowRight size={16} />}
               >

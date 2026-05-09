@@ -203,7 +203,7 @@ const RecruiterDashboard = () => {
     try {
       const response = await api.get('/applications/recruiter');
       if (response.data.success) {
-        console.log("✅ Loaded applications:", response.data.applications?.length);
+        console.log("Loaded applications:", response.data.applications?.length);
         setApplications(response.data.applications || []);
       } else {
         setApplications([]);
@@ -226,11 +226,11 @@ const RecruiterDashboard = () => {
     }
   };
 
-  // ✅ Helper function to safely get application ID - returns string, never undefined
+  // Helper function to safely get application ID - returns string, never undefined
   const getAppId = (app: Application): string => {
     const id = app._id || app.id;
     if (!id || id === "undefined" || id === "null" || id === "") {
-      console.error("❌ Invalid application ID:", app);
+      console.error("Invalid application ID:", app);
       return "";
     }
     return id;
@@ -284,7 +284,7 @@ const RecruiterDashboard = () => {
       const response = await api.post('/jobs', newJobData);
       if (response.data.success) {
         notifications.show({
-          title: "Success! 🎉",
+          title: "Success! ",
           message: "Job posted successfully",
           color: "green",
         });
@@ -413,10 +413,10 @@ const RecruiterDashboard = () => {
     openEditJobModal();
   };
 
-  // ✅ FIXED: Application status update with validation
+  // FIXED: Application status update with validation
   const updateApplicationStatus = async (appId: string, status: Application["status"]) => {
     if (!appId || appId === "undefined" || appId === "null" || appId === "") {
-      console.error("❌ Invalid application ID:", appId);
+      console.error("Invalid application ID:", appId);
       notifications.show({
         title: "Error",
         message: "Invalid application ID. Please refresh the page.",
@@ -445,10 +445,10 @@ const RecruiterDashboard = () => {
     }
   };
 
-  // ✅ FIXED: Toggle bookmark with validation
+  // FIXED: Toggle bookmark with validation
   const toggleBookmark = async (appId: string) => {
     if (!appId || appId === "undefined" || appId === "null" || appId === "") {
-      console.error("❌ Invalid application ID for bookmark:", appId);
+      console.error("Invalid application ID for bookmark:", appId);
       notifications.show({
         title: "Error",
         message: "Invalid application ID. Please refresh the page.",
