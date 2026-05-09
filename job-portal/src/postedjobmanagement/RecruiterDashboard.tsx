@@ -10,7 +10,6 @@ import {
   Select,
   ActionIcon,
   Menu,
-  SimpleGrid,
   Tabs,
   Avatar,
   Divider,
@@ -18,9 +17,7 @@ import {
   Tooltip,
   Skeleton,
   Alert,
-  Group,
   Stack,
-  MultiSelect,
   NumberInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -34,16 +31,13 @@ import {
   IconClock,
   IconStar,
   IconDotsVertical,
-  IconCopy,
   IconArchive,
   IconSend,
   IconEye,
   IconDownload,
   IconBuilding,
-  IconSettings,
   IconLogout,
   IconSearch,
-  IconCalendar,
   IconCheck,
   IconX,
   IconBookmark,
@@ -54,7 +48,6 @@ import {
   IconTrendingUp,
   IconUserCheck,
   IconCalendar as IconCalendarEvent,
-  IconChevronRight,
   IconTrophy,
   IconMoodHappy,
   IconVideo,
@@ -84,6 +77,7 @@ interface Job {
 
 interface Application {
   _id: string;
+  id?: string;
   jobId: string;
   jobTitle: string;
   company: string;
@@ -173,7 +167,6 @@ const RecruiterDashboard = () => {
     skills: [] as string[],
   });
 
-  // Load data from backend
   useEffect(() => {
     loadAllData();
   }, []);
@@ -210,7 +203,10 @@ const RecruiterDashboard = () => {
     try {
       const response = await api.get('/applications/recruiter');
       if (response.data.success) {
-        setApplications(response.data.applications);
+        console.log("✅ Loaded applications:", response.data.applications?.length);
+        setApplications(response.data.applications || []);
+      } else {
+        setApplications([]);
       }
     } catch (error) {
       console.error("Error loading applications:", error);
@@ -230,7 +226,16 @@ const RecruiterDashboard = () => {
     }
   };
 
-  // Skill management functions
+  // ✅ Helper function to safely get application ID - returns string, never undefined
+  const getAppId = (app: Application): string => {
+    const id = app._id || app.id;
+    if (!id || id === "undefined" || id === "null" || id === "") {
+      console.error("❌ Invalid application ID:", app);
+      return "";
+    }
+    return id;
+  };
+
   const addSkill = () => {
     if (skillInput && !newJobData.skills.includes(skillInput)) {
       setNewJobData({
@@ -265,7 +270,6 @@ const RecruiterDashboard = () => {
     });
   };
 
-  // Job CRUD operations
   const handleCreateJob = async () => {
     if (!newJobData.jobTitle || !newJobData.location || !newJobData.description) {
       notifications.show({
@@ -409,8 +413,18 @@ const RecruiterDashboard = () => {
     openEditJobModal();
   };
 
-  // Application status updates
+  // ✅ FIXED: Application status update with validation
   const updateApplicationStatus = async (appId: string, status: Application["status"]) => {
+    if (!appId || appId === "undefined" || appId === "null" || appId === "") {
+      console.error("❌ Invalid application ID:", appId);
+      notifications.show({
+        title: "Error",
+        message: "Invalid application ID. Please refresh the page.",
+        color: "red",
+      });
+      return;
+    }
+
     try {
       const response = await api.put(`/applications/${appId}/status`, { status });
       if (response.data.success) {
@@ -419,9 +433,10 @@ const RecruiterDashboard = () => {
           message: `Application marked as ${status}`,
           color: "green",
         });
-        loadApplications();
+        await loadApplications();
       }
     } catch (error: any) {
+      console.error("Error updating status:", error);
       notifications.show({
         title: "Error",
         message: error.response?.data?.message || "Failed to update status",
@@ -430,7 +445,18 @@ const RecruiterDashboard = () => {
     }
   };
 
+  // ✅ FIXED: Toggle bookmark with validation
   const toggleBookmark = async (appId: string) => {
+    if (!appId || appId === "undefined" || appId === "null" || appId === "") {
+      console.error("❌ Invalid application ID for bookmark:", appId);
+      notifications.show({
+        title: "Error",
+        message: "Invalid application ID. Please refresh the page.",
+        color: "red",
+      });
+      return;
+    }
+
     try {
       const response = await api.patch(`/applications/${appId}/bookmark`);
       if (response.data.success) {
@@ -439,9 +465,10 @@ const RecruiterDashboard = () => {
           message: response.data.isBookmarked ? "Candidate bookmarked" : "Bookmark removed",
           color: "blue",
         });
-        loadApplications();
+        await loadApplications();
       }
     } catch (error: any) {
+      console.error("Error updating bookmark:", error);
       notifications.show({
         title: "Error",
         message: error.response?.data?.message || "Failed to update bookmark",
@@ -450,12 +477,21 @@ const RecruiterDashboard = () => {
     }
   };
 
-  // Interview scheduling
   const sendInterviewInvite = async () => {
     if (!selectedApp || !interviewDate || !interviewTime) {
       notifications.show({
         title: "Missing Information",
         message: "Please fill all interview details",
+        color: "red",
+      });
+      return;
+    }
+
+    const appId = getAppId(selectedApp);
+    if (!appId) {
+      notifications.show({
+        title: "Error",
+        message: "Invalid application ID",
         color: "red",
       });
       return;
@@ -484,8 +520,8 @@ const RecruiterDashboard = () => {
         setInterviewDate("");
         setInterviewTime("");
         setInterviewLink("");
-        loadInterviews();
-        updateApplicationStatus(selectedApp._id, "interview");
+        await loadInterviews();
+        await updateApplicationStatus(appId, "interview");
       }
     } catch (error: any) {
       notifications.show({
@@ -496,28 +532,18 @@ const RecruiterDashboard = () => {
     }
   };
 
-  // Send message to candidate
   const sendMessage = async () => {
     if (!selectedApp || !messageText) return;
 
-    try {
-      notifications.show({
-        title: "Message Sent! ✉️",
-        message: `Message sent to ${selectedApp.candidateName}`,
-        color: "green",
-      });
-      setMessageModalOpen(false);
-      setMessageText("");
-    } catch (error) {
-      notifications.show({
-        title: "Error",
-        message: "Failed to send message",
-        color: "red",
-      });
-    }
+    notifications.show({
+      title: "Message Sent! ✉️",
+      message: `Message sent to ${selectedApp.candidateName}`,
+      color: "green",
+    });
+    setMessageModalOpen(false);
+    setMessageText("");
   };
 
-  // AI Screening
   const runAIScreening = async () => {
     setLoading(true);
     setTimeout(() => {
@@ -531,7 +557,6 @@ const RecruiterDashboard = () => {
     }, 2000);
   };
 
-  // Bulk download resumes
   const bulkDownloadResumes = () => {
     const shortlistedApps = applications.filter(app => app.status === "shortlisted");
     notifications.show({
@@ -541,9 +566,7 @@ const RecruiterDashboard = () => {
     });
   };
 
-  // Stats calculation
   const activeJobs = jobs.filter(job => job.status === "active");
-  const draftJobs = jobs.filter(job => job.status === "draft");
   const totalApplications = applications.length;
   const shortlistedApps = applications.filter(app => app.status === "shortlisted");
   const interviewApps = applications.filter(app => app.status === "interview");
@@ -555,8 +578,8 @@ const RecruiterDashboard = () => {
     if (selectedJob) filtered = filtered.filter(app => app.jobId === selectedJob._id);
     if (searchTerm) {
       filtered = filtered.filter(app =>
-        app.candidateName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        app.candidateEmail.toLowerCase().includes(searchTerm.toLowerCase())
+        app.candidateName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        app.candidateEmail?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     if (showBookmarkedOnly) filtered = filtered.filter(app => app.isBookmarked);
@@ -699,7 +722,11 @@ const RecruiterDashboard = () => {
                             </ActionIcon>
                           </Tooltip>
                           <Menu position="bottom-end">
-                            <Menu.Target><ActionIcon variant="light" size="lg"><IconDotsVertical size={18} /></ActionIcon></Menu.Target>
+                            <Menu.Target>
+                              <ActionIcon variant="light" size="lg">
+                                <IconDotsVertical size={18} />
+                              </ActionIcon>
+                            </Menu.Target>
                             <Menu.Dropdown>
                               <Menu.Item leftSection={<IconEdit size={14} />} onClick={() => handleEditJob(job)}>Edit Job</Menu.Item>
                               <Menu.Item leftSection={<IconSend size={14} />} onClick={() => handlePublishJob(job._id)}>Publish</Menu.Item>
@@ -722,80 +749,211 @@ const RecruiterDashboard = () => {
                 </div>
               </Tabs.Panel>
 
-              {/* Applications Tab */}
+              {/* ✅ FIXED: Applications Tab with proper TypeScript */}
               <Tabs.Panel value="applications">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center flex-wrap gap-3 p-4 bg-gray-50 rounded-xl">
                     <div className="flex gap-3 flex-wrap">
-                      <TextInput placeholder="Search candidates..." leftSection={<IconSearch size={16} />} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-64" radius="xl" />
-                      <Button variant={showBookmarkedOnly ? "filled" : "light"} color="yellow" onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)} leftSection={<IconBookmarkFilled size={16} />} radius="xl">Bookmarked</Button>
-                      <Button variant="light" color="blue" onClick={runAIScreening} leftSection={<IconRobot size={16} />} loading={loading} radius="xl">AI Screen</Button>
-                      <Button variant="light" color="green" onClick={bulkDownloadResumes} leftSection={<IconDownload size={16} />} radius="xl">Download</Button>
+                      <TextInput 
+                        placeholder="Search candidates..." 
+                        leftSection={<IconSearch size={16} />} 
+                        value={searchTerm} 
+                        onChange={(e) => setSearchTerm(e.target.value)} 
+                        className="w-64" 
+                        radius="xl" 
+                      />
+                      <Button 
+                        variant={showBookmarkedOnly ? "filled" : "light"} 
+                        color="yellow" 
+                        onClick={() => setShowBookmarkedOnly(!showBookmarkedOnly)} 
+                        leftSection={<IconBookmarkFilled size={16} />} 
+                        radius="xl"
+                      >
+                        Bookmarked
+                      </Button>
+                      <Button 
+                        variant="light" 
+                        color="blue" 
+                        onClick={runAIScreening} 
+                        leftSection={<IconRobot size={16} />} 
+                        loading={loading} 
+                        radius="xl"
+                      >
+                        AI Screen
+                      </Button>
+                      <Button 
+                        variant="light" 
+                        color="green" 
+                        onClick={bulkDownloadResumes} 
+                        leftSection={<IconDownload size={16} />} 
+                        radius="xl"
+                      >
+                        Download
+                      </Button>
                     </div>
                     <div className="text-sm text-gray-500">{filteredApps.length} candidates found</div>
                   </div>
 
-                  {paginatedApps.map((app) => (
-                    <div key={app._id} className="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all hover:border-blue-200">
-                      <div className="flex justify-between items-start">
-                        <div className="flex gap-3 flex-1">
-                          <Avatar size="lg" radius="xl" color="blue" className="shadow-md">{app.candidateName?.charAt(0) || "?"}</Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2 flex-wrap">
-                              <h4 className="font-semibold text-gray-900">{app.candidateName}</h4>
-                              {getStatusBadge(app.status)}
-                              {app.aiScore && <Badge color="blue" variant="light" size="sm"><IconRobot size={12} className="inline mr-1" /> AI: {app.aiScore}%</Badge>}
-                              {app.isBookmarked && <Badge color="yellow" variant="light" size="sm"><IconBookmarkFilled size={12} className="inline mr-1" /> Bookmarked</Badge>}
+                  {paginatedApps.map((app) => {
+                    // ✅ Get the correct application ID safely - use non-null assertion or check
+                    const applicationId = app._id || app.id || "";
+                    
+                    // Skip rendering if no valid ID
+                    if (!applicationId) {
+                      console.warn("Skipping application with no ID:", app);
+                      return null;
+                    }
+                    
+                    return (
+                      <div key={applicationId} className="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all hover:border-blue-200">
+                        <div className="flex justify-between items-start">
+                          <div className="flex gap-3 flex-1">
+                            <Avatar size="lg" radius="xl" color="blue" className="shadow-md">
+                              {app.candidateName?.charAt(0) || "?"}
+                            </Avatar>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                <h4 className="font-semibold text-gray-900">{app.candidateName}</h4>
+                                {getStatusBadge(app.status)}
+                                {app.aiScore && (
+                                  <Badge color="blue" variant="light" size="sm">
+                                    <IconRobot size={12} className="inline mr-1" /> AI: {app.aiScore}%
+                                  </Badge>
+                                )}
+                                {app.isBookmarked && (
+                                  <Badge color="yellow" variant="light" size="sm">
+                                    <IconBookmarkFilled size={12} className="inline mr-1" /> Bookmarked
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-sm text-gray-600">{app.candidateEmail}</p>
+                              <p className="text-sm text-gray-500 mt-1">{app.jobTitle}</p>
                             </div>
-                            <p className="text-sm text-gray-600">{app.candidateEmail} • {app.candidatePhone}</p>
-                            <p className="text-sm text-gray-500 mt-1">{app.jobTitle}</p>
+                          </div>
+                          <div className="flex gap-2 ml-2">
+                            {/* ✅ FIXED: Use applicationId (string, not undefined) */}
+                            <ActionIcon 
+                              variant="light" 
+                              color={app.isBookmarked ? "yellow" : "gray"} 
+                              onClick={() => toggleBookmark(applicationId)} 
+                              size="lg"
+                            >
+                              {app.isBookmarked ? <IconBookmarkFilled size={18} /> : <IconBookmark size={18} />}
+                            </ActionIcon>
+                            <Menu position="bottom-end">
+                              <Menu.Target>
+                                <ActionIcon variant="light" size="lg">
+                                  <IconDotsVertical size={18} />
+                                </ActionIcon>
+                              </Menu.Target>
+                              <Menu.Dropdown>
+                                <Menu.Item 
+                                  leftSection={<IconEye size={14} />} 
+                                  onClick={() => { setSelectedApp(app); openAppModal(); }}
+                                >
+                                  View Details
+                                </Menu.Item>
+                                <Menu.Item 
+                                  leftSection={<IconSend size={14} />} 
+                                  onClick={() => { setSelectedApp(app); setMessageModalOpen(true); }}
+                                >
+                                  Send Message
+                                </Menu.Item>
+                                <Menu.Item 
+                                  leftSection={<IconCalendarEvent size={14} />} 
+                                  onClick={() => { setSelectedApp(app); setInterviewModalOpen(true); }}
+                                >
+                                  Schedule Interview
+                                </Menu.Item>
+                                <Menu.Divider />
+                                <Menu.Item 
+                                  leftSection={<IconUserCheck size={14} />} 
+                                  color="green" 
+                                  onClick={() => updateApplicationStatus(applicationId, "shortlisted")}
+                                >
+                                  Shortlist
+                                </Menu.Item>
+                                <Menu.Item 
+                                  leftSection={<IconCalendarEvent size={14} />} 
+                                  color="blue" 
+                                  onClick={() => updateApplicationStatus(applicationId, "interview")}
+                                >
+                                  Interview
+                                </Menu.Item>
+                                <Menu.Item 
+                                  leftSection={<IconTrophy size={14} />} 
+                                  color="teal" 
+                                  onClick={() => updateApplicationStatus(applicationId, "hired")}
+                                >
+                                  Hire
+                                </Menu.Item>
+                                <Menu.Item 
+                                  leftSection={<IconX size={14} />} 
+                                  color="red" 
+                                  onClick={() => updateApplicationStatus(applicationId, "rejected")}
+                                >
+                                  Reject
+                                </Menu.Item>
+                              </Menu.Dropdown>
+                            </Menu>
                           </div>
                         </div>
-                        <div className="flex gap-2 ml-2">
-                          <ActionIcon variant="light" color={app.isBookmarked ? "yellow" : "gray"} onClick={() => toggleBookmark(app._id)} size="lg">
-                            {app.isBookmarked ? <IconBookmarkFilled size={18} /> : <IconBookmark size={18} />}
-                          </ActionIcon>
-                          <Menu position="bottom-end">
-                            <Menu.Target><ActionIcon variant="light" size="lg"><IconDotsVertical size={18} /></ActionIcon></Menu.Target>
-                            <Menu.Dropdown>
-                              <Menu.Item leftSection={<IconEye size={14} />} onClick={() => { setSelectedApp(app); openAppModal(); }}>View Details</Menu.Item>
-                              <Menu.Item leftSection={<IconSend size={14} />} onClick={() => { setSelectedApp(app); setMessageModalOpen(true); }}>Send Message</Menu.Item>
-                              <Menu.Item leftSection={<IconCalendarEvent size={14} />} onClick={() => { setSelectedApp(app); setInterviewModalOpen(true); }}>Schedule Interview</Menu.Item>
-                              <Menu.Divider />
-                              <Menu.Item leftSection={<IconUserCheck size={14} />} color="green" onClick={() => updateApplicationStatus(app._id, "shortlisted")}>Shortlist</Menu.Item>
-                              <Menu.Item leftSection={<IconCalendarEvent size={14} />} color="blue" onClick={() => updateApplicationStatus(app._id, "interview")}>Interview</Menu.Item>
-                              <Menu.Item leftSection={<IconTrophy size={14} />} color="teal" onClick={() => updateApplicationStatus(app._id, "hired")}>Hire</Menu.Item>
-                              <Menu.Item leftSection={<IconX size={14} />} color="red" onClick={() => updateApplicationStatus(app._id, "rejected")}>Reject</Menu.Item>
-                            </Menu.Dropdown>
-                          </Menu>
-                        </div>
                       </div>
+                    );
+                  })}
+                  {totalPages > 1 && (
+                    <div className="mt-4 flex justify-center">
+                      <Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} color="blue" radius="xl" />
                     </div>
-                  ))}
-                  {totalPages > 1 && <div className="mt-4 flex justify-center"><Pagination total={totalPages} value={currentPage} onChange={setCurrentPage} color="blue" radius="xl" /></div>}
+                  )}
                 </div>
               </Tabs.Panel>
 
-              {/* Shortlisted Tab */}
+              {/* Shortlisted Tab - ✅ FIXED */}
               <Tabs.Panel value="shortlisted">
-                {shortlistedApps.map((app) => (
-                  <div key={app._id} className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 mb-3">
-                    <div className="flex justify-between items-start">
-                      <div className="flex gap-3">
-                        <Avatar size="lg" radius="xl" color="green">{app.candidateName?.charAt(0) || "?"}</Avatar>
-                        <div>
-                          <h4 className="font-semibold text-gray-900">{app.candidateName}</h4>
-                          <p className="text-sm text-gray-600">{app.candidateEmail} • {app.candidatePhone}</p>
-                          <p className="text-sm text-gray-500">{app.jobTitle}</p>
+                {shortlistedApps.map((app) => {
+                  const applicationId = app._id || app.id || "";
+                  if (!applicationId) return null;
+                  
+                  return (
+                    <div key={applicationId} className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 mb-3">
+                      <div className="flex justify-between items-start">
+                        <div className="flex gap-3">
+                          <Avatar size="lg" radius="xl" color="green">
+                            {app.candidateName?.charAt(0) || "?"}
+                          </Avatar>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">{app.candidateName}</h4>
+                            <p className="text-sm text-gray-600">{app.candidateEmail}</p>
+                            <p className="text-sm text-gray-500">{app.jobTitle}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="xs" 
+                            variant="light" 
+                            color="blue" 
+                            onClick={() => { setSelectedApp(app); setInterviewModalOpen(true); }} 
+                            leftSection={<IconCalendarEvent size={14} />} 
+                            radius="xl"
+                          >
+                            Schedule Interview
+                          </Button>
+                          <Button 
+                            size="xs" 
+                            variant="light" 
+                            color="gray" 
+                            onClick={() => { setSelectedApp(app); openAppModal(); }} 
+                            leftSection={<IconEye size={14} />} 
+                            radius="xl"
+                          >
+                            View Profile
+                          </Button>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button size="xs" variant="light" color="blue" onClick={() => { setSelectedApp(app); setInterviewModalOpen(true); }} leftSection={<IconCalendarEvent size={14} />} radius="xl">Schedule Interview</Button>
-                        <Button size="xs" variant="light" color="gray" onClick={() => { setSelectedApp(app); openAppModal(); }} leftSection={<IconEye size={14} />} radius="xl">View Profile</Button>
-                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </Tabs.Panel>
 
               {/* Interviews Tab */}
@@ -807,12 +965,31 @@ const RecruiterDashboard = () => {
                         <h4 className="font-semibold text-gray-900">{interview.candidateName}</h4>
                         <p className="text-sm text-gray-600">{interview.jobTitle}</p>
                         <div className="flex gap-2 mt-2">
-                          <Badge color="blue" size="sm" leftSection={<IconCalendarEvent size={12} />}>{new Date(interview.date).toLocaleDateString()}</Badge>
-                          <Badge color="gray" size="sm" leftSection={<IconClock size={12} />}>{interview.time}</Badge>
-                          <Badge variant="light" size="sm" leftSection={interview.mode === "online" ? <IconVideo size={12} /> : <IconBuilding size={12} />}>{interview.mode === "online" ? "Online" : "In-Person"}</Badge>
+                          <Badge color="blue" size="sm" leftSection={<IconCalendarEvent size={12} />}>
+                            {new Date(interview.date).toLocaleDateString()}
+                          </Badge>
+                          <Badge color="gray" size="sm" leftSection={<IconClock size={12} />}>
+                            {interview.time}
+                          </Badge>
+                          <Badge variant="light" size="sm" leftSection={interview.mode === "online" ? <IconVideo size={12} /> : <IconBuilding size={12} />}>
+                            {interview.mode === "online" ? "Online" : "In-Person"}
+                          </Badge>
                         </div>
                       </div>
-                      {interview.link && <Button component="a" href={interview.link} target="_blank" size="xs" variant="light" color="blue" leftSection={<IconVideo size={14} />} radius="xl">Join Meeting</Button>}
+                      {interview.link && (
+                        <Button 
+                          component="a" 
+                          href={interview.link} 
+                          target="_blank" 
+                          size="xs" 
+                          variant="light" 
+                          color="blue" 
+                          leftSection={<IconVideo size={14} />} 
+                          radius="xl"
+                        >
+                          Join Meeting
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -821,69 +998,63 @@ const RecruiterDashboard = () => {
           </Tabs>
         </Card>
 
-        {/* Post Job Modal - FIXED */}
+        {/* Post Job Modal */}
         <Modal opened={jobModalOpen} onClose={closeJobModal} title="Post a New Job" size="lg" radius="lg">
           <Stack gap="md">
             <TextInput 
               label="Job Title" 
               placeholder="e.g., Senior Frontend Developer" 
               value={newJobData.jobTitle} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewJobData({ ...newJobData, jobTitle: e.target.value })} 
+              onChange={(e) => setNewJobData({ ...newJobData, jobTitle: e.target.value })} 
               required 
             />
-            
             <TextInput 
               label="Location" 
               placeholder="e.g., New York, NY / Remote" 
               value={newJobData.location} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewJobData({ ...newJobData, location: e.target.value })} 
+              onChange={(e) => setNewJobData({ ...newJobData, location: e.target.value })} 
               required 
             />
-            
             <Select 
               label="Job Type" 
               data={["Full-time", "Part-time", "Contract", "Internship"]} 
               value={newJobData.jobType} 
-              onChange={(val: string | null) => setNewJobData({ ...newJobData, jobType: val || "Full-time" })} 
+              onChange={(val) => setNewJobData({ ...newJobData, jobType: val || "Full-time" })} 
             />
-            
             <TextInput 
               label="Salary Range" 
               placeholder="e.g., $80k - $120k" 
               value={newJobData.salary} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewJobData({ ...newJobData, salary: e.target.value })} 
+              onChange={(e) => setNewJobData({ ...newJobData, salary: e.target.value })} 
             />
-            
             <TextInput 
               label="Experience Required" 
               placeholder="e.g., 3-5 years" 
               value={newJobData.experience} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewJobData({ ...newJobData, experience: e.target.value })} 
+              onChange={(e) => setNewJobData({ ...newJobData, experience: e.target.value })} 
             />
-            
             <Textarea 
               label="Job Description" 
               placeholder="Detailed job description..." 
               rows={4} 
               value={newJobData.description} 
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewJobData({ ...newJobData, description: e.target.value })} 
+              onChange={(e) => setNewJobData({ ...newJobData, description: e.target.value })} 
               required 
             />
-            
             <div>
               <label className="block text-sm font-medium mb-1">Skills Required</label>
               <div className="flex gap-2 mb-2">
                 <TextInput 
                   placeholder="Add a skill" 
                   value={skillInput} 
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSkillInput(e.target.value)} 
+                  onChange={(e) => setSkillInput(e.target.value)} 
                   className="flex-1" 
-                  onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && addSkill()} 
+                  onKeyPress={(e) => e.key === 'Enter' && addSkill()} 
                 />
                 <Button onClick={addSkill} size="sm">Add</Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {newJobData.skills.map((skill: string, idx: number) => (
+                {newJobData.skills.map((skill, idx) => (
                   <Badge 
                     key={idx} 
                     size="lg" 
@@ -896,14 +1067,12 @@ const RecruiterDashboard = () => {
                 ))}
               </div>
             </div>
-            
             <NumberInput 
               label="Number of Openings" 
               min={1} 
               value={newJobData.openings} 
-              onChange={(val: number | string) => setNewJobData({ ...newJobData, openings: Number(val) || 1 })} 
+              onChange={(val) => setNewJobData({ ...newJobData, openings: Number(val) || 1 })} 
             />
-            
             <Button onClick={handleCreateJob} color="blue" fullWidth radius="xl">
               Post Job
             </Button>
@@ -916,33 +1085,33 @@ const RecruiterDashboard = () => {
             <TextInput 
               label="Job Title" 
               value={editFormData.jobTitle} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditFormData({ ...editFormData, jobTitle: e.target.value })} 
+              onChange={(e) => setEditFormData({ ...editFormData, jobTitle: e.target.value })} 
             />
             <TextInput 
               label="Location" 
               value={editFormData.location} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditFormData({ ...editFormData, location: e.target.value })} 
+              onChange={(e) => setEditFormData({ ...editFormData, location: e.target.value })} 
             />
             <Select 
               label="Job Type" 
               data={["Full-time", "Part-time", "Contract"]} 
               value={editFormData.jobType} 
-              onChange={(val: string | null) => setEditFormData({ ...editFormData, jobType: val || "Full-time" })} 
+              onChange={(val) => setEditFormData({ ...editFormData, jobType: val || "Full-time" })} 
             />
             <TextInput 
               label="Salary Range" 
               value={editFormData.salary} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditFormData({ ...editFormData, salary: e.target.value })} 
+              onChange={(e) => setEditFormData({ ...editFormData, salary: e.target.value })} 
             />
             <TextInput 
               label="Experience Required" 
               value={editFormData.experience} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditFormData({ ...editFormData, experience: e.target.value })} 
+              onChange={(e) => setEditFormData({ ...editFormData, experience: e.target.value })} 
             />
             <Textarea 
               label="Description" 
               value={editFormData.description} 
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditFormData({ ...editFormData, description: e.target.value })} 
+              onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })} 
               rows={4} 
             />
             <div>
@@ -951,14 +1120,14 @@ const RecruiterDashboard = () => {
                 <TextInput 
                   placeholder="Add a skill" 
                   value={skillInput} 
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSkillInput(e.target.value)} 
+                  onChange={(e) => setSkillInput(e.target.value)} 
                   className="flex-1" 
-                  onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && addEditSkill()} 
+                  onKeyPress={(e) => e.key === 'Enter' && addEditSkill()} 
                 />
                 <Button onClick={addEditSkill} size="sm">Add</Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {editFormData.skills.map((skill: string, idx: number) => (
+                {editFormData.skills.map((skill, idx) => (
                   <Badge 
                     key={idx} 
                     size="lg" 
@@ -975,7 +1144,7 @@ const RecruiterDashboard = () => {
               label="Number of Openings" 
               min={1} 
               value={editFormData.openings} 
-              onChange={(val: number | string) => setEditFormData({ ...editFormData, openings: Number(val) || 1 })} 
+              onChange={(val) => setEditFormData({ ...editFormData, openings: Number(val) || 1 })} 
             />
             <div className="flex gap-3 pt-4">
               <Button onClick={handleUpdateJob} fullWidth color="blue">Save Changes</Button>
@@ -989,21 +1158,41 @@ const RecruiterDashboard = () => {
           {selectedApp && (
             <Stack gap="md">
               <div className="flex gap-4 items-center">
-                <Avatar size="xl" radius="xl" color="blue">{selectedApp.candidateName?.charAt(0) || "?"}</Avatar>
-                <div><h3 className="text-xl font-bold">{selectedApp.candidateName}</h3><p className="text-gray-500">{selectedApp.candidateEmail}</p><p className="text-gray-500">{selectedApp.candidatePhone}</p></div>
+                <Avatar size="xl" radius="xl" color="blue">
+                  {selectedApp.candidateName?.charAt(0) || "?"}
+                </Avatar>
+                <div>
+                  <h3 className="text-xl font-bold">{selectedApp.candidateName}</h3>
+                  <p className="text-gray-500">{selectedApp.candidateEmail}</p>
+                  <p className="text-gray-500">{selectedApp.candidatePhone}</p>
+                </div>
               </div>
               <Divider />
               <div><strong>Position:</strong><p className="text-gray-600 mt-1">{selectedApp.jobTitle}</p></div>
               <div><strong>Experience:</strong><p className="text-gray-600 mt-1">{selectedApp.experience || "Not specified"}</p></div>
               <div><strong>Skills:</strong><p className="text-gray-600 mt-1">{selectedApp.skills || "Not specified"}</p></div>
               <div><strong>Expected Salary:</strong><p className="text-gray-600 mt-1">{selectedApp.expectedSalary || "Negotiable"}</p></div>
-              {selectedApp.coverLetter && <div><strong>Cover Letter:</strong><p className="text-gray-600 mt-1">{selectedApp.coverLetter}</p></div>}
+              {selectedApp.coverLetter && (
+                <div><strong>Cover Letter:</strong><p className="text-gray-600 mt-1">{selectedApp.coverLetter}</p></div>
+              )}
               <Divider />
               <div className="flex gap-2 flex-wrap">
-                <Button color="green" onClick={() => updateApplicationStatus(selectedApp._id, "shortlisted")}>Shortlist</Button>
-                <Button color="blue" onClick={() => updateApplicationStatus(selectedApp._id, "interview")}>Interview</Button>
-                <Button color="teal" onClick={() => updateApplicationStatus(selectedApp._id, "hired")}>Hire</Button>
-                <Button color="red" variant="light" onClick={() => updateApplicationStatus(selectedApp._id, "rejected")}>Reject</Button>
+                <Button color="green" onClick={() => {
+                  const id = getAppId(selectedApp);
+                  if (id) updateApplicationStatus(id, "shortlisted");
+                }}>Shortlist</Button>
+                <Button color="blue" onClick={() => {
+                  const id = getAppId(selectedApp);
+                  if (id) updateApplicationStatus(id, "interview");
+                }}>Interview</Button>
+                <Button color="teal" onClick={() => {
+                  const id = getAppId(selectedApp);
+                  if (id) updateApplicationStatus(id, "hired");
+                }}>Hire</Button>
+                <Button color="red" variant="light" onClick={() => {
+                  const id = getAppId(selectedApp);
+                  if (id) updateApplicationStatus(id, "rejected");
+                }}>Reject</Button>
               </div>
             </Stack>
           )}
@@ -1012,19 +1201,52 @@ const RecruiterDashboard = () => {
         {/* Schedule Interview Modal */}
         <Modal opened={interviewModalOpen} onClose={() => setInterviewModalOpen(false)} title="Schedule Interview" centered>
           <Stack gap="md">
-            <TextInput label="Date" placeholder="YYYY-MM-DD" value={interviewDate} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInterviewDate(e.target.value)} leftSection={<IconCalendarEvent size={14} />} />
-            <TextInput label="Time" placeholder="10:00 AM" value={interviewTime} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInterviewTime(e.target.value)} leftSection={<IconClock size={14} />} />
-            <Select label="Mode" data={[{ value: "online", label: "Online" }, { value: "offline", label: "Offline" }]} value={interviewMode} onChange={(val: string | null) => setInterviewMode(val as "online" | "offline")} />
-            {interviewMode === "online" && <TextInput label="Meeting Link" placeholder="https://meet.google.com/..." value={interviewLink} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInterviewLink(e.target.value)} />}
-            <Button onClick={sendInterviewInvite} color="blue" fullWidth radius="xl">Send Invitation</Button>
+            <TextInput 
+              label="Date" 
+              placeholder="YYYY-MM-DD" 
+              value={interviewDate} 
+              onChange={(e) => setInterviewDate(e.target.value)} 
+              leftSection={<IconCalendarEvent size={14} />} 
+            />
+            <TextInput 
+              label="Time" 
+              placeholder="10:00 AM" 
+              value={interviewTime} 
+              onChange={(e) => setInterviewTime(e.target.value)} 
+              leftSection={<IconClock size={14} />} 
+            />
+            <Select 
+              label="Mode" 
+              data={[{ value: "online", label: "Online" }, { value: "offline", label: "Offline" }]} 
+              value={interviewMode} 
+              onChange={(val) => setInterviewMode(val as "online" | "offline")} 
+            />
+            {interviewMode === "online" && (
+              <TextInput 
+                label="Meeting Link" 
+                placeholder="https://meet.google.com/..." 
+                value={interviewLink} 
+                onChange={(e) => setInterviewLink(e.target.value)} 
+              />
+            )}
+            <Button onClick={sendInterviewInvite} color="blue" fullWidth radius="xl">
+              Send Invitation
+            </Button>
           </Stack>
         </Modal>
 
         {/* Send Message Modal */}
         <Modal opened={messageModalOpen} onClose={() => setMessageModalOpen(false)} title="Send Message" centered>
           <Stack gap="md">
-            <Textarea rows={4} value={messageText} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessageText(e.target.value)} placeholder="Type your message..." />
-            <Button onClick={sendMessage} color="blue" fullWidth radius="xl">Send Message</Button>
+            <Textarea 
+              rows={4} 
+              value={messageText} 
+              onChange={(e) => setMessageText(e.target.value)} 
+              placeholder="Type your message..." 
+            />
+            <Button onClick={sendMessage} color="blue" fullWidth radius="xl">
+              Send Message
+            </Button>
           </Stack>
         </Modal>
 
