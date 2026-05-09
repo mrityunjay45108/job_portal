@@ -103,7 +103,7 @@ const ProfileMenu = () => {
                 ? 'bg-purple-100 text-purple-700' 
                 : 'bg-green-100 text-green-700'
             }`}>
-              {user.role === 'recruiter' ? '👔 Recruiter' : '🎯 Candidate'}
+              {user.role === 'recruiter' ? 'Recruiter' : '🎯Candidate'}
             </span>
           </div>
         )}

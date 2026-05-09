@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "dev": "concurrently \"npm run start\" \"cd resume-analyzer && streamlit run app.py\"",
+    "resume-analyzer": "cd resume-analyzer && streamlit run app.py"
+  }
+}

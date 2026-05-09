@@ -67,8 +67,8 @@ app.use('*', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`📍 http://localhost:${PORT}`);
-  console.log(`📝 Test GET: http://localhost:${PORT}/api/test`);
-  console.log(`📝 Test POST: http://localhost:${PORT}/api/test-body`);
+  console.log(` Server running on port ${PORT}`);
+  console.log(` http://localhost:${PORT}`);
+  console.log(` Test GET: http://localhost:${PORT}/api/test`);
+  console.log(` Test POST: http://localhost:${PORT}/api/test-body`);
 });

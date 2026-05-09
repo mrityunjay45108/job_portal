@@ -517,7 +517,7 @@ const CandidateDashboard = () => {
 
       if (response.data.success) {
         notifications.show({
-          title: "Application Submitted! 🎉",
+          title: "Application Submitted! ",
           message: `Your application for ${selectedJob.jobTitle} has been sent.`,
           color: "green",
         });
@@ -768,7 +768,7 @@ const CandidateDashboard = () => {
               </Text>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-              Welcome back, {getFirstName()}! 👋
+              Welcome back, {getFirstName()}! 
             </h1>
             <p className="text-gray-500 mt-1">Track your applications and discover new opportunities</p>
           </div>
@@ -1216,12 +1216,12 @@ const CandidateDashboard = () => {
                 <Badge color={selectedJob.urgentHiring ? "red" : "blue"}>{selectedJob.urgentHiring ? "Urgent" : selectedJob.jobType}</Badge>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div><strong>💰 Salary:</strong> {selectedJob.salary}</div>
-                <div><strong>📅 Experience:</strong> {selectedJob.experience}</div>
-                <div><strong>📊 Type:</strong> {selectedJob.jobType}</div>
+                <div><strong>Salary:</strong> {selectedJob.salary}</div>
+                <div><strong>Experience:</strong> {selectedJob.experience}</div>
+                <div><strong>Type:</strong> {selectedJob.jobType}</div>
                 <div><strong>👥 Applicants:</strong> {selectedJob.applicants || 0}</div>
               </div>
-              <div><strong>📝 Description:</strong><p className="text-gray-700 mt-1">{selectedJob.description}</p></div>
+              <div><strong> Description:</strong><p className="text-gray-700 mt-1">{selectedJob.description}</p></div>
               <div>
                 <strong>🛠 Skills:</strong>
                 <div className="flex flex-wrap gap-2 mt-2">{selectedJob.skills?.map((s) => (<Badge key={s} variant="light" color="blue">{s}</Badge>))}</div>
