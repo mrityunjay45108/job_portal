@@ -176,11 +176,11 @@ const Footer = () => {
               <div className="mt-4 pt-2">
                 <div className="flex items-center gap-2 text-xs text-gray-400">
                   <IconMail size={12} />
-                  <span>careers@jobseekers.com</span>
+                  <span>sushmakumari685@gmail.com</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
                   <IconPhone size={12} />
-                  <span>+91 123 456 7890</span>
+                  <span>+91 7324882560</span>
                 </div>
               </div>
             </div>

@@ -92,13 +92,13 @@
 //               </p>
 //               <div className="flex flex-wrap gap-3">
 //                 <Button variant="outline" color="blue" size="sm" className="border-blue-300">
-//                   📚 View FAQ
+//                    View FAQ
 //                 </Button>
 //                 <Button variant="light" color="blue" size="sm">
-//                   💬 Live Chat Support
+//                    Live Chat Support
 //                 </Button>
 //                 <Button variant="subtle" color="blue" size="sm">
-//                   📧 Email Support
+//                   Email Support
 //                 </Button>
 //               </div>
 //             </div>
