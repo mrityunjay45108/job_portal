@@ -1,4 +1,3 @@
-
 import { 
   IconBriefcase, 
   IconBellRinging, 
@@ -66,7 +65,7 @@ const Header = () => {
     } else if (isAuthenticated && user?.role === "recruiter") {
       return [
         ...commonLinks,
-        // { label: "Post a Job", href: "/post-job", icon: <IconBuilding size={18} /> },
+        // ❌ Post a Job removed from here
         { label: "My Jobs", href: "/Posted-Jobs", icon: <IconClipboardList size={18} /> },
         { label: "Dashboard", href: "/Recruiter-Dashboard", icon: <IconChartBar size={18} /> }
       ];
@@ -179,24 +178,14 @@ const Header = () => {
         
         {isAuthenticated && user?.role === "recruiter" && (
           <>
+            {/* ❌ Post a Job link completely removed from desktop navigation */}
             <Link
-              to="/post-job"
+              to="/Posted-Jobs"
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                location.pathname === "/post-job"
+                location.pathname === "/Posted-Jobs"
                   ? "bg-blue-600 text-white shadow-md"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
               }`}
-            // >
-            //   <IconBuilding size={18} />
-            //   <span>Post a Job</span>
-            // </Link>
-            // <Link
-            //   to="/Posted-Jobs"
-            //   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-            //     location.pathname === "/Posted-Jobs"
-            //       ? "bg-blue-600 text-white shadow-md"
-            //       : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-            //   }`}
             >
               <IconClipboardList size={18} />
               <span>My Jobs</span>
@@ -302,12 +291,7 @@ const Header = () => {
                 
                 {user?.role === "recruiter" && (
                   <>
-                    <Menu.Item 
-                      leftSection={<IconBuilding size={16} />}
-                      onClick={() => navigate("/post-job")}
-                    >
-                      Post a Job
-                    </Menu.Item>
+                    {/* ❌ Post a Job removed from dropdown menu */}
                     <Menu.Item 
                       leftSection={<IconClipboardList size={16} />}
                       onClick={() => navigate("/Posted-Jobs")}
@@ -513,16 +497,7 @@ const Header = () => {
               
               {user?.role === "recruiter" && (
                 <>
-                  <button
-                    onClick={() => {
-                      close();
-                      navigate("/post-job");
-                    }}
-                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 w-full text-left"
-                  >
-                    <IconBuilding size={18} />
-                    <span>Post a Job</span>
-                  </button>
+                  {/* ❌ Post a Job removed from mobile drawer */}
                   <button
                     onClick={() => {
                       close();
