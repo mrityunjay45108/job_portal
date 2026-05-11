@@ -92,7 +92,7 @@
 //       {urgentHiring && (
 //         <div className="absolute top-3 right-3">
 //           <Badge color="red" size="sm" variant="filled" className="animate-pulse">
-//             ⚡ Urgent
+//              Urgent
 //           </Badge>
 //         </div>
 //       )}

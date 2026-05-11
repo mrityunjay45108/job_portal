@@ -1042,13 +1042,13 @@ const ResumeBuilder = () => {
                         </p>
                         <div className="flex flex-wrap justify-center gap-4 mt-3 text-sm text-gray-500">
                           {personalInfo.email && (
-                            <span>📧 {personalInfo.email}</span>
+                            <span> {personalInfo.email}</span>
                           )}
                           {personalInfo.phone && (
-                            <span>📞 {personalInfo.phone}</span>
+                            <span> {personalInfo.phone}</span>
                           )}
                           {personalInfo.location && (
-                            <span>📍 {personalInfo.location}</span>
+                            <span>{personalInfo.location}</span>
                           )}
                         </div>
                       </div>
@@ -1151,7 +1151,7 @@ const ResumeBuilder = () => {
                                     )}
                                     {edu.percentage && (
                                       <span>
-                                        📊 Percentage: {edu.percentage}
+                                         Percentage: {edu.percentage}
                                       </span>
                                     )}
                                   </div>

@@ -51,8 +51,8 @@ const RecruitmentForm = () => {
     recruiter: "",
   });
 
-  const WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/27557294/4ysr4jf/";
-  const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
+  // API endpoint - This doesn't expose the webhook URL
+  const API_ENDPOINT = "/api/submit-application";
 
   // Simulate page loading
   React.useEffect(() => {
@@ -76,6 +76,14 @@ const RecruitmentForm = () => {
     setSuccess(false);
     setErrorMessage("");
 
+    // Basic validation
+    if (!formData.name || !formData.email || !formData.mobile_number) {
+      setErrorMessage("Please fill all required fields");
+      setShowErrorModal(true);
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       name: formData.name,
       email: formData.email,
@@ -89,54 +97,49 @@ const RecruitmentForm = () => {
       source: "Recruitment Form",
     };
 
-    console.log("📤 Sending data to Zapier:", payload);
+    console.log("📤 Sending data to backend:", payload);
 
     try {
-      let response;
-      try {
-        response = await fetch(WEBHOOK_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-      } catch (firstError) {
-        console.log("First attempt failed, trying with proxy...");
-        response = await fetch(CORS_PROXY + WEBHOOK_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
-      }
-
-      console.log("✅ Request sent successfully!");
-      setSuccess(true);
-      setShowSuccessModal(true); // Show success popup
-      
-      setFormData({
-        name: "",
-        email: "",
-        mobile_number: "",
-        whatsapp_number: "",
-        state: "",
-        qualification: "",
-        candidate: "",
-        recruiter: "",
+      // Call backend API instead of directly calling Zapier
+      const response = await fetch(API_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
-      
-      setTimeout(() => {
-        setSuccess(false);
-        setShowSuccessModal(false);
-      }, 3000);
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        console.log("Application submitted successfully!");
+        setSuccess(true);
+        setShowSuccessModal(true);
+        
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          mobile_number: "",
+          whatsapp_number: "",
+          state: "",
+          qualification: "",
+          candidate: "",
+          recruiter: "",
+        });
+        
+        setTimeout(() => {
+          setSuccess(false);
+          setShowSuccessModal(false);
+        }, 3000);
+      } else {
+        throw new Error(data.error || "Submission failed");
+      }
       
     } catch (error) {
-      console.error("❌ Network Error:", error);
+      console.error("Error:", error);
       setErrorMessage("Unable to submit. Please try again.");
-      setShowErrorModal(true); // Show error popup
+      setShowErrorModal(true);
       
       setTimeout(() => {
         setShowErrorModal(false);
@@ -149,7 +152,6 @@ const RecruitmentForm = () => {
   // Skeleton Loader Component
   const FormSkeleton = () => (
     <div className="space-y-6">
-      {/* Header Skeleton */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-10">
         <div className="flex items-center gap-4">
           <Skeleton height={64} width={64} radius="xl" />
@@ -161,7 +163,6 @@ const RecruitmentForm = () => {
         <Skeleton height={56} width={280} radius="xl" />
       </div>
 
-      {/* Form Fields Skeleton */}
       <Grid gutter="xl">
         {[1, 2, 3, 4, 5, 6].map((item) => (
           <Grid.Col key={item} span={{ base: 12, md: 6 }}>
@@ -199,7 +200,6 @@ const RecruitmentForm = () => {
     </div>
   );
 
-  // Hero Section Skeleton
   const HeroSkeleton = () => (
     <div className="mb-8">
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl overflow-hidden">
@@ -307,14 +307,11 @@ const RecruitmentForm = () => {
           </div>
         </Modal>
 
-        {/* COMPACT HERO SECTION - REDESIGNED */}
+        {/* COMPACT HERO SECTION */}
         <div className="mb-8">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl overflow-hidden">
-            
-            {/* Main Content */}
             <div className="px-6 py-8 md:px-10 md:py-8">
               
-              {/* Badge */}
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 mb-4">
                 <IconBriefcase size={14} className="text-yellow-300" />
                 <span className="text-white font-bold text-xs uppercase tracking-wider">
@@ -322,7 +319,6 @@ const RecruitmentForm = () => {
                 </span>
               </div>
 
-              {/* Title Row */}
               <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
                 <div>
                   <h1 className="text-3xl md:text-4xl font-black text-white leading-tight">
@@ -335,7 +331,6 @@ const RecruitmentForm = () => {
                   </p>
                 </div>
                 
-                {/* Stats */}
                 <div className="flex gap-3">
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl px-3 py-2 text-center min-w-[70px]">
                     <div className="text-white font-bold text-lg">10K+</div>
@@ -348,7 +343,6 @@ const RecruitmentForm = () => {
                 </div>
               </div>
 
-              {/* Features - Compact Row */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6 pt-4 border-t border-white/20">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center">
@@ -398,7 +392,6 @@ const RecruitmentForm = () => {
         <div className="max-w-6xl mx-auto">
           <Paper radius={40} p="xl" className="border border-gray-200 shadow-2xl bg-white">
 
-            {/* HEADER */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-10">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
@@ -422,26 +415,11 @@ const RecruitmentForm = () => {
               </div>
             </div>
 
-            {/* SUCCESS MESSAGE - Keep as is */}
-            {success && (
-              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-2xl text-green-700">
-                ✅ Registration successful! We'll notify you about future opportunities.
-              </div>
-            )}
-
-            {/* ERROR MESSAGE - Keep as is */}
-            {errorMessage && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700">
-                ❌ {errorMessage}
-              </div>
-            )}
-
-            {/* FORM */}
             <form onSubmit={handleSubmit}>
               <Grid gutter="xl">
                 <Grid.Col span={{ base: 12, md: 6 }}>
                   <TextInput
-                    label="Full Name"
+                    label="Full Name *"
                     placeholder="Enter your full name"
                     name="name"
                     value={formData.name}
@@ -455,7 +433,7 @@ const RecruitmentForm = () => {
 
                 <Grid.Col span={{ base: 12, md: 6 }}>
                   <TextInput
-                    label="Email Address"
+                    label="Email Address *"
                     placeholder="Enter your email"
                     type="email"
                     name="email"
@@ -470,7 +448,7 @@ const RecruitmentForm = () => {
 
                 <Grid.Col span={{ base: 12, md: 6 }}>
                   <TextInput
-                    label="Mobile Number"
+                    label="Mobile Number *"
                     placeholder="Enter mobile number"
                     name="mobile_number"
                     value={formData.mobile_number}
@@ -489,7 +467,6 @@ const RecruitmentForm = () => {
                     name="whatsapp_number"
                     value={formData.whatsapp_number}
                     onChange={handleChange}
-                    required
                     size="lg"
                     radius="xl"
                     leftSection={<IconPhone size={18} />}
@@ -507,7 +484,6 @@ const RecruitmentForm = () => {
                         state: value || "",
                       }))
                     }
-                    required
                     size="lg"
                     radius="xl"
                     leftSection={<IconMapPin size={18} />}
@@ -530,7 +506,6 @@ const RecruitmentForm = () => {
                         qualification: value || "",
                       }))
                     }
-                    required
                     size="lg"
                     radius="xl"
                     leftSection={<IconSchool size={18} />}
@@ -543,7 +518,7 @@ const RecruitmentForm = () => {
 
                 <Grid.Col span={12}>
                   <Text fw={700} size="sm" mb={10}>
-                    Are you currently looking for opportunities?
+                    Are you currently looking for opportunities? *
                   </Text>
                   <Radio.Group
                     value={formData.candidate}
@@ -563,7 +538,7 @@ const RecruitmentForm = () => {
 
                 <Grid.Col span={12}>
                   <Text fw={700} size="sm" mb={10}>
-                    Are you a recruiter or hiring manager?
+                    Are you a recruiter or hiring manager? *
                   </Text>
                   <Radio.Group
                     value={formData.recruiter}

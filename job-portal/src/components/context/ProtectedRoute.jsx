@@ -1,6 +1,6 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const { isAuthenticated, user, loading } = useAuth();
@@ -23,9 +23,9 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   // Role-based access control
   if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
     // Redirect to appropriate dashboard based on role
-    if (user?.role === 'candidate') {
+    if (user?.role === "candidate") {
       return <Navigate to="/candidate-dashboard" replace />;
-    } else if (user?.role === 'recruiter') {
+    } else if (user?.role === "recruiter") {
       return <Navigate to="/Recruiter-Dashboard" replace />;
     }
     return <Navigate to="/" replace />;

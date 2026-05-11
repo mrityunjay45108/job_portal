@@ -8,7 +8,7 @@
 //   <div className="group bg-white p-5 rounded-2xl border border-gray-200 text-center hover:shadow-lg hover:border-blue-300 transition-all duration-300">
 //     <div className="flex justify-center mb-3">
 //       <div className="p-2 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-colors">
-//         {icon || <span className="text-2xl">📊</span>}
+//         {icon || <span className="text-2xl"></span>}
 //       </div>
 //     </div>
 //     <p className="text-2xl md:text-3xl font-bold text-blue-600 mb-1">{value}</p>

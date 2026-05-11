@@ -139,7 +139,7 @@ const ResumeAnalyzerPage = () => {
               </Text>
             </Alert>
 
-            {/* ✅ Embed Streamlit app in iframe - stays inside React app */}
+            {/* Embed Streamlit app in iframe - stays inside React app */}
             <Paper className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
               <iframe
                 src={analyzerUrl}

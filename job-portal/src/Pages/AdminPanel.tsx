@@ -80,7 +80,7 @@ const AdminPanel = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [adminData, setAdminData] = useState<any>(null);
 
-  // ✅ Correct way: useEffect instead of useState
+  //  Correct way: useEffect instead of useState
   useEffect(() => {
     const data = localStorage.getItem('adminData');
     if (data) {

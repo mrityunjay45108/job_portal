@@ -43,9 +43,7 @@ const AdminLogin = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   
-  // Add ref to prevent multiple submissions
   const isSubmitting = useRef(false);
-
   const handleLogin = async () => {
     // Prevent multiple simultaneous submissions
     if (loading || isSubmitting.current) {
@@ -87,7 +85,7 @@ const AdminLogin = () => {
     isSubmitting.current = true;
     
     try {
-      console.log("📝 Sending admin login request for:", email);
+      console.log("Sending admin login request for:", email);
       const response = await adminApi.post('/login', { email, password });
       
       console.log("Admin login response:", response.data);
@@ -97,7 +95,7 @@ const AdminLogin = () => {
         localStorage.setItem('adminData', JSON.stringify(response.data.admin));
         
         notifications.show({
-          title: "Welcome Admin! 👋",
+          title: "Welcome Admin! ",
           message: `Successfully logged in as ${response.data.admin.fullName}`,
           color: "green",
           autoClose: 2000,

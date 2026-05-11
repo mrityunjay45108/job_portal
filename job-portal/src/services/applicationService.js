@@ -8,7 +8,6 @@ export const applyForJob = async (applicationData) => {
     return error.response?.data || { success: false, message: 'Failed to apply' };
   }
 };
-
 export const getMyApplications = async () => {
   try {
     const response = await api.get('/applications/my-applications');

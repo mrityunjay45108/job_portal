@@ -1,17 +1,17 @@
 // import { useState, useEffect } from "react";
 // import {
-//   Container, Grid, Card, Text, Badge, Button, Group, 
-//   Avatar, Tabs, Divider, SimpleGrid, Skeleton, Modal, 
+//   Container, Grid, Card, Text, Badge, Button, Group,
+//   Avatar, Tabs, Divider, SimpleGrid, Skeleton, Modal,
 //   TextInput, Textarea, FileInput, Alert, LoadingOverlay,
-//   Paper, ActionIcon, Tooltip, Select, ThemeIcon, 
+//   Paper, ActionIcon, Tooltip, Select, ThemeIcon,
 //   Progress, Chip, Stack
 // } from "@mantine/core";
 // import {
-//   IconMapPin, IconWorld, IconBuilding, IconBriefcase, 
+//   IconMapPin, IconWorld, IconBuilding, IconBriefcase,
 //   IconSend, IconCheck, IconAlertCircle, IconUpload,
 //   IconUser, IconMail, IconPhone, IconCurrencyDollar,
 //   IconClock, IconStar, IconUsers, IconCalendar,
-//   IconHeart, IconHeartFilled, IconBrandLinkedin, 
+//   IconHeart, IconHeartFilled, IconBrandLinkedin,
 //   IconBrandGithub, IconGlobe, IconAward, IconTrendingUp,
 //   IconDevices, IconRocket, IconShieldCheck, IconSchool,
 //   IconX
@@ -286,7 +286,7 @@
 //           />
 //           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 //         </div>
-        
+
 //         <div className="relative h-full flex items-end pb-12">
 //           <Container size="xl" className="px-4 md:px-8">
 //             <div className="flex flex-col md:flex-row items-start gap-6">
@@ -335,9 +335,9 @@
 //             <Card className="bg-white rounded-2xl shadow-sm border border-gray-100" padding="xl">
 //               <Tabs value={activeTab} onChange={setActiveTab} color="blue" variant="pills">
 //                 <Tabs.List className="mb-6">
-//                   <Tabs.Tab value="about">📖 About Company</Tabs.Tab>
-//                   <Tabs.Tab value="jobs">💼 Open Positions ({company.jobs?.length || 0})</Tabs.Tab>
-//                   <Tabs.Tab value="culture">🌟 Culture & Benefits</Tabs.Tab>
+//                   <Tabs.Tab value="about">About Company</Tabs.Tab>
+//                   <Tabs.Tab value="jobs">Open Positions ({company.jobs?.length || 0})</Tabs.Tab>
+//                   <Tabs.Tab value="culture">Culture & Benefits</Tabs.Tab>
 //                 </Tabs.List>
 
 //                 {/* About Tab */}
@@ -377,7 +377,7 @@
 //                             <div className="flex items-center gap-2 flex-wrap mb-2">
 //                               <h4 className="text-lg font-semibold text-gray-900">{job.title}</h4>
 //                               {job.urgentHiring && (
-//                                 <Badge color="red" size="sm" variant="filled">⚡ Urgent</Badge>
+//                                 <Badge color="red" size="sm" variant="filled" Urgent</Badge>
 //                               )}
 //                             </div>
 //                             <div className="flex flex-wrap gap-3 mb-3 text-sm text-gray-500">
@@ -514,9 +514,9 @@
 //                 <Text size="xl" fw={700}>{selectedJob?.title}</Text>
 //                 <Text size="sm" className="text-blue-100 mt-1">{company?.name} • {selectedJob?.location}</Text>
 //               </div>
-//               <ActionIcon 
-//                 variant="transparent" 
-//                 onClick={() => setApplyModalOpen(false)} 
+//               <ActionIcon
+//                 variant="transparent"
+//                 onClick={() => setApplyModalOpen(false)}
 //                 color="white"
 //               >
 //                 <IconX size={20} />
@@ -643,10 +643,10 @@
 
 //           {/* Footer Buttons */}
 //           <div className="flex gap-3 p-5 border-t bg-gray-50 rounded-b-lg">
-//             <Button 
-//               fullWidth 
-//               variant="light" 
-//               onClick={() => setApplyModalOpen(false)} 
+//             <Button
+//               fullWidth
+//               variant="light"
+//               onClick={() => setApplyModalOpen(false)}
 //               size="md"
 //             >
 //               Cancel

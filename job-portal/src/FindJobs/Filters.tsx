@@ -7,7 +7,9 @@ interface FiltersProps {
 }
 
 const Filters = ({ setLocation, setSort }: FiltersProps) => {
-  const [salaryRange, setSalaryRange] = useState<[number, number]>([30000, 150000]);
+  const [salaryRange, setSalaryRange] = useState<[number, number]>([
+    30000, 150000,
+  ]);
   const [remoteOnly, setRemoteOnly] = useState(false);
 
   const locations = [
@@ -18,20 +20,23 @@ const Filters = ({ setLocation, setSort }: FiltersProps) => {
     "Seattle, WA",
     "Chicago, IL",
     "Boston, MA",
-    "Los Angeles, CA"
+    "Los Angeles, CA",
   ];
 
   const sortOptions = [
     "Relevance",
     "Most Recent",
     "Salary (High to Low)",
-    "Salary (Low to High)"
+    "Salary (Low to High)",
   ];
 
   return (
-    <Paper shadow="sm" radius="lg" className="bg-white border border-gray-200 p-6">
+    <Paper
+      shadow="sm"
+      radius="lg"
+      className="bg-white border border-gray-200 p-6"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        
         {/* Location Filter */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -44,7 +49,7 @@ const Filters = ({ setLocation, setSort }: FiltersProps) => {
             clearable
             classNames={{
               input: "bg-white border-gray-300 text-gray-900",
-              dropdown: "bg-white border-gray-200"
+              dropdown: "bg-white border-gray-200",
             }}
           />
         </div>
@@ -61,7 +66,7 @@ const Filters = ({ setLocation, setSort }: FiltersProps) => {
             clearable
             classNames={{
               input: "bg-white border-gray-300 text-gray-900",
-              dropdown: "bg-white border-gray-200"
+              dropdown: "bg-white border-gray-200",
             }}
           />
         </div>

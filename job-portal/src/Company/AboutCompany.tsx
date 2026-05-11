@@ -125,7 +125,7 @@
 //                 href={`mailto:${companyData.email}`}
 //                 className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 hover:underline"
 //               >
-//                 📧 {companyData.email}
+//                  {companyData.email}
 //               </a>
 //             )}
 //             {companyData.phone && (
@@ -133,7 +133,7 @@
 //                 href={`tel:${companyData.phone}`}
 //                 className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 hover:underline"
 //               >
-//                 📞 {companyData.phone}
+//                 {companyData.phone}
 //               </a>
 //             )}
 //           </div>

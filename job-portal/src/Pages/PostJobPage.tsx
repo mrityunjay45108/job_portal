@@ -205,7 +205,7 @@ const PostJobPage = () => {
       
       const jobData = {
         jobTitle: values.title,
-        companyName: values.company,  // ✅ This maps company name correctly
+        companyName: values.company,  // This maps company name correctly
         location: values.location,
         salary: salaryDisplay,
         jobType: values.jobType,
@@ -216,7 +216,7 @@ const PostJobPage = () => {
         urgentHiring: values.urgentHiring,
       };
 
-      console.log('📤 Sending job data:', jobData);
+      console.log(' Sending job data:', jobData);
       
       const response = await api.post('/jobs', jobData);
       
