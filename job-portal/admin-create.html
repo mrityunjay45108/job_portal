@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Admin</title>
+    <style>
+        body { font-family: Arial; padding: 50px; background: #f5f5f5; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 10px; }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd; }
+        button { background: blue; color: white; cursor: pointer; border: none; }
+        .result { margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create New Admin</h2>
+        <input type="text" id="fullName" placeholder="Full Name" value="Test Admin">
+        <input type="email" id="email" placeholder="Email" value="testadmin@jobportal.com">
+        <input type="password" id="password" placeholder="Password" value="Admin@123">
+        <select id="role">
+            <option value="admin">Admin</option>
+            <option value="moderator">Moderator</option>
+        </select>
+        <button onclick="createAdmin()">Create Admin</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // First login to get token
+        async function login() {
+            const response = await fetch('http://localhost:5000/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: 'superadmin@jobportal.com',
+                    password: 'Admin@123'
+                })
+            });
+            const data = await response.json();
+            return data.token;
+        }
+        
+        async function createAdmin() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Logging in...';
+            
+            try {
+                const token = await login();
+                resultDiv.innerHTML = 'Creating admin...';
+                
+                const response = await fetch('http://localhost:5000/api/admin/admins', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        fullName: document.getElementById('fullName').value,
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value,
+                        role: document.getElementById('role').value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `Admin created successfully!<br>Email: ${data.admin.email}<br>Role: ${data.admin.role}`;
+                    resultDiv.style.color = 'green';
+                } else {
+                    resultDiv.innerHTML = `Error: ${data.message}`;
+                    resultDiv.style.color = 'red';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+                resultDiv.style.color = 'red';
+            }
+        }
+    </script>
+</body>
+</html>

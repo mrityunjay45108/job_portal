@@ -1,4 +1,3 @@
-// src/Pages/MyApplicationsPage.tsx
 import { useState, useEffect } from "react";
 import {
   Container,

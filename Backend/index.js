@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const adminRoutes = require('./routes/admin.routes');
+
 
 dotenv.config();
 connectDB();
@@ -50,6 +52,7 @@ app.use('/api/jobs', require('./routes/job.routes'));
 app.use('/api/applications', require('./routes/application.routes'));
 app.use('/api/interviews', require('./routes/interview.routes'));
 app.use('/api/upload', require('./routes/upload.routes'));
+app.use('/api/admin', adminRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {

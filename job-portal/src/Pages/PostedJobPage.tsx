@@ -1,4 +1,3 @@
-// src/Pages/PostedJobPage.tsx
 import { Divider, Loader } from "@mantine/core";
 import PostedJob from "../PostedJob/PostedJob";
 import PostedJobDesc from "../PostedJob/PostedJobDesc";

@@ -382,16 +382,114 @@ const saveAIInterviewResults = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+// ==================== ADMIN FUNCTIONS ====================
 
+// Get all interviews (Admin)
+const getAllInterviews = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = '' } = req.query;
+    
+    let query = {};
+    if (search) {
+      query.$or = [
+        { candidateName: { $regex: search, $options: 'i' } },
+        { jobTitle: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const interviews = await Interview.find(query)
+      .sort({ date: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+
+    const total = await Interview.countDocuments(query);
+
+    res.json({
+      success: true,
+      interviews,
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / limit)
+    });
+  } catch (error) {
+    console.error('Get all interviews error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get interview by ID (Admin)
+const getInterviewById = async (req, res) => {
+  try {
+    const interview = await Interview.findById(req.params.id);
+    if (!interview) {
+      return res.status(404).json({ success: false, message: 'Interview not found' });
+    }
+    res.json({ success: true, interview });
+  } catch (error) {
+    console.error('Get interview error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update interview status (Admin)
+const updateInterviewStatusAdmin = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const interview = await Interview.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+    if (!interview) {
+      return res.status(404).json({ success: false, message: 'Interview not found' });
+    }
+    res.json({ success: true, message: 'Status updated', interview });
+  } catch (error) {
+    console.error('Update status error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Delete interview (Admin)
+const deleteInterview = async (req, res) => {
+  try {
+    const interview = await Interview.findByIdAndDelete(req.params.id);
+    if (!interview) {
+      return res.status(404).json({ success: false, message: 'Interview not found' });
+    }
+    res.json({ success: true, message: 'Interview deleted successfully' });
+  } catch (error) {
+    console.error('Delete interview error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Export all functions including admin ones
 module.exports = {
-  // Regular interview
   scheduleInterview,
   getRecruiterInterviews,
   getCandidateInterviews,
   updateInterviewStatus,
-  // AI interview
   generateInterviewQuestions,
   analyzeAnswer,
   scheduleAIInterview,
-  saveAIInterviewResults
+  saveAIInterviewResults,
+  // Admin functions
+  getAllInterviews,
+  getInterviewById,
+  updateInterviewStatusAdmin,
+  deleteInterview
 };
+
+// module.exports = {
+//   // Regular interview
+//   scheduleInterview,
+//   getRecruiterInterviews,
+//   getCandidateInterviews,
+//   updateInterviewStatus,
+//   // AI interview
+//   generateInterviewQuestions,
+//   analyzeAnswer,
+//   scheduleAIInterview,
+//   saveAIInterviewResults
+// };

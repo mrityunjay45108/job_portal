@@ -1,4 +1,3 @@
-
 // src/Profile/SelectInput.tsx
 import { Select } from "@mantine/core";
 
