@@ -1,4 +1,3 @@
-
 // Backend/controllers/job.controller.js
 const Job = require('../models/Job.model');
 
@@ -192,7 +191,6 @@ const updateJobStatus = async (req, res) => {
     });
   }
 };
-
 module.exports = {
   createJob,
   getRecruiterJobs,

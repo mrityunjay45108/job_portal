@@ -1,144 +1,8 @@
-// import Company from "../models/company.model.js";
-
-// const registerCompany = async (req, res) => {
-//   try {
-//     const { companayName } = req.body;
-
-//     if (!companayName) {
-//       return res.status(400).json({
-//         message: "Company name is required",
-//         success: false,
-//       });
-//     }
-//     let company = await Company.findOne({ companayName });
-//     if (company) {
-//       return res.status(400).json({
-//         message: "Company already exists",
-//         success: false,
-//       });
-//     }
-
-//     company = await Company.create({
-//       name: companayName,
-//       createdBy: req.user.id,
-//     });
-
-//     res.status(201).json({
-//       message: "Company Registered Successfully",
-//       success: true,
-//       company,
-//     });
-
-//     res.status(201).json({
-//       message: "Company Registered Successfully",
-//       success: true,
-//       company: newCompany,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       message: "Server Error",
-//     });
-//   }
-// };
-
-// export default registerCompany;
-
-// export const getAllCompanies = async (req, res) => {
-//   try {
-//     const userId = req.user.id;
-//     const companies = await Company.find( {user: userId} );
-//     if (!companies) {
-//       return res.status(404).json({
-//         message: "No companies found",
-//         success: false,
-//       });
-//     }
-//     return res.status(200).json({
-//       message: "Companies fetched successfully",
-//       success: true,
-//       companies,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       message: "Server Error",
-//     });
-//   }
-// };
-
-// // update company
-// export const updateCompany = async (req, res) => {
-//   try {
-//     const { name, description, website, location } = req.body;
-//     const file = req.file;
-//     // cloudinary service
-
-//     const updateData = {
-//       name,
-//       description,
-//       website,
-//       location,
-//     };
-//     const companyId = req.params.id;
-//     const company = await Company.findByIdAndUpdate(companyId, updateData, {
-//       new: true,
-//     });
-//     res.status(200).json({
-//       message: "Company Updated Successfully",
-//       success: true,
-//       company,
-//     });
-//     if (!company) {
-//       return res.status(404).json({
-//         message: "Company not found",
-//         success: false,
-//       });
-//     }
-//     return res.status(200).json({
-//       message: "Company Updated Successfully",
-//       success: true,
-//       company,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       message: "Server Error",
-//     });
-//   }
-// };
-
-// // get company by id
-// export const getCompanyById = async (req, res) => {
-//   try {    
-//     const companyId = req.params.id;
-//     const company = await Company.findById(companyId);
-//     if (!company) {
-//       return res.status(404).json({
-//         message: "Company not found",
-//         success: false,
-//       });
-//     }
-//     return res.status(200).json({
-//       message: "Company fetched successfully",
-//       success: true,
-//       company,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       message: "Server Error",
-//     });
-//   }
-// }; 
-
-
-
 import Company from "../models/company.model.js";
 
 const registerCompany = async (req, res) => {
   try {
-    const { companyName } = req.body; // Fixed typo: companayName -> companyName
+    const { companyName } = req.body;
 
     if (!companyName) {
       return res.status(400).json({
@@ -146,8 +10,8 @@ const registerCompany = async (req, res) => {
         success: false,
       });
     }
-    
-    let company = await Company.findOne({ name: companyName }); // Fixed: search by name field
+
+    let company = await Company.findOne({ name: companyName });
     if (company) {
       return res.status(400).json({
         message: "Company already exists",
@@ -177,16 +41,19 @@ const registerCompany = async (req, res) => {
 export const getAllCompanies = async (req, res) => {
   try {
     // For admin, get all companies
-    const isAdmin = req.userRole === 'admin';
+    const isAdmin = req.userRole === "admin";
     let query = {};
-    
+
     if (!isAdmin) {
       // For recruiter, get only their companies
       query = { createdBy: req.user.id };
     }
-    
-    const companies = await Company.find(query).populate('createdBy', 'fullName email');
-    
+
+    const companies = await Company.find(query).populate(
+      "createdBy",
+      "fullName email",
+    );
+
     return res.status(200).json({
       success: true,
       companies,
@@ -204,26 +71,26 @@ export const getAllCompanies = async (req, res) => {
 export const updateCompany = async (req, res) => {
   try {
     const { name, description, website, location } = req.body;
-    
+
     const updateData = {
       name,
       description,
       website,
       location,
     };
-    
+
     const companyId = req.params.id;
     const company = await Company.findByIdAndUpdate(companyId, updateData, {
       new: true,
     });
-    
+
     if (!company) {
       return res.status(404).json({
         message: "Company not found",
         success: false,
       });
     }
-    
+
     return res.status(200).json({
       message: "Company Updated Successfully",
       success: true,
@@ -240,17 +107,20 @@ export const updateCompany = async (req, res) => {
 
 // get company by id
 export const getCompanyById = async (req, res) => {
-  try {    
+  try {
     const companyId = req.params.id;
-    const company = await Company.findById(companyId).populate('createdBy', 'fullName email');
-    
+    const company = await Company.findById(companyId).populate(
+      "createdBy",
+      "fullName email",
+    );
+
     if (!company) {
       return res.status(404).json({
         message: "Company not found",
         success: false,
       });
     }
-    
+
     return res.status(200).json({
       message: "Company fetched successfully",
       success: true,
@@ -270,14 +140,14 @@ export const deleteCompany = async (req, res) => {
   try {
     const companyId = req.params.id;
     const company = await Company.findByIdAndDelete(companyId);
-    
+
     if (!company) {
       return res.status(404).json({
         message: "Company not found",
         success: false,
       });
     }
-    
+
     return res.status(200).json({
       message: "Company deleted successfully",
       success: true,

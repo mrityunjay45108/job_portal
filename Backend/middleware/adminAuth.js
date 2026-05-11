@@ -10,7 +10,6 @@ const isAdminAuthenticated = async (req, res, next) => {
         message: 'Authentication required' 
       });
     }
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'jobportal_secret_key_2024');
     
     req.adminId = decoded.id;
@@ -24,5 +23,4 @@ const isAdminAuthenticated = async (req, res, next) => {
     });
   }
 };
-
 module.exports = { isAdminAuthenticated };

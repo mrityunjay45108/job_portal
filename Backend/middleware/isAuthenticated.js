@@ -11,7 +11,6 @@ const isAuthenticated = async (req, res, next) => {
         message: 'Unauthorized: No token provided'
       });
     }
-    
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key');
     
     // Attach user info to request

@@ -1,4 +1,3 @@
-
 // Backend/routes/job.routes.js
 const express = require('express');
 const router = express.Router();
@@ -12,13 +11,11 @@ const {
   updateJobStatus
 } = require('../controllers/job.controller');
 const { isAuthenticated, authorize } = require('../middleware/isAuthenticated');
-
 // ---------------------- PUBLIC ROUTES ---------------------
 // Get all active jobs (no auth required)
 router.get('/active', getAllActiveJobs);
 // Get job by ID (no auth required)
 router.get('/:id', getJobById);
-
 // -------------------- RECRUITER ROUTES -----------------------
 // Create a new job (recruiter only)
 router.post('/', isAuthenticated, authorize('recruiter'), createJob);

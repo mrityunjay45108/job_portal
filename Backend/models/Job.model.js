@@ -1,4 +1,3 @@
-
 // Backend/models/Job.model.js
 const mongoose = require('mongoose');
 

@@ -1,4 +1,3 @@
-
 // Backend/controllers/interview.controller.js
 const Interview = require("../models/Interview.model");
 const Job = require("../models/Job.model");
@@ -16,10 +15,12 @@ try {
     console.log(" GEMINI_API_KEY not found, using fallback questions");
   }
 } catch (error) {
-  console.log(" @google/generative-ai package not installed, using fallback questions");
+  console.log(
+    " @google/generative-ai package not installed, using fallback questions",
+  );
 }
 
-// ==================== FALLBACK QUESTIONS ====================
+// -------------------------- FALLBACK QUESTIONS -----------------------
 const getFallbackQuestions = (jobTitle = "this position") => {
   return {
     questions: [
@@ -27,37 +28,64 @@ const getFallbackQuestions = (jobTitle = "this position") => {
         question: `Tell me about yourself and why you're interested in the ${jobTitle} position.`,
         type: "behavioral",
         difficulty: "easy",
-        expectedKeywords: ["experience", "skills", "passion", "career"]
+        expectedKeywords: ["experience", "skills", "passion", "career"],
       },
       {
-        question: "What are your greatest technical strengths and how have you applied them?",
+        question:
+          "What are your greatest technical strengths and how have you applied them?",
         type: "technical",
         difficulty: "medium",
-        expectedKeywords: ["programming", "languages", "frameworks", "projects"]
+        expectedKeywords: [
+          "programming",
+          "languages",
+          "frameworks",
+          "projects",
+        ],
       },
       {
-        question: "Describe a challenging problem you solved and the approach you took.",
+        question:
+          "Describe a challenging problem you solved and the approach you took.",
         type: "technical",
         difficulty: "hard",
-        expectedKeywords: ["challenge", "solution", "analysis", "result", "learning"]
+        expectedKeywords: [
+          "challenge",
+          "solution",
+          "analysis",
+          "result",
+          "learning",
+        ],
       },
       {
-        question: "How do you handle tight deadlines and pressure? Give an example.",
+        question:
+          "How do you handle tight deadlines and pressure? Give an example.",
         type: "behavioral",
         difficulty: "medium",
-        expectedKeywords: ["deadline", "pressure", "priority", "time management", "result"]
+        expectedKeywords: [
+          "deadline",
+          "pressure",
+          "priority",
+          "time management",
+          "result",
+        ],
       },
       {
-        question: "Where do you see yourself professionally in the next 3-5 years?",
+        question:
+          "Where do you see yourself professionally in the next 3-5 years?",
         type: "behavioral",
         difficulty: "easy",
-        expectedKeywords: ["growth", "career", "goals", "development", "learning"]
-      }
-    ]
+        expectedKeywords: [
+          "growth",
+          "career",
+          "goals",
+          "development",
+          "learning",
+        ],
+      },
+    ],
   };
 };
 
-// ==================== REGULAR INTERVIEW FUNCTIONS ====================
+// ---------------------------- REGULAR INTERVIEW FUNCTIONS -----------------------
 
 // @desc    Schedule interview (Regular)
 const scheduleInterview = async (req, res) => {
@@ -86,7 +114,7 @@ const scheduleInterview = async (req, res) => {
       mode,
       link,
       status: "scheduled",
-      isAIMode: false
+      isAIMode: false,
     });
 
     await Application.findOneAndUpdate(
@@ -100,14 +128,13 @@ const scheduleInterview = async (req, res) => {
       interview,
     });
   } catch (error) {
-    console.error('Schedule interview error:', error);
+    console.error("Schedule interview error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
-
 // @desc    Get recruiter interviews
 const getRecruiterInterviews = async (req, res) => {
   try {
@@ -120,14 +147,13 @@ const getRecruiterInterviews = async (req, res) => {
       interviews,
     });
   } catch (error) {
-    console.error('Get recruiter interviews error:', error);
+    console.error("Get recruiter interviews error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
-
 // @desc    Get candidate interviews
 const getCandidateInterviews = async (req, res) => {
   try {
@@ -140,7 +166,7 @@ const getCandidateInterviews = async (req, res) => {
       interviews,
     });
   } catch (error) {
-    console.error('Get candidate interviews error:', error);
+    console.error("Get candidate interviews error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -161,7 +187,7 @@ const updateInterviewStatus = async (req, res) => {
     if (!interview) {
       return res.status(404).json({
         success: false,
-        message: 'Interview not found'
+        message: "Interview not found",
       });
     }
 
@@ -170,7 +196,7 @@ const updateInterviewStatus = async (req, res) => {
       interview,
     });
   } catch (error) {
-    console.error('Update interview status error:', error);
+    console.error("Update interview status error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -178,31 +204,31 @@ const updateInterviewStatus = async (req, res) => {
   }
 };
 
-// ==================== AI INTERVIEW FUNCTIONS ====================
+// ------------------- AI INTERVIEW FUNCTIONS ----------------------
 
 // @desc    Generate AI interview questions
 const generateInterviewQuestions = async (req, res) => {
   try {
     const { jobId, experience, skills } = req.body;
-    
+
     console.log("Generating questions for job:", jobId);
-    
+
     const job = await Job.findById(jobId);
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.status(404).json({ success: false, message: "Job not found" });
     }
-    
+
     let questions = [];
-    
+
     // Try to use Gemini AI if available
     if (genAI && process.env.GEMINI_API_KEY) {
       try {
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-        
+
         const prompt = `
           Generate 5 interview questions for a ${job.jobTitle} position.
           Company: ${job.companyName}
-          Required Skills: ${job.skills?.join(', ') || 'Not specified'}
+          Required Skills: ${job.skills?.join(", ") || "Not specified"}
           
           Return ONLY valid JSON format:
           {
@@ -216,16 +242,19 @@ const generateInterviewQuestions = async (req, res) => {
             ]
           }
         `;
-        
+
         const result = await model.generateContent(prompt);
         const response = await result.response;
         let questionsText = response.text();
-        
-        questionsText = questionsText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+        questionsText = questionsText
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
         const parsed = JSON.parse(questionsText);
         questions = parsed.questions || parsed;
-        
-        console.log("✅ AI-generated questions created");
+
+        console.log(" AI-generated questions created");
       } catch (aiError) {
         console.error("AI generation failed, using fallback:", aiError.message);
         questions = getFallbackQuestions(job.jobTitle).questions;
@@ -235,20 +264,19 @@ const generateInterviewQuestions = async (req, res) => {
       console.log("Using fallback questions");
       questions = getFallbackQuestions(job.jobTitle).questions;
     }
-    
+
     res.json({
       success: true,
-      questions: questions
+      questions: questions,
     });
-    
   } catch (error) {
-    console.error('Generate questions error:', error);
-    
+    console.error("Generate questions error:", error);
+
     // Return fallback questions even on error
     res.json({
       success: true,
       questions: getFallbackQuestions().questions,
-      message: "Using default questions. AI service temporarily unavailable."
+      message: "Using default questions. AI service temporarily unavailable.",
     });
   }
 };
@@ -257,25 +285,26 @@ const generateInterviewQuestions = async (req, res) => {
 const analyzeAnswer = async (req, res) => {
   try {
     const { question, answer, expectedKeywords } = req.body;
-    
+
     let analysis = {
       score: 75,
       feedback: "Your answer has been recorded. Focus on being more specific.",
       missingKeywords: expectedKeywords?.slice(0, 3) || [],
-      improvement: "Practice using the STAR method (Situation, Task, Action, Result)."
+      improvement:
+        "Practice using the STAR method (Situation, Task, Action, Result).",
     };
-    
+
     // Try to use Gemini AI if available
     if (genAI && process.env.GEMINI_API_KEY) {
       try {
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-        
+
         const prompt = `
           Analyze this interview answer:
           
           Question: ${question}
           Answer: ${answer}
-          Expected Keywords: ${expectedKeywords?.join(', ') || 'Not specified'}
+          Expected Keywords: ${expectedKeywords?.join(", ") || "Not specified"}
           
           Return ONLY valid JSON format:
           {
@@ -285,35 +314,38 @@ const analyzeAnswer = async (req, res) => {
             "improvement": "Add more quantifiable achievements to strengthen your answer."
           }
         `;
-        
+
         const result = await model.generateContent(prompt);
         const response = await result.response;
         let analysisText = response.text();
-        
-        analysisText = analysisText.replace(/```json/g, '').replace(/```/g, '').trim();
+
+        analysisText = analysisText
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
         analysis = JSON.parse(analysisText);
-        
-        console.log("✅ AI analysis completed");
+
+        console.log(" AI analysis completed");
       } catch (aiError) {
         console.error("AI analysis failed, using fallback:", aiError.message);
       }
     }
-    
+
     res.json({
       success: true,
-      analysis
+      analysis,
     });
-    
   } catch (error) {
-    console.error('Analyze answer error:', error);
+    console.error("Analyze answer error:", error);
     res.json({
       success: true,
       analysis: {
         score: 70,
         feedback: "Your answer has been recorded. Keep practicing!",
         missingKeywords: [],
-        improvement: "Focus on providing specific examples from your experience."
-      }
+        improvement:
+          "Focus on providing specific examples from your experience.",
+      },
     });
   }
 };
@@ -322,12 +354,12 @@ const analyzeAnswer = async (req, res) => {
 const scheduleAIInterview = async (req, res) => {
   try {
     const { jobId } = req.body;
-    
+
     const job = await Job.findById(jobId);
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.status(404).json({ success: false, message: "Job not found" });
     }
-    
+
     const interview = await Interview.create({
       jobId,
       jobTitle: job.jobTitle,
@@ -335,21 +367,21 @@ const scheduleAIInterview = async (req, res) => {
       candidateName: req.user.fullName,
       candidateEmail: req.user.email,
       recruiterId: req.userId,
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split("T")[0],
       time: "Practice Mode",
-      mode: 'ai',
-      status: 'ai_practice',
-      isAIMode: true
+      mode: "ai",
+      status: "ai_practice",
+      isAIMode: true,
     });
-    
+
     res.status(201).json({
       success: true,
-      message: 'AI Interview practice session started',
+      message: "AI Interview practice session started",
       interviewId: interview._id,
-      interview
+      interview,
     });
   } catch (error) {
-    console.error('Schedule AI interview error:', error);
+    console.error("Schedule AI interview error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -358,7 +390,7 @@ const scheduleAIInterview = async (req, res) => {
 const saveAIInterviewResults = async (req, res) => {
   try {
     const { interviewId, questions, answers, analyses, totalScore } = req.body;
-    
+
     const interview = await Interview.findByIdAndUpdate(
       interviewId,
       {
@@ -366,34 +398,34 @@ const saveAIInterviewResults = async (req, res) => {
         aiAnswers: answers,
         aiAnalyses: analyses,
         aiTotalScore: totalScore,
-        status: 'ai_completed',
-        completedAt: new Date()
+        status: "ai_completed",
+        completedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
-    
+
     res.json({
       success: true,
-      message: 'Interview results saved successfully',
-      interview
+      message: "Interview results saved successfully",
+      interview,
     });
   } catch (error) {
-    console.error('Save AI interview results error:', error);
+    console.error("Save AI interview results error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
-// ==================== ADMIN FUNCTIONS ====================
+//------------------------ADMIN FUNCTIONS --------------------------
 
 // Get all interviews (Admin)
 const getAllInterviews = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '' } = req.query;
-    
+    const { page = 1, limit = 10, search = "" } = req.query;
+
     let query = {};
     if (search) {
       query.$or = [
-        { candidateName: { $regex: search, $options: 'i' } },
-        { jobTitle: { $regex: search, $options: 'i' } }
+        { candidateName: { $regex: search, $options: "i" } },
+        { jobTitle: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -409,10 +441,10 @@ const getAllInterviews = async (req, res) => {
       interviews,
       total,
       page: parseInt(page),
-      pages: Math.ceil(total / limit)
+      pages: Math.ceil(total / limit),
     });
   } catch (error) {
-    console.error('Get all interviews error:', error);
+    console.error("Get all interviews error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -422,11 +454,13 @@ const getInterviewById = async (req, res) => {
   try {
     const interview = await Interview.findById(req.params.id);
     if (!interview) {
-      return res.status(404).json({ success: false, message: 'Interview not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Interview not found" });
     }
     res.json({ success: true, interview });
   } catch (error) {
-    console.error('Get interview error:', error);
+    console.error("Get interview error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -438,14 +472,16 @@ const updateInterviewStatusAdmin = async (req, res) => {
     const interview = await Interview.findByIdAndUpdate(
       req.params.id,
       { status },
-      { new: true }
+      { new: true },
     );
     if (!interview) {
-      return res.status(404).json({ success: false, message: 'Interview not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Interview not found" });
     }
-    res.json({ success: true, message: 'Status updated', interview });
+    res.json({ success: true, message: "Status updated", interview });
   } catch (error) {
-    console.error('Update status error:', error);
+    console.error("Update status error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -455,11 +491,13 @@ const deleteInterview = async (req, res) => {
   try {
     const interview = await Interview.findByIdAndDelete(req.params.id);
     if (!interview) {
-      return res.status(404).json({ success: false, message: 'Interview not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Interview not found" });
     }
-    res.json({ success: true, message: 'Interview deleted successfully' });
+    res.json({ success: true, message: "Interview deleted successfully" });
   } catch (error) {
-    console.error('Delete interview error:', error);
+    console.error("Delete interview error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -478,18 +516,5 @@ module.exports = {
   getAllInterviews,
   getInterviewById,
   updateInterviewStatusAdmin,
-  deleteInterview
+  deleteInterview,
 };
-
-// module.exports = {
-//   // Regular interview
-//   scheduleInterview,
-//   getRecruiterInterviews,
-//   getCandidateInterviews,
-//   updateInterviewStatus,
-//   // AI interview
-//   generateInterviewQuestions,
-//   analyzeAnswer,
-//   scheduleAIInterview,
-//   saveAIInterviewResults
-// };
