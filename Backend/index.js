@@ -169,22 +169,47 @@
 // });
 
 
-// index.js mein CORS section ko aise update karein:
+// // index.js mein CORS section ko aise update karein:
+// const allowedOrigins = [
+//   'http://localhost:3000', 
+//   'http://localhost:3001',
+//   process.env.FRONTEND_URL // Ye Render dashboard se aayega
+// ];
+
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     // Allow requests with no origin (like mobile apps or curl)
+//     if (!origin) return callback(null, true);
+//     if (allowedOrigins.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
+
+
+
+// index.js
 const allowedOrigins = [
   'http://localhost:3000', 
   'http://localhost:3001',
-  process.env.FRONTEND_URL // Ye Render dashboard se aayega
-];
+  process.env.FRONTEND_URL
+].filter(Boolean); // Ye line 'undefined' values ko array se nikaal degi
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    // Localhost aur direct requests allow karein
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
     }
+    
+    // Agar production mein hai aur origin match nahi ho raha
+    console.log("Blocked by CORS:", origin);
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
