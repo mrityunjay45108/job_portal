@@ -81,89 +81,112 @@
 
 
 
-// Backend/index.js
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
-const adminRoutes = require('./routes/admin.routes');
+// // Backend/index.js
+// const express = require('express');
+// const cors = require('cors');
+// const dotenv = require('dotenv');
+// const connectDB = require('./config/db');
+// const adminRoutes = require('./routes/admin.routes');
 
-dotenv.config();
-connectDB();
+// dotenv.config();
+// connectDB();
 
-const app = express();
+// const app = express();
 
-// CORS
+// // CORS
+// app.use(cors({
+//   origin: ['http://localhost:3000', 'http://localhost:3001'],
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
+
+// // Body parser
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+
+// // Serve uploaded files
+// app.use('/uploads', express.static('uploads'));
+
+// // Request logger
+// app.use((req, res, next) => {
+//   console.log(`${req.method} ${req.url}`);
+//   next();
+// });
+
+// // Test route
+// app.get('/api/test', (req, res) => {
+//   res.json({ 
+//     success: true, 
+//     message: 'Server is running!',
+//     timestamp: new Date().toISOString()
+//   });
+// });
+
+// app.post('/api/test-body', (req, res) => {
+//   res.json({ 
+//     success: true, 
+//     message: 'POST request received',
+//     body: req.body
+//   });
+// });
+
+// // ==================== ROUTES ====================
+// // Auth routes (login, register, me)
+// app.use('/api/auth', require('./routes/user.routes'));
+
+// // User profile routes (get profile by ID)
+// app.use('/api/users', require('./routes/user.routes'));  // ✅ Add this line
+
+// // Other routes
+// app.use('/api/jobs', require('./routes/job.routes'));
+// app.use('/api/applications', require('./routes/application.routes'));
+// app.use('/api/interviews', require('./routes/interview.routes'));
+// app.use('/api/upload', require('./routes/upload.routes'));
+// app.use('/api/admin', adminRoutes);
+// app.use('/api/users', require('./routes/profile.routes'));
+// // Error handler
+// app.use((err, req, res, next) => {
+//   console.error('Error:', err.stack);
+//   res.status(500).json({ success: false, message: err.message });
+// });
+
+// // 404 handler
+// app.use('*', (req, res) => {
+//   res.status(404).json({ 
+//     success: false, 
+//     message: `Route ${req.originalUrl} not found` 
+//   });
+// });
+
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => {
+//   console.log(` Server running on port ${PORT}`);
+//   console.log(` http://localhost:${PORT}`);
+//   console.log(` Test GET: http://localhost:${PORT}/api/test`);
+//   console.log(` Test POST: http://localhost:${PORT}/api/test-body`);
+//   console.log(` Profile API: http://localhost:${PORT}/api/users/profile/YOUR_USER_ID`);
+// });
+
+
+// index.js mein CORS section ko aise update karein:
+const allowedOrigins = [
+  'http://localhost:3000', 
+  'http://localhost:3001',
+  process.env.FRONTEND_URL // Ye Render dashboard se aayega
+];
+
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
-// Body parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Serve uploaded files
-app.use('/uploads', express.static('uploads'));
-
-// Request logger
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
-
-// Test route
-app.get('/api/test', (req, res) => {
-  res.json({ 
-    success: true, 
-    message: 'Server is running!',
-    timestamp: new Date().toISOString()
-  });
-});
-
-app.post('/api/test-body', (req, res) => {
-  res.json({ 
-    success: true, 
-    message: 'POST request received',
-    body: req.body
-  });
-});
-
-// ==================== ROUTES ====================
-// Auth routes (login, register, me)
-app.use('/api/auth', require('./routes/user.routes'));
-
-// User profile routes (get profile by ID)
-app.use('/api/users', require('./routes/user.routes'));  // ✅ Add this line
-
-// Other routes
-app.use('/api/jobs', require('./routes/job.routes'));
-app.use('/api/applications', require('./routes/application.routes'));
-app.use('/api/interviews', require('./routes/interview.routes'));
-app.use('/api/upload', require('./routes/upload.routes'));
-app.use('/api/admin', adminRoutes);
-app.use('/api/users', require('./routes/profile.routes'));
-// Error handler
-app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
-  res.status(500).json({ success: false, message: err.message });
-});
-
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({ 
-    success: false, 
-    message: `Route ${req.originalUrl} not found` 
-  });
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(` Server running on port ${PORT}`);
-  console.log(` http://localhost:${PORT}`);
-  console.log(` Test GET: http://localhost:${PORT}/api/test`);
-  console.log(` Test POST: http://localhost:${PORT}/api/test-body`);
-  console.log(` Profile API: http://localhost:${PORT}/api/users/profile/YOUR_USER_ID`);
-});
