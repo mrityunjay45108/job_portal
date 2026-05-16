@@ -962,7 +962,6 @@ import {
   TextInput,
   Textarea,
   Modal,
-  Group,
   Badge,
   Divider,
   Stack,
@@ -973,12 +972,8 @@ import {
   IconCheck,
   IconX,
   IconPlus,
-  IconTrash,
   IconBriefcase,
   IconCertificate,
-  IconMapPin,
-  IconBuilding,
-  IconCalendar,
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import Profile from "./Profile";
@@ -1919,8 +1914,6 @@ const EditableProfile = ({
 };
 
 export default EditableProfile;
-
-
 
 
 

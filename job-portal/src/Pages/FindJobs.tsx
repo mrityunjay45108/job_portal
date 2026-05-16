@@ -3,7 +3,7 @@ import {
   Pagination,
   Skeleton,
 } from "@mantine/core";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
@@ -40,45 +40,7 @@ const FindJobs = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  useEffect(() => {
-    loadJobs();
-  }, []);
-
-  const loadJobs = async () => {
-    setLoading(true);
-    try {
-      const response = await api.get('/jobs/active');
-      console.log("Jobs response:", response.data);
-      
-      if (response.data.success && response.data.jobs) {
-        const formattedJobs: Job[] = response.data.jobs.map((job: any) => ({
-          _id: job._id,
-          jobTitle: job.jobTitle,
-          companyName: job.companyName,
-          location: job.location,
-          salary: job.salary || "Negotiable",
-          jobType: job.jobType,
-          experience: job.experience,
-          description: job.description,
-          skills: job.skills || [],
-          applicantsCount: job.applicantsCount || 0,
-          postedDate: job.postedDate ? new Date(job.postedDate).toLocaleDateString() : "Just now",
-          urgentHiring: false,
-        }));
-        setJobs(formattedJobs);
-      } else {
-        console.log("No jobs from backend, using sample data");
-        setJobs(getSampleJobs());
-      }
-    } catch (error) {
-      console.error("Error loading jobs from backend:", error);
-      setJobs(getSampleJobs());
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getSampleJobs = (): Job[] => {
+  const getSampleJobs = useCallback((): Job[] => {
     return [
       {
         _id: "1",
@@ -121,7 +83,45 @@ const FindJobs = () => {
         postedDate: "1 week ago",
       },
     ];
-  };
+  }, []);
+
+  const loadJobs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await api.get('/jobs/active');
+      console.log("Jobs response:", response.data);
+      
+      if (response.data.success && response.data.jobs) {
+        const formattedJobs: Job[] = response.data.jobs.map((job: any) => ({
+          _id: job._id,
+          jobTitle: job.jobTitle,
+          companyName: job.companyName,
+          location: job.location,
+          salary: job.salary || "Negotiable",
+          jobType: job.jobType,
+          experience: job.experience,
+          description: job.description,
+          skills: job.skills || [],
+          applicantsCount: job.applicantsCount || 0,
+          postedDate: job.postedDate ? new Date(job.postedDate).toLocaleDateString() : "Just now",
+          urgentHiring: false,
+        }));
+        setJobs(formattedJobs);
+      } else {
+        console.log("No jobs from backend, using sample data");
+        setJobs(getSampleJobs());
+      }
+    } catch (error) {
+      console.error("Error loading jobs from backend:", error);
+      setJobs(getSampleJobs());
+    } finally {
+      setLoading(false);
+    }
+  }, [getSampleJobs]);
+
+  useEffect(() => {
+    loadJobs();
+  }, [loadJobs]);
 
   const getFilteredJobs = (): Job[] => {
     let filtered = [...jobs];

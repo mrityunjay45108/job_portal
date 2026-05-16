@@ -18,8 +18,6 @@ import {
   IconLock,
   IconBrandGoogle,
   IconBrandGithub,
-  IconBriefcase,
-  IconUser,
   IconArrowRight,
   IconEye,
   IconEyeOff,
@@ -29,7 +27,7 @@ import {
   IconSparkles,
   IconShieldLock,
 } from "@tabler/icons-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
 import { motion } from "framer-motion";
 import adminApi from "../../services/adminApi";

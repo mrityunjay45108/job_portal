@@ -18,7 +18,6 @@ import {
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 interface JobCardProps {
   _id?: string;
@@ -40,7 +39,6 @@ const JobCard = (props: JobCardProps) => {
   const [liked, setLiked] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
 
   const handleApply = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -199,7 +197,7 @@ const JobCard = (props: JobCardProps) => {
         </Group>
       </Group>
 
-      {/*  Apply Button - navigates to apply page */}
+      {/* Apply Button - navigates to apply page */}
       <Button
         fullWidth
         mt="md"

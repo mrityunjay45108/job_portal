@@ -1,5 +1,5 @@
 // src/Pages/JobDetailsPage.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Container,
@@ -9,7 +9,6 @@ import {
   Badge,
   Divider,
   Group,
-  Stack,
   Avatar,
   Title,
   Grid,
@@ -17,19 +16,14 @@ import {
   Textarea,
   FileInput,
   Skeleton,
-  Card,
-  Progress,
   Tooltip,
   ActionIcon,
 } from "@mantine/core";
 import {
-  IconBriefcase,
   IconMapPin,
   IconClock,
-  IconUsers,
   IconBuilding,
   IconMail,
-  IconPhone,
   IconWorld,
   IconCheck,
   IconArrowLeft,
@@ -37,8 +31,6 @@ import {
   IconSend,
   IconBrain,
   IconMicrophone,
-  IconArrowRight,
-  IconDeviceLaptop,
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { useAuth } from "../context/AuthContext";
@@ -169,23 +161,9 @@ const JobDetailsPage = () => {
   const [coverLetter, setCoverLetter] = useState("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [hasApplied, setHasApplied] = useState(false);
-  const [showAICard, setShowAICard] = useState(true);
+  const [showAICard] = useState(true);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      notifications.show({
-        title: "Login Required",
-        message: "Please login to view job details",
-        color: "orange",
-      });
-      navigate("/login", { state: { from: `/job/${id}` } });
-      return;
-    }
-    loadJobDetails();
-    checkApplicationStatus();
-  }, [id, isAuthenticated]);
-
-  const loadJobDetails = async () => {
+  const loadJobDetails = useCallback(async () => {
     setLoading(true);
     try {
       const response = await api.get(`/jobs/${id}`);
@@ -209,9 +187,11 @@ const JobDetailsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
 
-  const checkApplicationStatus = async () => {
+  const checkApplicationStatus = useCallback(async () => {
+    if (!isAuthenticated) return;
+    
     try {
       const response = await api.get("/applications/my-applications");
       if (response.data.success) {
@@ -223,7 +203,21 @@ const JobDetailsPage = () => {
     } catch (error) {
       console.error("Error checking application status:", error);
     }
-  };
+  }, [id, isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      notifications.show({
+        title: "Login Required",
+        message: "Please login to view job details",
+        color: "orange",
+      });
+      navigate("/login", { state: { from: `/job/${id}` } });
+      return;
+    }
+    loadJobDetails();
+    checkApplicationStatus();
+  }, [isAuthenticated, id, navigate, loadJobDetails, checkApplicationStatus]);
 
   const handleApply = async () => {
     if (!isAuthenticated) {
@@ -584,6 +578,3 @@ const JobDetailsPage = () => {
 };
 
 export default JobDetailsPage;
-
-
-

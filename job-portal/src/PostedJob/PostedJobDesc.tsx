@@ -1,7 +1,7 @@
 // src/components/PostedJob/PostedJobDesc.tsx
-import { Badge, Tabs, ScrollArea, Button, Modal, TextInput, Textarea, Select, ActionIcon, Loader, NumberInput } from "@mantine/core";
+import { Badge, Tabs, ScrollArea, Button, Modal, TextInput, Textarea, Select, Loader, NumberInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { IconEdit, IconTrash, IconSend, IconBriefcase, IconMapPin, IconCoin, IconClock, IconBuilding, IconCheck } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import api from "../services/api";
@@ -24,13 +24,9 @@ const PostedJobDesc = ({ jobId, onJobUpdate, onJobDelete }: any) => {
     company: ''
   });
 
-  useEffect(() => {
-    if (jobId) {
-      loadJobDetails();
-    }
-  }, [jobId]);
-
-  const loadJobDetails = async () => {
+  const loadJobDetails = useCallback(async () => {
+    if (!jobId) return;
+    
     setLoading(true);
     try {
       const response = await api.get(`/jobs/${jobId}`);
@@ -56,7 +52,13 @@ const PostedJobDesc = ({ jobId, onJobUpdate, onJobDelete }: any) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [jobId]);
+
+  useEffect(() => {
+    if (jobId) {
+      loadJobDetails();
+    }
+  }, [jobId, loadJobDetails]);
 
   const handleUpdateJob = async () => {
     setSubmitting(true);

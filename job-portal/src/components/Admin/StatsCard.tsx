@@ -1,4 +1,4 @@
-import { Card, Text, Group, ThemeIcon, Skeleton } from '@mantine/core';
+import { Card, Text, ThemeIcon, Skeleton } from '@mantine/core';
 import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
 
 interface StatsCardProps {
@@ -24,21 +24,6 @@ const StatsCard = ({
   prefix = '',
   description,
 }: StatsCardProps) => {
-  const getColorClass = () => {
-    switch (color) {
-      case 'blue': return 'from-blue-500 to-blue-600';
-      case 'green': return 'from-green-500 to-green-600';
-      case 'red': return 'from-red-500 to-red-600';
-      case 'yellow': return 'from-yellow-500 to-yellow-600';
-      case 'purple': return 'from-purple-500 to-purple-600';
-      case 'pink': return 'from-pink-500 to-pink-600';
-      case 'indigo': return 'from-indigo-500 to-indigo-600';
-      case 'teal': return 'from-teal-500 to-teal-600';
-      case 'orange': return 'from-orange-500 to-orange-600';
-      default: return 'from-blue-500 to-blue-600';
-    }
-  };
-
   const getBgColorClass = () => {
     switch (color) {
       case 'blue': return 'bg-blue-50';

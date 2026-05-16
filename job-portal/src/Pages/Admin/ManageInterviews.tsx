@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Paper,
@@ -62,11 +62,7 @@ const ManageInterviews = () => {
     useDisclosure(false);
   const [newStatus, setNewStatus] = useState("");
 
-  useEffect(() => {
-    loadInterviews();
-  }, [page, search]);
-
-  const loadInterviews = async () => {
+  const loadInterviews = useCallback(async () => {
     setLoading(true);
     try {
       const response = await adminApi.get("/interviews", {
@@ -110,7 +106,11 @@ const ManageInterviews = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search, itemsPerPage]);
+
+  useEffect(() => {
+    loadInterviews();
+  }, [loadInterviews]);
 
   const updateStatus = async () => {
     if (!selectedInterview || !newStatus) return;

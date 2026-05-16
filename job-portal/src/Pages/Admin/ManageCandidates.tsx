@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Paper,
@@ -17,7 +17,6 @@ import {
   Alert,
   Loader,
   Textarea,
-  Select,
   Divider,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -28,8 +27,6 @@ import {
   IconEye,
   IconRefresh,
   IconEdit,
-  IconCheck,
-  IconX,
 } from "@tabler/icons-react";
 import adminApi from "../../services/adminApi";
 
@@ -73,11 +70,7 @@ const ManageCandidates = () => {
     profileBio: "",
   });
 
-  useEffect(() => {
-    loadCandidates();
-  }, [page, search]);
-
-  const loadCandidates = async () => {
+  const loadCandidates = useCallback(async () => {
     setLoading(true);
     try {
       const response = await adminApi.get("/candidates", {
@@ -97,7 +90,11 @@ const ManageCandidates = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
+
+  useEffect(() => {
+    loadCandidates();
+  }, [loadCandidates]);
 
   const handleEdit = (candidate: Candidate) => {
     setSelectedCandidate(candidate);

@@ -1,11 +1,10 @@
-import { Avatar, Button, Text, Loader } from "@mantine/core";
+import { Avatar, Button, Loader } from "@mantine/core";
 import { 
   IconSearch, 
   IconMapPin, 
   IconSparkles, 
   IconWorld, 
   IconChartBar, 
-  IconShieldCheck,
   IconArrowRight,
   IconUsers,
   IconFileText,

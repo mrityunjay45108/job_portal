@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Paper,
@@ -7,7 +7,6 @@ import {
   Button,
   TextInput,
   Group,
-  Badge,
   ActionIcon,
   Modal,
   Stack,
@@ -25,7 +24,6 @@ import {
   IconEye,
   IconTrash,
   IconRefresh,
-  IconBuilding,
   IconWorld,
   IconMapPin,
 } from "@tabler/icons-react";
@@ -58,11 +56,7 @@ const ManageCompanies = () => {
   const [deleteModalOpen, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
 
-  useEffect(() => {
-    loadCompanies();
-  }, [page, search]);
-
-  const loadCompanies = async () => {
+  const loadCompanies = useCallback(async () => {
     setLoading(true);
     try {
       const response = await adminApi.get("/companies", {
@@ -108,7 +102,11 @@ const ManageCompanies = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search, itemsPerPage]);
+
+  useEffect(() => {
+    loadCompanies();
+  }, [loadCompanies]);
 
   const handleDelete = async () => {
     if (!selectedCompany) return;

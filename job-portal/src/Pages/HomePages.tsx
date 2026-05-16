@@ -44,11 +44,9 @@
 
 // export default HomePages;
 
-
 import DreamJob from "../LandingPage/DreamJob";
 import Companies from "../LandingPage/Companies";
 import JobCategorie from "../LandingPage/JobCategorie";
-import Footer from "../Footter/Fotter";
 import InternshipSection from "../LandingPage/Internships";
 import OurNumbersSection from "../LandingPage/ourmembers";
 import JobSeekerJourney from "../LandingPage/JobSeekersJourney";

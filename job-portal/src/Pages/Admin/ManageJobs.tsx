@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Paper,
@@ -94,11 +94,7 @@ const ManageJobs = () => {
     status: "",
   });
 
-  useEffect(() => {
-    loadJobs();
-  }, [page, search, status]);
-
-  const loadJobs = async () => {
+  const loadJobs = useCallback(async () => {
     setLoading(true);
     try {
       const response = await adminApi.get("/jobs", {
@@ -118,7 +114,11 @@ const ManageJobs = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search, status]);
+
+  useEffect(() => {
+    loadJobs();
+  }, [loadJobs]);
 
   const handleEdit = (job: Job) => {
     setSelectedJob(job);

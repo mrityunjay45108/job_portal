@@ -4,7 +4,6 @@ import {
   IconSettings, 
   IconLogin, 
   IconUserPlus, 
-  IconBuilding, 
   IconUser, 
   IconClipboardList, 
   IconChartBar, 
@@ -12,9 +11,7 @@ import {
   IconFileText,
   IconBrain,
   IconSearch,
-  IconShieldLock,
-  IconMenu2,
-  IconX
+  IconShieldLock
 } from "@tabler/icons-react";
 import { Indicator, Burger, Drawer, Stack, Divider, Button, Skeleton, Menu, Avatar, Text, Badge } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -62,30 +59,6 @@ const Header = () => {
     logout();
     navigate("/");
     close();
-  };
-
-  // Get navigation links based on role
-  const getNavLinks = () => {
-    const commonLinks = [
-      { label: "Find Jobs", href: "/find-jobs", icon: <IconSearch size={18} /> }
-    ];
-    
-    if (isAuthenticated && user?.role === "candidate") {
-      return [
-        ...commonLinks,
-        { label: "My Applications", href: "/my-applications", icon: <IconClipboardList size={18} /> },
-        { label: "Resume Builder", href: "/resume-builder", icon: <IconFileText size={18} /> },
-        { label: "Dashboard", href: "/candidate-dashboard", icon: <IconChartBar size={18} /> }
-      ];
-    } else if (isAuthenticated && user?.role === "recruiter") {
-      return [
-        ...commonLinks,
-        { label: "My Jobs", href: "/Posted-Jobs", icon: <IconClipboardList size={18} /> },
-        { label: "Dashboard", href: "/Recruiter-Dashboard", icon: <IconChartBar size={18} /> }
-      ];
-    }
-    
-    return commonLinks;
   };
 
   // Show skeleton while loading

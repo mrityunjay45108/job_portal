@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Paper,
@@ -25,7 +25,6 @@ import {
   IconTrash,
   IconEye,
   IconRefresh,
-  IconEdit,
 } from "@tabler/icons-react";
 import adminApi from "../../services/adminApi";
 
@@ -53,11 +52,7 @@ const ManageRecruiters = () => {
   const [deleteModalOpen, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
 
-  useEffect(() => {
-    loadRecruiters();
-  }, [page, search]);
-
-  const loadRecruiters = async () => {
+  const loadRecruiters = useCallback(async () => {
     setLoading(true);
     try {
       const response = await adminApi.get("/recruiters", {
@@ -77,7 +72,11 @@ const ManageRecruiters = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
+
+  useEffect(() => {
+    loadRecruiters();
+  }, [loadRecruiters]);
 
   const handleDelete = async () => {
     if (!selectedRecruiter) return;

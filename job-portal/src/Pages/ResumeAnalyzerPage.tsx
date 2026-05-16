@@ -1,5 +1,5 @@
 // src/Pages/ResumeAnalyzerPage.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Paper,
@@ -8,9 +8,7 @@ import {
   Button,
   Alert,
   Loader,
-  Tabs,
   Card,
-  Badge,
 } from '@mantine/core';
 import {
   IconBrain,
@@ -31,21 +29,7 @@ const ResumeAnalyzerPage = () => {
 
   const analyzerUrl = process.env.REACT_APP_RESUME_ANALYZER_URL || 'http://localhost:8501';
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-
-    if (user?.role !== 'candidate') {
-      navigate('/');
-      return;
-    }
-
-    checkAnalyzerStatus();
-  }, [isAuthenticated, user, navigate]);
-
-  const checkAnalyzerStatus = async () => {
+  const checkAnalyzerStatus = useCallback(async () => {
     setIsLoading(true);
     try {
       const controller = new AbortController();
@@ -64,7 +48,21 @@ const ResumeAnalyzerPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [analyzerUrl]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    if (user?.role !== 'candidate') {
+      navigate('/');
+      return;
+    }
+
+    checkAnalyzerStatus();
+  }, [isAuthenticated, user, navigate, checkAnalyzerStatus]);
 
   if (isLoading) {
     return (

@@ -1280,8 +1280,6 @@
 // export default Profile;
 
 
-
-
 import { useState, useRef } from "react";
 import { 
   IconBriefcase, 
@@ -1310,8 +1308,6 @@ import {
   IconPlus,
   IconTrash,
   IconBrandTwitter,
-  IconBrandInstagram,
-  IconBrandYoutube,
   IconX,
   IconUpload,
   IconFile,
@@ -1337,11 +1333,8 @@ import {
   Textarea,
   Stack,
   Group,
-  Switch,
-  Select,
   ScrollArea,
   FileInput,
-  Loader,
 } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from "@mantine/notifications";
@@ -1390,7 +1383,6 @@ const Profile = (props: ProfileProps) => {
   const [editedData, setEditedData] = useState(props);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const resumeInputRef = useRef<HTMLInputElement>(null);
 
   const experienceList = Array.isArray(props.experience) ? props.experience : [];
   const certificationsList = Array.isArray(props.certifications) ? props.certifications : [];
@@ -2156,13 +2148,13 @@ const Profile = (props: ProfileProps) => {
               radius="md"
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
-                  const input = e.currentTarget.value;
-                  if (input && !(editedData.skills || []).includes(input)) {
+                  const input = e.currentTarget;
+                  if (input.value && !(editedData.skills || []).includes(input.value)) {
                     setEditedData({
                       ...editedData,
-                      skills: [...(editedData.skills || []), input]
+                      skills: [...(editedData.skills || []), input.value]
                     });
-                    e.currentTarget.value = "";
+                    input.value = "";
                   }
                 }
               }}

@@ -318,7 +318,7 @@ import {
   IconCheck,
   IconAward,
 } from "@tabler/icons-react";
-import { Badge, Tooltip, Divider } from "@mantine/core";
+import { Badge, Tooltip } from "@mantine/core";
 
 interface ExperienceProps {
   title?: string;

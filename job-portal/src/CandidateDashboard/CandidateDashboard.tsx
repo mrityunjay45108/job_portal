@@ -5085,7 +5085,7 @@
 
 // CandidateDashboard.tsx - Complete fixed code
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Card,
@@ -5096,56 +5096,41 @@ import {
   Textarea,
   Select,
   ActionIcon,
-  Menu,
-  SimpleGrid,
   Tabs,
   Avatar,
   Text,
-  Divider,
   Progress,
   Pagination,
-  Tooltip,
-  FileInput,
   Alert,
   Skeleton,
-  Group,
+  SimpleGrid,
   RingProgress,
   Paper,
   Grid,
-  Stack,
-  ScrollArea,
 } from "@mantine/core";
 import {
   IconBriefcase,
-  IconUsers,
   IconClock,
   IconStar,
   IconSearch,
   IconCalendar,
-  IconCheck,
   IconX,
   IconBookmark,
   IconBookmarkFilled,
   IconRobot,
-  IconUpload,
   IconUser,
   IconBell,
   IconTrash,
   IconSend,
-  IconFileText,
   IconChartBar,
   IconRefresh,
   IconArrowRight,
   IconAward,
   IconMapPin,
-  IconBrandLinkedin,
-  IconBrandGithub,
-  IconWorld,
   IconTrendingUp,
   IconSparkles,
   IconShield,
   IconLogout,
-  IconMenu2,
 } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -5225,7 +5210,6 @@ const CandidateDashboard = () => {
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState<string | null>("overview");
-  const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [savedJobs, setSavedJobs] = useState<SavedJob[]>([]);
@@ -5285,8 +5269,6 @@ const CandidateDashboard = () => {
     preferredJobType: "Full-time",
   });
 
-  const [newSkill, setNewSkill] = useState("");
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [coverLetter, setCoverLetter] = useState("");
   const [recommendedJobs, setRecommendedJobs] = useState<Job[]>([]);
 
@@ -5305,128 +5287,7 @@ const CandidateDashboard = () => {
     if (!isAuthenticated) navigate("/login");
   }, [isAuthenticated, navigate]);
 
-  useEffect(() => {
-    if (user) {
-      loadFullProfile();
-      loadAllData();
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      loadJobs();
-      loadApplications();
-      loadInterviews();
-    }, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    generateRecommendations();
-  }, [jobs, profile.skills]);
-
-  const loadAllData = async () => {
-    setLoading(true);
-    await Promise.all([
-      loadJobs(),
-      loadApplications(),
-      loadSavedJobs(),
-      loadInterviews(),
-      loadNotifications(),
-      loadProfileFromBackend(),
-    ]);
-    setTimeout(() => setLoading(false), 500);
-  };
-
-  const loadProfileFromBackend = async () => {
-    try {
-      const response = await api.get("/auth/me");
-      if (response.data.success && response.data.user) {
-        const userData = response.data.user;
-        const profileData = userData.profile || {};
-        setProfile({
-          ...profile,
-          id: userData.id,
-          fullName: userData.fullName || "",
-          email: userData.email || "",
-          phone: userData.phoneNumber || "",
-          location: profileData.location || "",
-          skills: profileData.skills || [],
-          bio: profileData.bio || "",
-          linkedin: profileData.linkedin || "",
-          github: profileData.github || "",
-          portfolio: profileData.portfolio || "",
-        });
-        setFullProfileData({
-          ...fullProfileData,
-          id: userData.id,
-          name: userData.fullName,
-          fullName: userData.fullName,
-          email: userData.email,
-          phone: userData.phoneNumber,
-          location: profileData.location || "",
-          title: profileData.title || "",
-          company: profileData.company || "",
-          about: profileData.bio || "",
-          skills: profileData.skills || [],
-          experience: profileData.experience || [],
-          certifications: profileData.certifications || [],
-          linkedin: profileData.linkedin || "",
-          github: profileData.github || "",
-          website: profileData.portfolio || "",
-          avatar: profileData.avatar || "",
-        });
-      }
-    } catch (error) {
-      console.error("Error loading profile:", error);
-    }
-  };
-
-  const loadFullProfile = () => loadProfileFromBackend();
-
-  const saveFullProfile = async (updatedProfile: any) => {
-    try {
-      await api.put("/auth/profile", {
-        profile: {
-          location: updatedProfile.location,
-          title: updatedProfile.title,
-          company: updatedProfile.company,
-          skills: updatedProfile.skills,
-          experience: updatedProfile.experience,
-          certifications: updatedProfile.certifications,
-          bio: updatedProfile.about,
-          linkedin: updatedProfile.linkedin,
-          github: updatedProfile.github,
-          portfolio: updatedProfile.website,
-          avatar: updatedProfile.avatar,
-        },
-      });
-      setFullProfileData(updatedProfile);
-      setProfile({
-        ...profile,
-        fullName: updatedProfile.name || updatedProfile.fullName,
-        email: updatedProfile.email,
-        phone: updatedProfile.phone,
-        location: updatedProfile.location,
-        skills: updatedProfile.skills,
-        linkedin: updatedProfile.linkedin,
-        github: updatedProfile.github,
-      });
-      notifications.show({
-        title: "Profile Updated",
-        message: "Your profile has been updated successfully!",
-        color: "green",
-      });
-    } catch (error: any) {
-      notifications.show({
-        title: "Error",
-        message: error.response?.data?.message || "Failed to update profile",
-        color: "red",
-      });
-    }
-  };
-
-  const loadJobs = async () => {
+  const loadJobs = useCallback(async () => {
     try {
       const response = await api.get("/jobs/active");
       if (response.data.success) {
@@ -5448,12 +5309,11 @@ const CandidateDashboard = () => {
       }
     } catch (error) {
       console.error("Error loading jobs:", error);
-      // Fallback data
       setJobs([]);
     }
-  };
+  }, []);
 
-  const loadApplications = async () => {
+  const loadApplications = useCallback(async () => {
     try {
       const response = await api.get("/applications/my-applications");
       if (response.data.success) {
@@ -5477,14 +5337,14 @@ const CandidateDashboard = () => {
       console.error("Error loading applications:", error);
       setApplications([]);
     }
-  };
+  }, []);
 
-  const loadSavedJobs = () => {
+  const loadSavedJobs = useCallback(() => {
     const stored = localStorage.getItem(`saved_jobs_${user?.id || "guest"}`);
     setSavedJobs(stored ? JSON.parse(stored) : []);
-  };
+  }, [user?.id]);
 
-  const loadInterviews = async () => {
+  const loadInterviews = useCallback(async () => {
     try {
       const response = await api.get("/interviews/candidate");
       if (response.data.success) {
@@ -5504,29 +5364,139 @@ const CandidateDashboard = () => {
       console.error("Error loading interviews:", error);
       setInterviews([]);
     }
-  };
+  }, []);
 
-  const loadNotifications = () => {
+  const loadNotifications = useCallback(() => {
     const stored = localStorage.getItem(`candidate_notifications_${user?.id || "guest"}`);
     setNotificationsList(stored ? JSON.parse(stored) : []);
+  }, [user?.id]);
+
+  const loadProfileFromBackend = useCallback(async () => {
+    try {
+      const response = await api.get("/auth/me");
+      if (response.data.success && response.data.user) {
+        const userData = response.data.user;
+        const profileData = userData.profile || {};
+        setProfile({
+          id: userData.id,
+          fullName: userData.fullName || "",
+          email: userData.email || "",
+          phone: userData.phoneNumber || "",
+          location: profileData.location || "",
+          skills: profileData.skills || [],
+          experience: "",
+          education: "",
+          bio: profileData.bio || "",
+          resumeName: "",
+          linkedin: profileData.linkedin || "",
+          github: profileData.github || "",
+          portfolio: profileData.portfolio || "",
+          expectedSalary: "",
+          preferredJobType: "Full-time",
+        });
+        setFullProfileData({
+          id: userData.id,
+          name: userData.fullName,
+          fullName: userData.fullName,
+          email: userData.email,
+          phone: userData.phoneNumber,
+          location: profileData.location || "",
+          title: profileData.title || "",
+          company: profileData.company || "",
+          about: profileData.bio || "",
+          skills: profileData.skills || [],
+          experience: profileData.experience || [],
+          certifications: profileData.certifications || [],
+          linkedin: profileData.linkedin || "",
+          github: profileData.github || "",
+          website: profileData.portfolio || "",
+          avatar: profileData.avatar || "",
+          banner: "",
+          rating: 4.8,
+          verified: false,
+        });
+      }
+    } catch (error) {
+      console.error("Error loading profile:", error);
+    }
+  }, []);
+
+  const loadAllData = useCallback(async () => {
+    setLoading(true);
+    await Promise.all([
+      loadJobs(),
+      loadApplications(),
+      loadSavedJobs(),
+      loadInterviews(),
+      loadNotifications(),
+      loadProfileFromBackend(),
+    ]);
+    setTimeout(() => setLoading(false), 500);
+  }, [loadJobs, loadApplications, loadSavedJobs, loadInterviews, loadNotifications, loadProfileFromBackend]);
+
+  const loadFullProfile = useCallback(() => {
+    loadProfileFromBackend();
+  }, [loadProfileFromBackend]);
+
+  const saveFullProfile = async (updatedProfile: any) => {
+    try {
+      await api.put("/auth/profile", {
+        profile: {
+          location: updatedProfile.location,
+          title: updatedProfile.title,
+          company: updatedProfile.company,
+          skills: updatedProfile.skills,
+          experience: updatedProfile.experience,
+          certifications: updatedProfile.certifications,
+          bio: updatedProfile.about,
+          linkedin: updatedProfile.linkedin,
+          github: updatedProfile.github,
+          portfolio: updatedProfile.website,
+          avatar: updatedProfile.avatar,
+        },
+      });
+      setFullProfileData(updatedProfile);
+      setProfile((prev) => ({
+        ...prev,
+        fullName: updatedProfile.name || updatedProfile.fullName,
+        email: updatedProfile.email,
+        phone: updatedProfile.phone,
+        location: updatedProfile.location,
+        skills: updatedProfile.skills,
+        linkedin: updatedProfile.linkedin,
+        github: updatedProfile.github,
+      }));
+      notifications.show({
+        title: "Profile Updated",
+        message: "Your profile has been updated successfully!",
+        color: "green",
+      });
+    } catch (error: any) {
+      notifications.show({
+        title: "Error",
+        message: error.response?.data?.message || "Failed to update profile",
+        color: "red",
+      });
+    }
   };
 
-  const saveApplications = (updatedApps: Application[]) => {
-    setApplications(updatedApps);
-    localStorage.setItem(`candidate_applications_${user?.id || "guest"}`, JSON.stringify(updatedApps));
-  };
+  useEffect(() => {
+    if (user) {
+      loadFullProfile();
+      loadAllData();
+    }
+  }, [user, loadFullProfile, loadAllData]);
 
-  const saveSavedJobs = (updated: SavedJob[]) => {
-    setSavedJobs(updated);
-    localStorage.setItem(`saved_jobs_${user?.id || "guest"}`, JSON.stringify(updated));
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadJobs();
+      loadApplications();
+      loadInterviews();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [loadJobs, loadApplications, loadInterviews]);
 
-  const saveNotifications = (updated: Notification[]) => {
-    setNotificationsList(updated);
-    localStorage.setItem(`candidate_notifications_${user?.id || "guest"}`, JSON.stringify(updated));
-  };
-
-  const generateRecommendations = () => {
+  const generateRecommendations = useCallback(() => {
     if (!profile.skills.length) {
       setRecommendedJobs([]);
       return;
@@ -5536,7 +5506,11 @@ const CandidateDashboard = () => {
         profile.skills.some((ps) => ps?.toLowerCase() === skill?.toLowerCase())
       )
     ).slice(0, 4));
-  };
+  }, [jobs, profile.skills]);
+
+  useEffect(() => {
+    generateRecommendations();
+  }, [generateRecommendations]);
 
   const calculateMatchScore = (job: Job | null): number => {
     if (!job?.skills?.length || !profile.skills.length) return 0;
@@ -5583,22 +5557,29 @@ const CandidateDashboard = () => {
           coverLetter: coverLetter,
           matchScore: calculateMatchScore(selectedJob),
         };
-        saveApplications([newApp, ...applications]);
+        const updatedApps = [newApp, ...applications];
+        setApplications(updatedApps);
+        localStorage.setItem(`candidate_applications_${user?.id || "guest"}`, JSON.stringify(updatedApps));
+        
         const updatedJobs = jobs.map((job) =>
           job.id === selectedJob.id ? { ...job, applicants: (job.applicants || 0) + 1 } : job
         );
         setJobs(updatedJobs);
-        saveNotifications([
+        
+        const updatedNotifications = [
           {
             id: Date.now().toString(),
             title: "Application Submitted! 🎉",
             message: `Applied for ${selectedJob.jobTitle} at ${selectedJob.company}`,
-            type: "application",
+            type: "application" as const,
             read: false,
             createdAt: new Date().toISOString(),
           },
           ...notificationsList,
-        ]);
+        ];
+        setNotificationsList(updatedNotifications);
+        localStorage.setItem(`candidate_notifications_${user?.id || "guest"}`, JSON.stringify(updatedNotifications));
+        
         closeApplyModal();
         setCoverLetter("");
         setSelectedJob(null);
@@ -5616,10 +5597,12 @@ const CandidateDashboard = () => {
     if (!job) return;
     const existing = savedJobs.find((sj) => sj.jobId === job.id);
     if (existing) {
-      saveSavedJobs(savedJobs.filter((sj) => sj.jobId !== job.id));
+      const updated = savedJobs.filter((sj) => sj.jobId !== job.id);
+      setSavedJobs(updated);
+      localStorage.setItem(`saved_jobs_${user?.id || "guest"}`, JSON.stringify(updated));
       notifications.show({ title: "Removed", message: "Job removed from saved", color: "blue" });
     } else {
-      saveSavedJobs([
+      const updated = [
         {
           id: Date.now().toString(),
           jobId: job.id,
@@ -5630,7 +5613,9 @@ const CandidateDashboard = () => {
           savedDate: new Date().toISOString(),
         },
         ...savedJobs,
-      ]);
+      ];
+      setSavedJobs(updated);
+      localStorage.setItem(`saved_jobs_${user?.id || "guest"}`, JSON.stringify(updated));
       notifications.show({ title: "Saved", message: "Job saved successfully", color: "green" });
     }
   };
@@ -5645,7 +5630,10 @@ const CandidateDashboard = () => {
       return;
     }
     try {
-      saveApplications(applications.filter((a) => a.id !== appId));
+      const updated = applications.filter((a) => a.id !== appId);
+      setApplications(updated);
+      localStorage.setItem(`candidate_applications_${user?.id || "guest"}`, JSON.stringify(updated));
+      
       const updatedJobs = jobs.map((job) =>
         job.id === app.jobId ? { ...job, applicants: Math.max(0, (job.applicants || 0) - 1) } : job
       );
@@ -5656,25 +5644,16 @@ const CandidateDashboard = () => {
     }
   };
 
-  const addSkill = () => {
-    if (newSkill && !profile.skills.includes(newSkill)) {
-      setProfile({ ...profile, skills: [...profile.skills, newSkill] });
-      setNewSkill("");
-      generateRecommendations();
-    }
-  };
-
-  const removeSkill = (skill: string) => {
-    setProfile({ ...profile, skills: profile.skills.filter((s) => s !== skill) });
-    generateRecommendations();
-  };
-
   const markNotificationRead = (id: string) => {
-    saveNotifications(notificationsList.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    const updated = notificationsList.map((n) => (n.id === id ? { ...n, read: true } : n));
+    setNotificationsList(updated);
+    localStorage.setItem(`candidate_notifications_${user?.id || "guest"}`, JSON.stringify(updated));
   };
 
   const markAllRead = () => {
-    saveNotifications(notificationsList.map((n) => ({ ...n, read: true })));
+    const updated = notificationsList.map((n) => ({ ...n, read: true }));
+    setNotificationsList(updated);
+    localStorage.setItem(`candidate_notifications_${user?.id || "guest"}`, JSON.stringify(updated));
     notifications.show({ title: "Success", message: "All notifications marked as read", color: "green" });
   };
 
@@ -6017,7 +5996,7 @@ const CandidateDashboard = () => {
               <Tabs.Panel value="interviews" className="p-4 md:p-6">
                 {interviews.length === 0 ? <div className="text-center py-12"><IconCalendar size={32} className="mx-auto text-gray-300 mb-2" /><Text size="md" fw={500}>No interviews scheduled</Text></div> : interviews.map((interview) => (
                   <Card key={interview.id} className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3 mb-3">
-                    <div className="flex gap-3"><div className="p-2 bg-blue-100 rounded-lg"><IconCalendar size={20} className="text-blue-600" /></div><div><Text fw={600} size="sm">{interview.jobTitle}</Text><Text size="xs" c="gray">{interview.company}</Text><div className="flex flex-wrap gap-1 mt-1"><Badge size="xs" color="blue">{interview.date}</Badge><Badge size="xs" color="gray">{interview.time}</Badge></div>{interview.link && <a href={interview.link} target="_blank" className="text-blue-600 text-xs inline-flex items-center gap-1 mt-1">Join Meeting <IconArrowRight size={10} /></a>}</div></div>
+                    <div className="flex gap-3"><div className="p-2 bg-blue-100 rounded-lg"><IconCalendar size={20} className="text-blue-600" /></div><div><Text fw={600} size="sm">{interview.jobTitle}</Text><Text size="xs" c="gray">{interview.company}</Text><div className="flex flex-wrap gap-1 mt-1"><Badge size="xs" color="blue">{interview.date}</Badge><Badge size="xs" color="gray">{interview.time}</Badge></div>{interview.link && <a href={interview.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 text-xs inline-flex items-center gap-1 mt-1">Join Meeting <IconArrowRight size={10} /></a>}</div></div>
                   </Card>
                 ))}
               </Tabs.Panel>

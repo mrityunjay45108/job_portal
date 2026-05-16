@@ -18,7 +18,7 @@ import Login from "./SignUpLogin/Login";
 import SignUp from "./SignUpLogin/SignUp";
 import { AuthProvider } from "./context/AuthContext";
 import JobDetailsPage from "./Pages/JobDetailsPage";
-import PostJobPage from "./Pages/PostJobPage";
+// import PostJobPage from "./Pages/PostJobPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoleBasedRedirect from "./components/RoleBasedRedirect";
 import ResumeBuilder from "./Pages/ResumeBuilder";

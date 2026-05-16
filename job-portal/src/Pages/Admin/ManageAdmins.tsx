@@ -20,7 +20,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconTrash, IconPlus, IconRefresh } from '@tabler/icons-react';
+import { IconTrash, IconPlus } from '@tabler/icons-react';
 import adminApi from '../../services/adminApi';
 
 interface Admin {

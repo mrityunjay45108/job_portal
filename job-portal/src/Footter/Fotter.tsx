@@ -7,7 +7,7 @@ import {
   IconSend,
   IconBriefcase,
   IconArrowUp,
-  IconHeart,
+  // IconHeart,
   IconRocket,
   IconPhone,
   IconMail,

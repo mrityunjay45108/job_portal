@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Paper,
@@ -143,11 +143,42 @@ const Reports = () => {
   ]);
   const [reportType, setReportType] = useState("monthly");
 
-  useEffect(() => {
-    loadReports();
-  }, [dateRange, reportType]);
+  const loadMockData = useCallback(() => {
+    const mockData: ReportData = {
+      monthlyData: [
+        { month: "Jan", jobs: 45, applications: 234, hires: 12 },
+        { month: "Feb", jobs: 52, applications: 289, hires: 18 },
+        { month: "Mar", jobs: 48, applications: 312, hires: 15 },
+        { month: "Apr", jobs: 61, applications: 378, hires: 22 },
+        { month: "May", jobs: 58, applications: 345, hires: 19 },
+        { month: "Jun", jobs: 67, applications: 412, hires: 25 },
+      ],
+      topCompanies: [
+        { name: "Tech Corp", jobs: 45, hires: 12 },
+        { name: "Innovate Inc", jobs: 38, hires: 9 },
+        { name: "Global Solutions", jobs: 32, hires: 8 },
+        { name: "Digital Dynamics", jobs: 28, hires: 7 },
+      ],
+      statusDistribution: [
+        { name: "Pending", value: 234, color: "#f59e0b" },
+        { name: "Shortlisted", value: 89, color: "#10b981" },
+        { name: "Interview", value: 67, color: "#3b82f6" },
+        { name: "Hired", value: 45, color: "#8b5cf6" },
+        { name: "Rejected", value: 123, color: "#ef4444" },
+      ],
+      summary: {
+        totalUsers: 1250,
+        totalJobs: 342,
+        totalApplications: 1876,
+        totalHires: 145,
+        activeJobs: 189,
+        avgApplicationsPerJob: 5.5,
+      },
+    };
+    setReportData(mockData);
+  }, []);
 
-  const loadReports = async () => {
+  const loadReports = useCallback(async () => {
     setLoading(true);
     try {
       const response = await adminApi.get("/reports", {
@@ -249,42 +280,11 @@ const Reports = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange, reportType, loadMockData]);
 
-  const loadMockData = () => {
-    const mockData: ReportData = {
-      monthlyData: [
-        { month: "Jan", jobs: 45, applications: 234, hires: 12 },
-        { month: "Feb", jobs: 52, applications: 289, hires: 18 },
-        { month: "Mar", jobs: 48, applications: 312, hires: 15 },
-        { month: "Apr", jobs: 61, applications: 378, hires: 22 },
-        { month: "May", jobs: 58, applications: 345, hires: 19 },
-        { month: "Jun", jobs: 67, applications: 412, hires: 25 },
-      ],
-      topCompanies: [
-        { name: "Tech Corp", jobs: 45, hires: 12 },
-        { name: "Innovate Inc", jobs: 38, hires: 9 },
-        { name: "Global Solutions", jobs: 32, hires: 8 },
-        { name: "Digital Dynamics", jobs: 28, hires: 7 },
-      ],
-      statusDistribution: [
-        { name: "Pending", value: 234, color: "#f59e0b" },
-        { name: "Shortlisted", value: 89, color: "#10b981" },
-        { name: "Interview", value: 67, color: "#3b82f6" },
-        { name: "Hired", value: 45, color: "#8b5cf6" },
-        { name: "Rejected", value: 123, color: "#ef4444" },
-      ],
-      summary: {
-        totalUsers: 1250,
-        totalJobs: 342,
-        totalApplications: 1876,
-        totalHires: 145,
-        activeJobs: 189,
-        avgApplicationsPerJob: 5.5,
-      },
-    };
-    setReportData(mockData);
-  };
+  useEffect(() => {
+    loadReports();
+  }, [loadReports]);
 
   const exportReport = async () => {
     try {
@@ -558,7 +558,7 @@ const Reports = () => {
                     </div>
                     <SimpleProgress
                       value={percentage}
-                      color={colors[idx]}
+                      color={colors[idx % colors.length]}
                       size="md"
                     />
                   </div>

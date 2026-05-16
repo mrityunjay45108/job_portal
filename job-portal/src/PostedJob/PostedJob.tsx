@@ -1,8 +1,8 @@
 // src/components/PostedJob/PostedJob.tsx
-import { ScrollArea, Tabs, Button, Modal, TextInput, Textarea, Select, ActionIcon, Menu, NumberInput, Loader, Alert } from "@mantine/core";
+import { ScrollArea, Tabs, Button, Modal, TextInput, Textarea, Select, ActionIcon, Menu, NumberInput, Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState, useEffect } from "react";
-import { IconPlus, IconDotsVertical, IconEdit, IconTrash, IconCopy, IconArchive, IconEye, IconSend, IconCheck, IconAlertCircle } from "@tabler/icons-react";
+import { IconPlus, IconDotsVertical, IconEdit, IconTrash, IconCopy, IconArchive, IconEye, IconSend, IconCheck } from "@tabler/icons-react";
 import PostedJobCard from "./PostedJobCard";
 import { notifications } from "@mantine/notifications";
 import api from "../services/api";
@@ -85,10 +85,6 @@ const PostedJob = ({ onJobSelect, selectedJobId, refreshTrigger }: any) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const saveJobs = (updatedJobs: Job[]) => {
-    setJobs(updatedJobs);
   };
 
   const handleCreateJob = async () => {

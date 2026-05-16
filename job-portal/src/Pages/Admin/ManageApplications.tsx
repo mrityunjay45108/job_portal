@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Paper,
   Title,
   Table,
-  Button,
   Group,
   Badge,
   ActionIcon,
@@ -18,7 +17,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconEye, IconFileText } from '@tabler/icons-react';
+import { IconEye } from '@tabler/icons-react';
 import adminApi from '../../services/adminApi';
 
 interface Application {
@@ -46,11 +45,7 @@ const ManageApplications = () => {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [viewModalOpen, { open: openViewModal, close: closeViewModal }] = useDisclosure(false);
 
-  useEffect(() => {
-    loadApplications();
-  }, [page, status]);
-
-  const loadApplications = async () => {
+  const loadApplications = useCallback(async () => {
     setLoading(true);
     try {
       const response = await adminApi.get('/applications', {
@@ -70,7 +65,11 @@ const ManageApplications = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, status]);
+
+  useEffect(() => {
+    loadApplications();
+  }, [loadApplications]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -131,7 +130,7 @@ const ManageApplications = () => {
                   <Table.Td>
                     <Group gap="sm">
                       <Avatar size="sm" radius="xl" color="blue">
-                        {app.candidateName.charAt(0)}
+                        {app.candidateName?.charAt(0) || '?'}
                       </Avatar>
                       <div>
                         <Text fw={500}>{app.candidateName}</Text>

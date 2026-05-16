@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Paper,
@@ -8,14 +8,9 @@ import {
   Card,
   Badge,
   Divider,
-  Group,
   Stack,
-  Grid,
-  Avatar,
   Progress,
   Alert,
-  Loader,
-  Tabs,
   SimpleGrid,
   ActionIcon,
   Tooltip,
@@ -25,19 +20,14 @@ import {
 import {
   IconBriefcase,
   IconCalendar,
-  IconClock,
-  IconCheck,
-  IconX,
+  IconSend,
   IconEye,
   IconTrash,
   IconFileText,
-  IconSend,
   IconStar,
   IconAward,
-  IconTrendingUp,
-  IconArrowRight,
+  IconX,
   IconBuilding,
-  IconMapPin,
 } from "@tabler/icons-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -126,21 +116,7 @@ const MyApplicationsPage = () => {
   const [withdrawConfirmOpen, setWithdrawConfirmOpen] = useState(false);
   const [applicationToWithdraw, setApplicationToWithdraw] = useState<Application | null>(null);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-      return;
-    }
-
-    if (user?.role !== "candidate") {
-      navigate("/");
-      return;
-    }
-
-    loadApplications();
-  }, [isAuthenticated, user, navigate]);
-
-  const loadApplications = async () => {
+  const loadApplications = useCallback(async () => {
     setLoading(true);
     try {
       const response = await api.get("/applications/my-applications");
@@ -162,7 +138,21 @@ const MyApplicationsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    if (user?.role !== "candidate") {
+      navigate("/");
+      return;
+    }
+
+    loadApplications();
+  }, [isAuthenticated, user?.role, navigate, loadApplications]);
 
   const withdrawApplication = async () => {
     if (!applicationToWithdraw) return;
@@ -429,6 +419,7 @@ const MyApplicationsPage = () => {
                     component="a"
                     href={selectedApplication.resumeUrl}
                     target="_blank"
+                    rel="noopener noreferrer"
                     variant="light"
                     leftSection={<IconFileText size={16} />}
                     className="flex-1"

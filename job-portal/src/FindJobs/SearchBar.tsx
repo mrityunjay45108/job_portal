@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, TextInput, Group, Paper } from "@mantine/core";
+import { Button, Paper } from "@mantine/core";
 import { IconSearch, IconMapPin, IconFilter } from "@tabler/icons-react";
 import MultiSelectCreatable from "./Multiinputs";
 import Filters from "./Filters";

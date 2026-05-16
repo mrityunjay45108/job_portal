@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Container,
-  Paper,
   Title,
   Text,
   Grid,
@@ -76,17 +75,91 @@ const SystemStats = () => {
   const [stats, setStats] = useState<SystemStatsData | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    loadSystemStats();
-    // Auto refresh every 30 seconds
-    const interval = setInterval(() => {
-      loadSystemStats(true);
-    }, 30000);
-
-    return () => clearInterval(interval);
+  const getActiveUsers = useCallback(async () => {
+    try {
+      const response = await adminApi.get("/stats");
+      return (
+        response.data.stats?.totalCandidates +
+          response.data.stats?.totalRecruiters || 234
+      );
+    } catch {
+      return 234;
+    }
   }, []);
 
-  const loadSystemStats = async (silent: boolean = false) => {
+  const getActiveJobs = useCallback(async () => {
+    try {
+      const response = await adminApi.get("/stats");
+      return response.data.stats?.activeJobs || 89;
+    } catch {
+      return 89;
+    }
+  }, []);
+
+  const getPendingApplications = useCallback(async () => {
+    try {
+      const response = await adminApi.get("/applications?status=pending");
+      return response.data.total || 145;
+    } catch {
+      return 145;
+    }
+  }, []);
+
+  const getTodayInterviews = useCallback(async () => {
+    try {
+      const response = await adminApi.get("/interviews/today");
+      return response.data.count || 12;
+    } catch {
+      return 12;
+    }
+  }, []);
+
+  const loadMockData = useCallback(() => {
+    const mockData: SystemStatsData = {
+      server: {
+        status: "healthy",
+        uptime: 86400,
+        cpuUsage: 45,
+        memoryUsage: 62,
+        nodeVersion: "v18.17.0",
+        platform: "win32",
+      },
+      database: {
+        status: "healthy",
+        size: "245 MB",
+        collections: 12,
+        indexes: 28,
+      },
+      api: {
+        totalRequests: 15420,
+        avgResponseTime: 145,
+        successRate: 98.5,
+        endpoints: [
+          { path: "/api/auth/login", count: 3420, avgTime: 89 },
+          { path: "/api/jobs", count: 2850, avgTime: 156 },
+          { path: "/api/applications", count: 2100, avgTime: 178 },
+          { path: "/api/users/profile", count: 1850, avgTime: 67 },
+          { path: "/api/jobs/search", count: 1200, avgTime: 234 },
+        ],
+      },
+      storage: {
+        used: "1.2",
+        total: "5",
+        files: 342,
+        images: 156,
+        documents: 186,
+      },
+      activity: {
+        activeUsers: 234,
+        activeJobs: 89,
+        pendingApplications: 145,
+        todayInterviews: 12,
+      },
+    };
+    setStats(mockData);
+  }, []);
+
+  const loadSystemStats = useCallback(async (silent: boolean = false) => {
     if (!silent) setLoading(true);
     else setRefreshing(true);
 
@@ -163,91 +236,17 @@ const SystemStats = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [getActiveUsers, getActiveJobs, getPendingApplications, getTodayInterviews, loadMockData]);
 
-  const getActiveUsers = async () => {
-    try {
-      const response = await adminApi.get("/stats");
-      return (
-        response.data.stats?.totalCandidates +
-          response.data.stats?.totalRecruiters || 234
-      );
-    } catch {
-      return 234;
-    }
-  };
+  useEffect(() => {
+    loadSystemStats();
+    // Auto refresh every 30 seconds
+    const interval = setInterval(() => {
+      loadSystemStats(true);
+    }, 30000);
 
-  const getActiveJobs = async () => {
-    try {
-      const response = await adminApi.get("/stats");
-      return response.data.stats?.activeJobs || 89;
-    } catch {
-      return 89;
-    }
-  };
-
-  const getPendingApplications = async () => {
-    try {
-      const response = await adminApi.get("/applications?status=pending");
-      return response.data.total || 145;
-    } catch {
-      return 145;
-    }
-  };
-
-  const getTodayInterviews = async () => {
-    try {
-      const response = await adminApi.get("/interviews/today");
-      return response.data.count || 12;
-    } catch {
-      return 12;
-    }
-  };
-
-  const loadMockData = () => {
-    const mockData: SystemStatsData = {
-      server: {
-        status: "healthy",
-        uptime: 86400,
-        cpuUsage: 45,
-        memoryUsage: 62,
-        nodeVersion: "v18.17.0",
-        platform: "win32",
-      },
-      database: {
-        status: "healthy",
-        size: "245 MB",
-        collections: 12,
-        indexes: 28,
-      },
-      api: {
-        totalRequests: 15420,
-        avgResponseTime: 145,
-        successRate: 98.5,
-        endpoints: [
-          { path: "/api/auth/login", count: 3420, avgTime: 89 },
-          { path: "/api/jobs", count: 2850, avgTime: 156 },
-          { path: "/api/applications", count: 2100, avgTime: 178 },
-          { path: "/api/users/profile", count: 1850, avgTime: 67 },
-          { path: "/api/jobs/search", count: 1200, avgTime: 234 },
-        ],
-      },
-      storage: {
-        used: "1.2",
-        total: "5",
-        files: 342,
-        images: 156,
-        documents: 186,
-      },
-      activity: {
-        activeUsers: 234,
-        activeJobs: 89,
-        pendingApplications: 145,
-        todayInterviews: 12,
-      },
-    };
-    setStats(mockData);
-  };
+    return () => clearInterval(interval);
+  }, [loadSystemStats]);
 
   const formatUptime = (seconds: number) => {
     const days = Math.floor(seconds / 86400);

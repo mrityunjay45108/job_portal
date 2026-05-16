@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Container,
-  Title,
   Text,
   Paper,
   Button,
@@ -16,7 +15,6 @@ import {
   Divider,
   Progress,
   SimpleGrid,
-  Stepper,
   Skeleton,
   Drawer,
 } from "@mantine/core";
@@ -33,7 +31,6 @@ import {
   IconSparkles,
   IconPrinter,
   IconMenu2,
-  IconX,
 } from "@tabler/icons-react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -141,7 +138,6 @@ const ResumeBuilder = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string | null>("build");
   const [activeStep, setActiveStep] = useState(0);
-  const [uploading, setUploading] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

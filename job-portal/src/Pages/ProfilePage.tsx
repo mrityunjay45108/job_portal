@@ -205,8 +205,7 @@
 
 
 
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Container, Loader, Alert, Button } from "@mantine/core";
 import { useParams, useNavigate } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
@@ -222,16 +221,8 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-      return;
-    }
-    loadProfileData();
-  }, [userId, isAuthenticated]);
-
-  //  Fixed: Renamed from useAuthUserData to loadFromAuth (not starting with "use")
-  const loadFromAuth = () => {
+  // Fixed: Renamed from useAuthUserData to loadFromAuth (not starting with "use")
+  const loadFromAuth = useCallback(() => {
     if (user) {
       console.log("Using auth user data:", user);
       setProfileData({
@@ -257,9 +248,9 @@ const ProfilePage = () => {
         resumeName: user.profile?.resumeName
       });
     }
-  };
+  }, [user]);
 
-  const loadProfileData = async () => {
+  const loadProfileData = useCallback(async () => {
     setLoading(true);
     setError("");
     
@@ -304,7 +295,7 @@ const ProfilePage = () => {
         });
       } else {
         // Use auth user data as fallback
-        loadFromAuth(); //  Now calling renamed function
+        loadFromAuth(); // Now calling renamed function
       }
     } catch (error: any) {
       console.error("Error loading profile:", error);
@@ -313,7 +304,15 @@ const ProfilePage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, user?.id, user?._id, loadFromAuth]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    loadProfileData();
+  }, [isAuthenticated, navigate, loadProfileData]);
 
   const handleSave = async (data: any) => {
     try {
@@ -468,7 +467,6 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
 
 
 

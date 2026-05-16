@@ -10,12 +10,7 @@ import {
   Card,
   Badge,
   Progress,
-  Alert,
-  Loader,
   Stepper,
-  Group,
-  Stack,
-  Modal,
   Timeline,
   RingProgress
 } from "@mantine/core";
@@ -24,9 +19,7 @@ import {
   IconMicrophone,
   IconSend,
   IconCheck,
-  IconAlertCircle,
   IconScoreboard,
-  IconTrendingUp,
   IconBulb,
   IconArrowRight
 } from "@tabler/icons-react";

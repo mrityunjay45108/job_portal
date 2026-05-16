@@ -5,24 +5,16 @@ import {
   PasswordInput,
   Paper,
   Container,
-  Title,
   Text,
   Divider,
   Stack,
-  Anchor,
   Progress,
-  Card,
-  Group,
   Badge,
   Alert,
 } from "@mantine/core";
 import {
-  IconAt,
-  IconLock,
-  IconUser,
   IconBrandGoogle,
   IconBrandGithub,
-  IconArrowLeft,
   IconBriefcase,
   IconCheck,
   IconBuilding,
@@ -34,6 +26,7 @@ import {
   IconPhone,
   IconMail,
   IconPassword,
+  IconUser,
 } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
