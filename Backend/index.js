@@ -81,92 +81,92 @@
 
 
 
-// // Backend/index.js
-// const express = require('express');
-// const cors = require('cors');
-// const dotenv = require('dotenv');
-// const connectDB = require('./config/db');
-// const adminRoutes = require('./routes/admin.routes');
+// Backend/index.js
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
+const adminRoutes = require('./routes/admin.routes');
 
-// dotenv.config();
-// connectDB();
+dotenv.config();
+connectDB();
 
-// const app = express();
+const app = express();
 
-// // CORS
-// app.use(cors({
-//   origin: ['http://localhost:3000', 'http://localhost:3001'],
-//   credentials: true,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization']
-// }));
+// CORS
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// // Body parser
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// // Serve uploaded files
-// app.use('/uploads', express.static('uploads'));
+// Serve uploaded files
+app.use('/uploads', express.static('uploads'));
 
-// // Request logger
-// app.use((req, res, next) => {
-//   console.log(`${req.method} ${req.url}`);
-//   next();
-// });
+// Request logger
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
-// // Test route
-// app.get('/api/test', (req, res) => {
-//   res.json({ 
-//     success: true, 
-//     message: 'Server is running!',
-//     timestamp: new Date().toISOString()
-//   });
-// });
+// Test route
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'Server is running!',
+    timestamp: new Date().toISOString()
+  });
+});
 
-// app.post('/api/test-body', (req, res) => {
-//   res.json({ 
-//     success: true, 
-//     message: 'POST request received',
-//     body: req.body
-//   });
-// });
+app.post('/api/test-body', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'POST request received',
+    body: req.body
+  });
+});
 
-// // ==================== ROUTES ====================
-// // Auth routes (login, register, me)
-// app.use('/api/auth', require('./routes/user.routes'));
+// ==================== ROUTES ====================
+// Auth routes (login, register, me)
+app.use('/api/auth', require('./routes/user.routes'));
 
-// // User profile routes (get profile by ID)
-// app.use('/api/users', require('./routes/user.routes'));  // ✅ Add this line
+// User profile routes (get profile by ID)
+app.use('/api/users', require('./routes/user.routes'));  // ✅ Add this line
 
-// // Other routes
-// app.use('/api/jobs', require('./routes/job.routes'));
-// app.use('/api/applications', require('./routes/application.routes'));
-// app.use('/api/interviews', require('./routes/interview.routes'));
-// app.use('/api/upload', require('./routes/upload.routes'));
-// app.use('/api/admin', adminRoutes);
-// app.use('/api/users', require('./routes/profile.routes'));
-// // Error handler
-// app.use((err, req, res, next) => {
-//   console.error('Error:', err.stack);
-//   res.status(500).json({ success: false, message: err.message });
-// });
+// Other routes
+app.use('/api/jobs', require('./routes/job.routes'));
+app.use('/api/applications', require('./routes/application.routes'));
+app.use('/api/interviews', require('./routes/interview.routes'));
+app.use('/api/upload', require('./routes/upload.routes'));
+app.use('/api/admin', adminRoutes);
+app.use('/api/users', require('./routes/profile.routes'));
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  res.status(500).json({ success: false, message: err.message });
+});
 
-// // 404 handler
-// app.use('*', (req, res) => {
-//   res.status(404).json({ 
-//     success: false, 
-//     message: `Route ${req.originalUrl} not found` 
-//   });
-// });
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ 
+    success: false, 
+    message: `Route ${req.originalUrl} not found` 
+  });
+});
 
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => {
-//   console.log(` Server running on port ${PORT}`);
-//   console.log(` http://localhost:${PORT}`);
-//   console.log(` Test GET: http://localhost:${PORT}/api/test`);
-//   console.log(` Test POST: http://localhost:${PORT}/api/test-body`);
-//   console.log(` Profile API: http://localhost:${PORT}/api/users/profile/YOUR_USER_ID`);
-// });
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(` Server running on port ${PORT}`);
+  console.log(` http://localhost:${PORT}`);
+  console.log(` Test GET: http://localhost:${PORT}/api/test`);
+  console.log(` Test POST: http://localhost:${PORT}/api/test-body`);
+  console.log(` Profile API: http://localhost:${PORT}/api/users/profile/YOUR_USER_ID`);
+});
 
 
 // // index.js mein CORS section ko aise update karein:
@@ -193,25 +193,25 @@
 
 
 
-// index.js
-const allowedOrigins = [
-  'http://localhost:3000', 
-  'http://localhost:3001',
-  process.env.FRONTEND_URL
-].filter(Boolean); // Ye line 'undefined' values ko array se nikaal degi
+// // index.js
+// const allowedOrigins = [
+//   'http://localhost:3000', 
+//   'http://localhost:3001',
+//   process.env.FRONTEND_URL
+// ].filter(Boolean); // Ye line 'undefined' values ko array se nikaal degi
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // Localhost aur direct requests allow karein
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     // Localhost aur direct requests allow karein
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       return callback(null, true);
+//     }
     
-    // Agar production mein hai aur origin match nahi ho raha
-    console.log("Blocked by CORS:", origin);
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+//     // Agar production mein hai aur origin match nahi ho raha
+//     console.log("Blocked by CORS:", origin);
+//     return callback(new Error('Not allowed by CORS'));
+//   },
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
