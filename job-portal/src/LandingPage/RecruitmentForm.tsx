@@ -113,7 +113,7 @@ const RecruitmentForm = () => {
       source: "Recruitment Form",
     };
 
-    console.log("📤 Sending data to backend:", payload);
+    console.log(" Sending data to backend:", payload);
 
     try {
       const response = await fetch(API_ENDPOINT, {
@@ -127,14 +127,14 @@ const RecruitmentForm = () => {
       // Check if response is OK before trying to parse JSON
       if (!response.ok) {
         const text = await response.text();
-        console.error("❌ Response error:", text);
+        console.error(" Response error:", text);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
 
       if (data.success) {
-        console.log("✅ Application submitted successfully!");
+        console.log(" Application submitted successfully!");
         setShowSuccessModal(true);
 
         // Reset form
