@@ -156,7 +156,7 @@ const RecruitmentForm = () => {
         throw new Error(data.error || "Submission failed");
       }
     } catch (error) {
-      console.error("❌ Error:", error);
+      console.error(" Error:", error);
       setErrorMessage(
         error instanceof Error
           ? error.message
