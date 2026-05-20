@@ -7,13 +7,13 @@ import {
   IconSend,
   IconBriefcase,
   IconArrowUp,
-  // IconHeart,
   IconRocket,
   IconPhone,
   IconMail,
   IconBrandInstagram,
   IconChevronDown,
-  IconChevronUp
+  IconChevronUp,
+  IconBrandWhatsapp  // ← Added WhatsApp icon
 } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
@@ -28,6 +28,9 @@ const Footer = () => {
     help: false,
     legal: false
   });
+
+  // Your WhatsApp channel link
+  const whatsappChannelLink = "https://whatsapp.com/channel/0029VbCunpMD8SE153xyCD0z";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -107,7 +110,9 @@ const Footer = () => {
     { icon: IconBrandTwitter, href: "#", color: "text-sky-500", name: "Twitter" },
     { icon: IconBrandYoutube, href: "#", color: "text-red-600", name: "YouTube" },
     { icon: IconBrandInstagram, href: "#", color: "text-pink-600", name: "Instagram" },
-    { icon: IconBrandFacebook, href: "#", color: "text-blue-700", name: "Facebook" }
+    { icon: IconBrandFacebook, href: "#", color: "text-blue-700", name: "Facebook" },
+    // Added WhatsApp channel link
+    { icon: IconBrandWhatsapp, href: whatsappChannelLink, color: "text-green-600", name: "WhatsApp Channel" }
   ];
 
   return (
@@ -133,11 +138,13 @@ const Footer = () => {
               </p>
               
               <p className="text-xs text-gray-400 mt-4 text-center sm:text-left">Connect with us</p>
-              <div className="flex gap-2 justify-center sm:justify-start mt-2">
+              <div className="flex gap-2 justify-center sm:justify-start mt-2 flex-wrap">
                 {socialLinks.map((social, idx) => (
                   <a
                     key={idx}
                     href={social.href}
+                    target={social.name === "WhatsApp Channel" ? "_blank" : undefined}
+                    rel={social.name === "WhatsApp Channel" ? "noopener noreferrer" : undefined}
                     className={`p-2 bg-gray-100 rounded-lg ${social.color} hover:bg-gray-200 transition-all duration-300 hover:scale-110`}
                     aria-label={social.name}
                   >
